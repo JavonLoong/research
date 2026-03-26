@@ -111,9 +111,12 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
 .paper{
   background:var(--card);border-radius:12px;padding:18px 22px;box-shadow:var(--shadow);
   display:flex;gap:16px;align-items:flex-start;border:1px solid #eee;
-  transition:transform .15s;
+  transition:transform .15s,border-color .2s;cursor:pointer;text-decoration:none;color:inherit;
 }
-.paper:hover{transform:translateX(4px);}
+.paper:hover{transform:translateX(4px);border-color:var(--accent);}
+.paper::after{content:'\2197';position:absolute;top:12px;right:14px;font-size:14px;color:var(--muted);opacity:0;transition:opacity .2s;}
+.paper:hover::after{opacity:1;}
+.paper{position:relative;}
 .paper .yr{
   flex-shrink:0;width:52px;height:52px;border-radius:10px;display:flex;flex-direction:column;
   align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:12px;line-height:1.2;
@@ -277,7 +280,7 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
       <span class="kw">木质素化学</span><span class="kw">生物炭</span><span class="kw">PET回收</span>
     </div>
     <div class="paper-list" style="margin-top:14px;">
-      <div class="paper">
+      <a class="paper" href="https://doi.org/10.1002/adma.202307412" target="_blank">
         <div class="yr y2024">2024</div>
         <div class="info">
           <div class="journal">Advanced Materials · <span style="color:var(--accent);font-weight:700;">高被引论文</span></div>
@@ -285,8 +288,8 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
           <p>生物质水热碳化制备可持续碳材料的里程碑式综述，为 SRT 生物炭数据库项目提供直接文献基础。</p>
           <div class="tag-row"><span class="ptag review">综述</span><span class="ptag bio">水热碳化</span></div>
         </div>
-      </div>
-      <div class="paper">
+      </a>
+      <a class="paper" href="https://doi.org/10.1038/s41467-022-31352-x" target="_blank">
         <div class="yr classic">2022</div>
         <div class="info">
           <div class="journal">Nature Communications</div>
@@ -294,8 +297,8 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
           <p>提出 DTPH 工艺，实现纤维素快速低温水热碳化制碳亚微米球。</p>
           <div class="tag-row"><span class="ptag bio">水热碳化</span><span class="ptag h2">Nature子刊</span></div>
         </div>
-      </div>
-      <div class="paper">
+      </a>
+      <a class="paper" href="https://doi.org/10.1016/j.crsus.2025.100344" target="_blank">
         <div class="yr y2025">2025</div>
         <div class="info">
           <div class="journal">Cell Reports Sustainability</div>
@@ -303,8 +306,8 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
           <p>从木质素出发制备尼龙前驱物，实现生物质高值化的交叉突破。</p>
           <div class="tag-row"><span class="ptag bio">木质素</span><span class="ptag bio">高值化利用</span></div>
         </div>
-      </div>
-      <div class="paper">
+      </a>
+      <a class="paper" href="https://doi.org/10.1016/j.xinn.2025.101079" target="_blank">
         <div class="yr y2025">2025</div>
         <div class="info">
           <div class="journal">The Innovation (Cell Press)</div>
@@ -312,7 +315,7 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
           <p>系统梳理生物质赋能碳负排放技术路径的旗舰综述。</p>
           <div class="tag-row"><span class="ptag review">综述</span><span class="ptag bio">碳负排放</span></div>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 
@@ -326,7 +329,7 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
       <span class="kw">Ni-Ca材料</span><span class="kw">Ca-Fe材料</span><span class="kw">CO₂加氢</span>
     </div>
     <div class="paper-list" style="margin-top:14px;">
-      <div class="paper">
+      <a class="paper" href="https://doi.org/10.1039/D5IM00087D" target="_blank">
         <div class="yr y2026">2026</div>
         <div class="info">
           <div class="journal">Industrial Chemistry & Materials (RSC)</div>
@@ -334,8 +337,8 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
           <p>首次系统研究含硫/含氮真实烟气条件对 ICCU-DRM 的影响机理。</p>
           <div class="tag-row"><span class="ptag iccu">ICCU</span><span class="ptag iccu">双功能材料</span></div>
         </div>
-      </div>
-      <div class="paper">
+      </a>
+      <a class="paper" href="https://doi.org/10.1016/j.seppur.2025.135624" target="_blank">
         <div class="yr y2025">2025<br>.10</div>
         <div class="info">
           <div class="journal">Separation and Purification Technology</div>
@@ -343,8 +346,8 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
           <p>利用固废制备 Ca-Fe 双功能吸附-催化材料，实现一体化 CO₂ 捕集与转化。</p>
           <div class="tag-row"><span class="ptag iccu">ICCU</span><span class="ptag bio">废弃物利用</span></div>
         </div>
-      </div>
-      <div class="paper">
+      </a>
+      <a class="paper" href="https://doi.org/10.1016/j.ccst.2023.100178" target="_blank">
         <div class="yr y2024">2024</div>
         <div class="info">
           <div class="journal">Carbon Capture Science & Technology</div>
@@ -352,7 +355,7 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
           <p>作为期刊执行主编主导的碳捕集全面综述，奠定领域话语权。</p>
           <div class="tag-row"><span class="ptag review">综述</span><span class="ptag iccu">碳捕集</span></div>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 
@@ -365,7 +368,7 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
       <span class="kw">钙钛矿材料</span><span class="kw">城市固废气化</span>
     </div>
     <div class="paper-list" style="margin-top:14px;">
-      <div class="paper">
+      <a class="paper" href="https://doi.org/10.1016/j.biortech.2026.134385" target="_blank">
         <div class="yr y2026">2026<br>.03</div>
         <div class="info">
           <div class="journal">Bioresource Technology</div>
@@ -373,8 +376,8 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
           <p>开发富锶 Ruddlesden-Popper 层状钙钛矿，通过化学链实现生物质高效制合成气。</p>
           <div class="tag-row"><span class="ptag bio">生物质</span><span class="ptag h2">制氢</span></div>
         </div>
-      </div>
-      <div class="paper">
+      </a>
+      <a class="paper" href="https://doi.org/10.1016/j.jechem.2024.05.018" target="_blank">
         <div class="yr y2024">2024</div>
         <div class="info">
           <div class="journal">Journal of Energy Chemistry</div>
@@ -382,7 +385,7 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
           <p>两段式气化-重整工艺将城市固废升级为可持续氢气。</p>
           <div class="tag-row"><span class="ptag h2">制氢</span><span class="ptag bio">固废利用</span></div>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 
@@ -395,7 +398,7 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
       <span class="kw">碳酸钼</span><span class="kw">抗硫催化</span>
     </div>
     <div class="paper-list" style="margin-top:14px;">
-      <div class="paper">
+      <a class="paper" href="https://doi.org/10.1016/j.fuel.2023.130087" target="_blank">
         <div class="yr y2024">2024</div>
         <div class="info">
           <div class="journal">Fuel</div>
@@ -403,8 +406,8 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
           <p>Ni/CeO₂ 催化体系实现生物质组分 CO₂ 气化重整产富 CO 合成气。</p>
           <div class="tag-row"><span class="ptag h2">合成气</span><span class="ptag iccu">CO₂气化</span></div>
         </div>
-      </div>
-      <div class="paper">
+      </a>
+      <a class="paper" href="https://doi.org/10.1016/j.apenergy.2024.122975" target="_blank">
         <div class="yr y2024">2024</div>
         <div class="info">
           <div class="journal">Applied Energy</div>
@@ -412,7 +415,7 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
           <p>揭示纤维素与塑料在 Ni/CeO₂ 纳米棒催化剂上 CO₂ 气化协同机理。</p>
           <div class="tag-row"><span class="ptag iccu">CO₂气化</span><span class="ptag bio">协同效应</span></div>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 
