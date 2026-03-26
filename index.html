@@ -509,24 +509,112 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
     </div>
   </div>
 
-  <!-- 匹配度 -->
-  <div class="match">
-    <h3>✅ 我（纪文龙）与本项目的匹配度分析</h3>
-    <div class="match-grid">
-      <div class="match-item">
-        <div class="score">✓</div>
-        <div class="desc">前期基础</div>
-        <div class="detail">已在曹海山老师处完成 CO₂ 吸附材料数据采集 SRT，积累了文献数据处理经验</div>
+  <!-- ===== 个人介绍 + 匹配度（大改版） ===== -->
+  <div style="margin-top:36px;">
+    <!-- 个人简介卡片 -->
+    <div style="background:var(--card);border-radius:16px;padding:28px 32px;box-shadow:var(--shadow-lg);border:2px solid var(--blue);margin-bottom:20px;">
+      <h3 style="font-size:18px;font-weight:700;color:var(--blue);margin-bottom:16px;">👤 关于我 · 纪文龙</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div>
+          <div class="info-row"><span class="label">院系</span><span class="value">清华大学 行健书院 烽火4班</span></div>
+          <div class="info-row"><span class="label">年级</span><span class="value">2024级 本科在读</span></div>
+          <div class="info-row"><span class="label">GitHub</span><span class="value"><a href="https://github.com/JavonLoong" target="_blank" style="color:var(--blue);text-decoration:none;">github.com/JavonLoong</a></span></div>
+        </div>
+        <div>
+          <div class="info-row"><span class="label">SRT 经历</span><span class="value">曹海山副教授课题组（已完成）</span></div>
+          <div class="info-row"><span class="label">技术栈</span><span class="value">Python · NLP · ML · Web · 数据库</span></div>
+          <div class="info-row"><span class="label">自我定位</span><span class="value">工程实现型，擅长数据 → 系统落地</span></div>
+        </div>
       </div>
-      <div class="match-item">
-        <div class="score">✓</div>
-        <div class="desc">编程能力</div>
-        <div class="detail">具备 Python/NLP/数据库开发能力，可独立完成文献自动化采集与 ML 建模</div>
+    </div>
+
+    <!-- 核心：项目需求 vs 我的能力 逐项对照 -->
+    <div class="match" style="border-color:var(--green);">
+      <h3 style="color:var(--green);">🎯 项目需求 × 我的能力 · 逐项匹配</h3>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">以下将 SRT 项目的 5 项核心技术需求与我的已有能力一一对照</p>
+
+      <!-- 匹配项1 -->
+      <div style="background:#f0faf5;border-radius:10px;padding:16px 18px;margin-bottom:10px;border-left:3px solid var(--green);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;color:var(--green);">① NLP 文献自动提取</span>
+          <span style="font-size:10px;background:var(--green);color:#fff;padding:2px 8px;border-radius:10px;font-weight:600;">高度匹配</span>
+        </div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.7;">
+          <b>项目要求：</b>用 NLP 技术从学术论文中自动提取生物炭制备参数与性能数据<br>
+          <b>我的基础：</b>在曹海山副教授 SRT 中已完成 CO₂ 吸附材料文献的<b>结构化数据采集</b>工作，熟练掌握 Python 文本处理与正则提取流程，具备从 PDF/HTML 论文中批量抽取表格数据的实战经验
+        </div>
       </div>
-      <div class="match-item">
-        <div class="score">✓</div>
-        <div class="desc">领域认知</div>
-        <div class="detail">已系统调研周会老师课题组论文，理解生物炭在碳中和技术中的关键地位</div>
+
+      <!-- 匹配项2 -->
+      <div style="background:#f0faf5;border-radius:10px;padding:16px 18px;margin-bottom:10px;border-left:3px solid var(--green);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;color:var(--green);">② 机器学习建模</span>
+          <span style="font-size:10px;background:var(--green);color:#fff;padding:2px 8px;border-radius:10px;font-weight:600;">高度匹配</span>
+        </div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.7;">
+          <b>项目要求：</b>构建随机森林 / 神经网络模型预测生物炭性能（R²≥0.85）<br>
+          <b>我的基础：</b>熟练使用 scikit-learn 与 PyTorch，已独立完成过<b>回归预测</b>与<b>分类任务</b>的完整 ML 工作流（数据清洗 → 特征工程 → 模型训练 → 超参调优 → 可视化评估）
+        </div>
+      </div>
+
+      <!-- 匹配项3 -->
+      <div style="background:#f0faf5;border-radius:10px;padding:16px 18px;margin-bottom:10px;border-left:3px solid var(--green);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;color:var(--green);">③ 数据库设计与构建</span>
+          <span style="font-size:10px;background:var(--green);color:#fff;padding:2px 8px;border-radius:10px;font-weight:600;">高度匹配</span>
+        </div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.7;">
+          <b>项目要求：</b>构建包含 ≥2000 条记录的生物炭多维度数据库<br>
+          <b>我的基础：</b>具备关系型数据库（SQLite/MySQL）设计经验，理解数据范式化与索引优化。在前期 SRT 中已设计过<b>材料-性能多表关联数据库</b>的 Schema
+        </div>
+      </div>
+
+      <!-- 匹配项4 -->
+      <div style="background:#e8f4fd;border-radius:10px;padding:16px 18px;margin-bottom:10px;border-left:3px solid var(--blue);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;color:var(--blue);">④ Web 可视化查询界面</span>
+          <span style="font-size:10px;background:var(--blue);color:#fff;padding:2px 8px;border-radius:10px;font-weight:600;">核心优势</span>
+        </div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.7;">
+          <b>项目要求：</b>开发可视化查询界面供团队使用<br>
+          <b>我的基础：</b>具备完整的前后端开发能力（HTML/CSS/JS + Python Flask），已独立开发并部署过 <a href="https://github.com/JavonLoong/mooncake" target="_blank" style="color:var(--blue);">GitHub 开源项目</a>。<b>本调研报告页面即为个人独立制作</b>，可直观体现 Web 工程化能力
+        </div>
+      </div>
+
+      <!-- 匹配项5 -->
+      <div style="background:#fef5e7;border-radius:10px;padding:16px 18px;margin-bottom:10px;border-left:3px solid var(--orange);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:700;color:var(--orange);">⑤ 领域理解与科研素养</span>
+          <span style="font-size:10px;background:var(--orange);color:#fff;padding:2px 8px;border-radius:10px;font-weight:600;">深度调研</span>
+        </div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.7;">
+          <b>项目要求：</b>理解生物炭材料的制备-结构-性能关系<br>
+          <b>我的基础：</b>已系统精读周会老师课题组 <b>11 篇代表论文</b>，深入理解水热碳化、热解等工艺与生物炭性能参数的映射关系。前期 SRT 中在曹海山副教授指导下积累了对 CO₂ 吸附材料的文献综合分析能力
+        </div>
+      </div>
+    </div>
+
+    <!-- 我能为课题组做什么 -->
+    <div style="background:linear-gradient(135deg,#1a8a5c,#27ae60);color:#fff;border-radius:16px;padding:28px 32px;margin-top:20px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-30%;right:-10%;width:250px;height:250px;background:radial-gradient(circle,rgba(255,255,255,.08),transparent 70%);"></div>
+      <h3 style="font-size:17px;font-weight:700;margin-bottom:14px;position:relative;">💡 我能为课题组提供什么</h3>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;position:relative;">
+        <div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:14px;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px;">🔧 工程化落地能力</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.8);line-height:1.6;">将文献数据从"散落在论文中"到"可查询、可预测的数据库系统"，完成完整的产品化交付</div>
+        </div>
+        <div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:14px;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px;">📊 数据驱动的研究辅助</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.8);line-height:1.6;">通过 ML 模型为课题组的生物炭实验提供材料筛选建议，缩短"trial-and-error"周期</div>
+        </div>
+        <div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:14px;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px;">🌐 可交付的软件成果</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.8);line-height:1.6;">瞄准 SCI 论文 1 篇 + 软件著作权 1 项的目标，按四阶段时间线稳步推进</div>
+        </div>
+        <div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:14px;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px;">⏰ 充足的时间投入</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.8);line-height:1.6;">作为低年级本科生，课业压力可控，能够保证每周≥10小时的稳定科研投入</div>
+        </div>
       </div>
     </div>
   </div>
