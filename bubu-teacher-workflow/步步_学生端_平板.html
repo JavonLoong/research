@@ -103,6 +103,34 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .tc-foot .tc-action{color:var(--primary-dark);font-weight:700}
 .tcard.done .tc-action{color:var(--primary-dark)}
 
+/* === Student four-app workspace === */
+.app-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.app-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;box-shadow:var(--shadow-2);transition:.15s;min-height:104px;display:flex;flex-direction:column;justify-content:space-between}
+.app-card:hover{border-color:var(--primary);transform:translateY(-1px)}
+.app-card .app-top{display:flex;align-items:center;gap:9px}
+.app-icon{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:900;flex-shrink:0}
+.app-icon.knowledge{background:#0ea5e9}
+.app-icon.classroom{background:#10b981}
+.app-icon.homework{background:#f59e0b}
+.app-icon.repair{background:#7c3aed}
+.app-card h3{font-size:13.5px;line-height:1.25;color:var(--text);font-weight:900}
+.app-card p{font-size:10.5px;line-height:1.45;color:var(--muted);font-weight:600;margin-top:4px}
+.app-card .app-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:10px;color:var(--muted);font-weight:800}
+.app-card .app-open{color:var(--primary-dark)}
+.module-head{background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid var(--line);border-radius:13px;padding:12px;margin-bottom:10px}
+.module-head .mh-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.module-head h3{font-size:16px;font-weight:900;color:var(--text)}
+.module-head p{font-size:11px;color:var(--muted);line-height:1.5;font-weight:600}
+.module-pill{font-size:10px;font-weight:900;border-radius:999px;padding:3px 8px;background:var(--primary-soft);color:var(--primary-dark);white-space:nowrap}
+.knowledge-list,.classroom-list,.repair-list{display:flex;flex-direction:column;gap:8px}
+.knowledge-card,.classroom-card,.repair-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px;cursor:pointer}
+.knowledge-card:hover,.classroom-card:hover,.repair-card:hover{border-color:var(--primary);box-shadow:var(--shadow-2)}
+.knowledge-card .kc-tag,.classroom-card .cc-tag,.repair-card .rc-tag{display:inline-flex;border-radius:999px;padding:2px 7px;font-size:9.5px;font-weight:900;background:var(--primary-soft);color:var(--primary-dark);margin-bottom:6px}
+.knowledge-card h4,.classroom-card h4,.repair-card h4{font-size:13px;font-weight:900;color:var(--text);line-height:1.35}
+.knowledge-card p,.classroom-card p,.repair-card p{font-size:10.8px;color:var(--muted);line-height:1.5;margin-top:4px;font-weight:600}
+.classroom-card.live{background:linear-gradient(135deg,#ecfdf5,#fff);border-color:var(--primary-soft)}
+.repair-card.warn{background:#fffafa;border-color:#fecaca}
+
 /* === Student home + homework center === */
 .priority-card{background:linear-gradient(135deg,#ecfdf5,#fff);border:1px solid var(--primary-soft);border-radius:14px;padding:13px 14px;margin-bottom:12px;box-shadow:var(--shadow-2);cursor:pointer}
 .priority-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-size:10.5px;color:var(--muted);font-weight:700}
@@ -255,7 +283,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .toggle.on::after{left:16px}
 
 /* === Tabbar (底部) === */
-.tabbar{background:#fff;border-top:1px solid var(--line);padding:7px 8px 9px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;flex-shrink:0}
+.tabbar{background:#fff;border-top:1px solid var(--line);padding:7px 8px 9px;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;flex-shrink:0}
 .tb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 4px;border-radius:8px;cursor:pointer;font-size:10px;color:var(--muted);font-weight:600;transition:.15s}
 .tb i{font-size:18px;line-height:1;font-style:normal}
 .tb:hover{color:var(--primary-dark);background:var(--primary-soft-2)}
@@ -417,7 +445,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
             <div class="ab-avatar">嘉</div>
             <div>
               <div class="ab-name">嘉怡，晚上好</div>
-              <div class="ab-sub">今日 <strong style="color:var(--primary-dark)">4</strong> 项 · 补交 1 · 课堂推送 1</div>
+              <div class="ab-sub">知识 · 课堂 · 作业 · 订正</div>
             </div>
           </div>
           <div class="ab-tools">
@@ -428,56 +456,89 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
         <div class="live-bar" id="liveBar">
           <span class="pulse"></span>
-          <span class="grow">先补交语文听写订正，再完成数学剩余 2 题</span>
+          <span class="grow">先处理作业提交里的语文补交，再去自主订正练 1 题</span>
           <button class="lb-btn" data-tab-go="homework" data-hw-filter="late">查看</button>
         </div>
 
         <div class="scroll-area" id="homeScroll">
 
-          <!-- ===== Tab 1: 今日 ===== -->
-          <div class="s-panel active" data-pane="today">
-            <div class="stat-row">
-              <div class="stat-card"><div class="sc-v">4</div><div class="sc-l">今日待办</div></div>
-              <div class="stat-card accent"><div class="sc-v">1</div><div class="sc-l">需补交</div></div>
-              <div class="stat-card warn"><div class="sc-v">22:00</div><div class="sc-l">最近截止</div></div>
-            </div>
-
-            <div class="priority-card" data-hw="chn_makeup">
-              <div class="priority-meta"><span class="priority-pill">需补交</span><span>语文 · 昨天 21:00 退回</span></div>
-              <h3>第 12 课生字听写订正</h3>
-              <p>刘老师退回：少拍第 2 页。补拍上传后，这项会从“需补交”移到“待老师复核”。</p>
-              <div class="priority-actions">
-                <button class="mini-btn primary" data-hw="chn_makeup">去补拍上传</button>
-                <button class="mini-btn" data-tab-go="homework" data-hw-filter="late">看全部补交</button>
+          <!-- ===== App 1: 知识内容 ===== -->
+          <div class="s-panel active" data-pane="knowledge">
+            <div class="app-grid">
+              <div class="app-card" data-tab-go="knowledge">
+                <div class="app-top"><div class="app-icon knowledge">知</div><div><h3>知识内容</h3><p>课件、知识点、课堂板书沉淀</p></div></div>
+                <div class="app-foot"><span>6 个知识点</span><span class="app-open">打开</span></div>
+              </div>
+              <div class="app-card" data-tab-go="classroom">
+                <div class="app-top"><div class="app-icon classroom">课</div><div><h3>课堂互动</h3><p>老师推送、答题、听写、手写记录</p></div></div>
+                <div class="app-foot"><span>今日 4 次</span><span class="app-open">查看</span></div>
+              </div>
+              <div class="app-card" data-tab-go="homework">
+                <div class="app-top"><div class="app-icon homework">交</div><div><h3>作业提交</h3><p>按科目处理补交、录音、拍照</p></div></div>
+                <div class="app-foot"><span>补交 1 项</span><span class="app-open">处理</span></div>
+              </div>
+              <div class="app-card" data-tab-go="repair">
+                <div class="app-top"><div class="app-icon repair">订</div><div><h3>自主订正</h3><p>错题讲解、同类题、AI 思路提示</p></div></div>
+                <div class="app-foot"><span>待订正 3 题</span><span class="app-open">进入</span></div>
               </div>
             </div>
 
-            <div class="sec-h"><h4>今日顺序</h4><span class="sec-meta">按截止和老师退回排序</span></div>
-            <div class="agenda-list">
-              <div class="agenda-item" data-hw="chn_makeup">
-                <div class="agenda-time">现在</div>
-                <div class="agenda-main"><strong>语文听写订正</strong><p>补交 · 少拍一页，先处理</p></div>
-                <div class="agenda-action">补交</div>
+            <div class="module-head">
+              <div class="mh-row"><h3>知识内容</h3><span class="module-pill">四年级下 · 小数初步认识</span></div>
+              <p>像一个独立的知识软件：孩子不是看一堆资料，而是按“本课要点、例题、课堂保存、相关练习”进入。</p>
+            </div>
+
+            <div class="knowledge-list">
+              <div class="knowledge-card" data-act="knowledgeDecimal">
+                <span class="kc-tag">本课核心</span>
+                <h4>小数表示十分之几、百分之几</h4>
+                <p>0.1 元 = 1 角，0.8 米 = 80 厘米；从生活单位进入概念。</p>
               </div>
-              <div class="agenda-item" data-hw="math_basic">
-                <div class="agenda-time">22:00</div>
-                <div class="agenda-main"><strong>数学分数加减基础 5 题</strong><p>已做 3/5，剩 2 题</p></div>
-                <div class="agenda-action">继续</div>
+              <div class="knowledge-card" data-act="knowledgeBoard">
+                <span class="kc-tag">课堂沉淀</span>
+                <h4>王老师板书：1 米 = 100 厘米</h4>
+                <p>保存课堂手写题过程，课后复看时只显示自己的作答和老师讲评。</p>
               </div>
-              <div class="agenda-item" data-hw="eng_read">
-                <div class="agenda-time">明早</div>
-                <div class="agenda-main"><strong>英语 Unit 4 跟读录音</strong><p>可先录草稿，明早 8:00 前提交</p></div>
-                <div class="agenda-action">录音</div>
-              </div>
-              <div class="agenda-item" data-hw="sci_photo">
-                <div class="agenda-time">待批</div>
-                <div class="agenda-main"><strong>科学观察记录照片</strong><p>已提交，等陈老师批改</p></div>
-                <div class="agenda-action">查看</div>
+              <div class="knowledge-card" data-hw="math_basic">
+                <span class="kc-tag">关联练习</span>
+                <h4>分数加减法基础 5 题</h4>
+                <p>知识内容不是单独孤岛，能直接连到作业提交里的同一项练习。</p>
               </div>
             </div>
           </div>
 
-          <!-- ===== Tab 2: 作业中心 ===== -->
+          <!-- ===== App 2: 课堂互动 ===== -->
+          <div class="s-panel" data-pane="classroom">
+            <div class="module-head">
+              <div class="mh-row"><h3>课堂互动</h3><span class="module-pill">老师推送中</span></div>
+              <p>像一个课堂接管软件：课上只接受老师推送，课后只保留记录，不让学生自己乱点功能。</p>
+            </div>
+
+            <div class="classroom-list">
+              <div class="classroom-card live" data-act="classReplay">
+                <span class="cc-tag">当前课堂</span>
+                <h4>第 1 次推送 · 手写题</h4>
+                <p>右侧课堂屏正在展示老师推送。提交后等待老师下一次推送。</p>
+              </div>
+              <div class="classroom-card" data-act="classReplay">
+                <span class="cc-tag">已提交</span>
+                <h4>0.8 米 = 80 厘米 · 手写过程</h4>
+                <p>保存学生自己的手写轨迹，老师可回收，课后可进入自主订正。</p>
+              </div>
+              <div class="classroom-card" data-hw="chn_makeup">
+                <span class="cc-tag">转作业</span>
+                <h4>听写订正被退回</h4>
+                <p>课堂听写的订正结果进入“作业提交”，少拍一页所以现在需要补交。</p>
+              </div>
+              <div class="classroom-card" data-tab-go="repair">
+                <span class="cc-tag">转订正</span>
+                <h4>随堂练错题进入自主订正</h4>
+                <p>有对错的题不在大屏公开个人错误，回到学生端自己订正。</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== App 3: 作业提交 ===== -->
           <div class="s-panel" data-pane="homework">
             <div class="hw-shell">
               <div class="hw-summary">
@@ -584,13 +645,30 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
             </div>
           </div>
 
-          <!-- ===== Tab 3: AI 学伴 ===== -->
-          <div class="s-panel" data-pane="ai">
+          <!-- ===== App 4: 自主订正 ===== -->
+          <div class="s-panel" data-pane="repair">
+            <div class="module-head">
+              <div class="mh-row"><h3>自主订正</h3><span class="module-pill">错题 3 · 已修复 1</span></div>
+              <p>像一个订正软件：先看自己的错因，再让 AI 给思路和同类题，不把答案直接摊开。</p>
+            </div>
+            <div class="repair-list">
+              <div class="repair-card warn" data-act="wbReview" data-wb="w1">
+                <span class="rc-tag">优先订正</span>
+                <h4>分数化简：3/9 写成 1/2</h4>
+                <p>错因是没有找公因数。进入后先看步骤，再做 4/12 同类题。</p>
+              </div>
+              <div class="repair-card" data-act="wbReview" data-wb="w2">
+                <span class="rc-tag">应用题</span>
+                <h4>千克和克混在一起算</h4>
+                <p>先圈单位，再换算。订正完成后回到作业提交生成记录。</p>
+              </div>
+            </div>
+
             <div class="chat-meta">
               <div class="cm-ava">🤖</div>
               <div>
-                <h4>步步 · AI 学伴</h4>
-                <p>不会的题先讲思路，不直接给答案 · 已陪你聊 12 次</p>
+                <h4>订正学伴</h4>
+                <p>只在课后订正里出现；课堂中禁用，不替学生答题。</p>
               </div>
             </div>
             <div class="chat-body" id="chatBody">
@@ -733,11 +811,10 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
         <!-- 底部 Tab Bar -->
         <div class="tabbar" id="tabbar">
-          <div class="tb active" data-tab="today"><i>⌂</i>今日</div>
-          <div class="tb has-dot" data-tab="homework"><i>▤</i>作业</div>
-          <div class="tb" data-tab="ai"><i>◎</i>学伴</div>
-          <div class="tb" data-tab="wb"><i>✎</i>错题</div>
-          <div class="tb" data-tab="me"><i>☻</i>我的</div>
+          <div class="tb active" data-tab="knowledge"><i>知</i>知识</div>
+          <div class="tb" data-tab="classroom"><i>课</i>课堂</div>
+          <div class="tb has-dot" data-tab="homework"><i>交</i>作业</div>
+          <div class="tb" data-tab="repair"><i>订</i>订正</div>
         </div>
 
       </div><!-- /tablet-screen -->
@@ -1306,6 +1383,30 @@ const DEMOS = {
       <li>👨‍👩‍👧 <strong>妈妈：</strong>"今天作业做完了吗？"（19:20）</li>
     </ul>
     <div class="note">家长消息走<strong>独立通道</strong>，不会出现在课堂模式里。</div>` },
+  knowledgeDecimal: { tag:'知识内容', t:'小数初步认识 · 本课核心', h:`
+    <p>这块像一个独立的<strong>知识软件</strong>，只沉淀学生要复看的内容：</p>
+    <ul>
+      <li><strong>概念：</strong>小数可以表示十分之几、百分之几。</li>
+      <li><strong>生活例子：</strong>0.1 元 = 1 角，0.8 米 = 80 厘米。</li>
+      <li><strong>课堂来源：</strong>来自第 1 课时的板书和手写题。</li>
+    </ul>
+    <div class="note">它不负责提交作业，也不负责订正；需要练习时会跳到“作业提交”或“自主订正”。</div>`, pri:'进入关联练习' },
+  knowledgeBoard: { tag:'课堂沉淀', t:'课堂板书 · 只保留需要复看的', h:`
+    <p>这里保存的是课堂过程里的关键内容，不是把整节课录像塞进来：</p>
+    <ul>
+      <li>王老师强调：<strong>1 米 = 100 厘米</strong></li>
+      <li>你的手写过程：0.8 × 100 = 80</li>
+      <li>老师讲评：先写单位关系，再做换算。</li>
+    </ul>
+    <div class="note">学生复看时先看知识点，再看自己的作答，而不是看同学名单或全班数据。</div>` },
+  classReplay: { tag:'课堂互动', t:'课堂互动 · 老师推送记录', h:`
+    <p>课堂互动像一个<strong>课堂接管软件</strong>：课上由老师推送，学生只看到当前任务；课后只保留自己的记录。</p>
+    <ul>
+      <li>14:21 手写题已提交：0.8 米 = 80 厘米</li>
+      <li>14:25 随堂练已提交：第 3 题进入自主订正</li>
+      <li>14:31 听写订正转入作业提交：少拍第 2 页</li>
+    </ul>
+    <div class="note">这避免把“课堂互动”做成一排功能按钮，实际更接近老师在课堂里一页一页推送。</div>` },
   portraitMore: { tag:'学习画像', t:'我的学习画像 · 近 4 周聚合', h:`
     <p>下面是基于<strong>课堂答题 + 作业 + 错题修复</strong>三类数据画出来的能力分布：</p>
     <ul>
@@ -1479,6 +1580,9 @@ document.addEventListener('click', e=>{
     case 'liveBarSwitch': showDemo('liveBarSwitch', a); break;
     case 'search': showDemo('search', a); break;
     case 'notify': showDemo('notify', a); break;
+    case 'knowledgeDecimal': showDemo('knowledgeDecimal', a); break;
+    case 'knowledgeBoard': showDemo('knowledgeBoard', a); break;
+    case 'classReplay': showDemo('classReplay', a); break;
     case 'portraitMore': showDemo('portraitMore', a); break;
     case 'setParent': showDemo('setParent', a); break;
     case 'setHistory': showDemo('setHistory', a); break;
