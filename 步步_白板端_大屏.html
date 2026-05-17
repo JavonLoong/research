@@ -84,23 +84,42 @@ body{
 }
 .float-main span{ display:block; font-size:24px; line-height:1; margin-bottom:2px; }
 .float-main small{ display:block; font-size:10px; color:#cbd5e1; font-weight:800; }
-.float-menu{
-  position:absolute; inset:0; pointer-events:none;
+.floating-ball.open .float-main{ background:linear-gradient(135deg,var(--primary),#119f73); }
+.floating-panel{
+  position:absolute; z-index:79; width:430px; max-width:calc(100% - 36px);
+  background:rgba(15,23,42,.94); color:#fff;
+  border:1px solid rgba(255,255,255,.16); border-radius:18px;
+  box-shadow:0 24px 60px rgba(15,23,42,.34);
+  padding:16px; opacity:0; transform:translateY(10px) scale(.98);
+  pointer-events:none; transition:opacity .16s ease, transform .16s ease;
 }
+.floating-panel.show{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+.float-panel-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+.float-panel-title{ font-size:17px; font-weight:900; }
+.float-panel-sub{ font-size:12px; color:#cbd5e1; margin-top:2px; }
+.float-panel-close{
+  width:34px; height:34px; border-radius:8px; border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.10); color:#fff; font-weight:900; cursor:pointer;
+}
+.float-tool-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
 .float-tool{
-  position:absolute; left:9px; top:9px; width:58px; height:58px;
-  border-radius:50%; border:1px solid rgba(255,255,255,.72);
-  background:rgba(15,23,42,.92); color:#fff;
-  box-shadow:0 12px 30px rgba(15,23,42,.24);
-  opacity:0; transform:translate(0,0) scale(.7);
-  transition:.18s ease; cursor:pointer;
-  display:grid; place-items:center; text-align:center;
-  font-size:12px; font-weight:900;
+  min-height:86px; border-radius:12px; border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.08); color:#fff; cursor:pointer;
+  padding:10px; display:flex; flex-direction:column; align-items:flex-start; justify-content:space-between;
+  text-align:left; font:inherit; transition:.16s ease;
 }
-.float-tool strong{ display:block; font-size:17px; line-height:1; }
-.floating-ball.open .float-menu{ pointer-events:auto; }
-.floating-ball.open .float-tool{ opacity:1; transform:translate(var(--tx),var(--ty)) scale(1); }
-.float-tool.active{ background:var(--primary); border-color:#fff; }
+.float-tool:hover,.float-tool.active{ background:rgba(34,201,147,.22); border-color:rgba(34,201,147,.78); transform:translateY(-1px); }
+.float-tool .ico{ width:30px; height:30px; border-radius:9px; display:grid; place-items:center; background:rgba(255,255,255,.14); font-weight:900; }
+.float-tool strong{ font-size:14px; line-height:1.2; margin-top:6px; }
+.float-tool span{ font-size:11px; line-height:1.35; color:#cbd5e1; }
+.float-panel-foot{
+  margin-top:12px; display:flex; align-items:center; justify-content:space-between; gap:10px;
+  color:#cbd5e1; font-size:12px; border-top:1px solid rgba(255,255,255,.10); padding-top:11px;
+}
+.float-panel-foot button{
+  border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.10); color:#fff;
+  border-radius:8px; padding:7px 10px; cursor:pointer; font-weight:800;
+}
 .collection-drawer,
 .answer-drawer,
 .gateway-panel,
@@ -793,14 +812,33 @@ body{
           <button class="float-main" id="floatingMain" type="button" aria-label="打开白板悬浮球">
             <span>✦</span><small>白板</small>
           </button>
-          <div class="float-menu" aria-label="白板工具菜单">
-            <button class="float-tool" style="--tx:-74px;--ty:-92px" data-board-tool="pushLive" type="button"><strong>练</strong>随堂</button>
-            <button class="float-tool" style="--tx:-132px;--ty:-24px" data-board-tool="draw" type="button"><strong>抽</strong>点名</button>
-            <button class="float-tool" style="--tx:-126px;--ty:54px" data-board-tool="circleAsk" type="button"><strong>圈</strong>提问</button>
-            <button class="float-tool" style="--tx:-54px;--ty:112px" data-board-tool="pen" type="button"><strong>笔</strong>批注</button>
-            <button class="float-tool" style="--tx:30px;--ty:104px" data-board-tool="subjectTool" type="button"><strong>具</strong>学科</button>
-            <button class="float-tool" style="--tx:76px;--ty:26px" data-board-tool="voice" type="button"><strong>语</strong>助手</button>
-            <button class="float-tool" style="--tx:56px;--ty:-58px" data-board-tool="gateway" type="button"><strong>网</strong>状态</button>
+        </div>
+
+        <div class="floating-panel" id="floatingPanel" aria-label="白板功能台">
+          <div class="float-panel-head">
+            <div>
+              <div class="float-panel-title">白板功能台</div>
+              <div class="float-panel-sub">拖动圆球可放到任意位置，点这里直接调课堂功能</div>
+            </div>
+            <button class="float-panel-close" type="button" data-board-action="closeFloatingPanel">×</button>
+          </div>
+          <div class="float-tool-grid">
+            <button class="float-tool" data-board-tool="pushLive" type="button"><span class="ico">练</span><strong>推随堂练</strong><span>发题、收题、底部回收抽屉</span></button>
+            <button class="float-tool" data-board-tool="draw" type="button"><span class="ico">抽</span><strong>抽人提问</strong><span>鼓励型/关注型/随机点名</span></button>
+            <button class="float-tool" data-board-tool="circleAsk" type="button"><span class="ico">圈</span><strong>圈选追问</strong><span>选区旁出现 AI 解释卡</span></button>
+            <button class="float-tool" data-board-tool="pen" type="button"><span class="ico">笔</span><strong>批注白板</strong><span>开启画笔与重点圈画状态</span></button>
+            <button class="float-tool" data-board-tool="subjectTool" type="button"><span class="ico">具</span><strong>学科工具</strong><span>数轴、几何、计时、随机器</span></button>
+            <button class="float-tool" data-board-tool="voice" type="button"><span class="ico">语</span><strong>语音助手</strong><span>条带响应，不遮挡课件</span></button>
+            <button class="float-tool" data-board-tool="answerDrawer" type="button"><span class="ico">答</span><strong>典型答案</strong><span>右侧 1/3 抽屉讲评</span></button>
+            <button class="float-tool" data-board-tool="timer" type="button"><span class="ico">时</span><strong>课堂计时</strong><span>1 分钟讨论/答题倒计时</span></button>
+            <button class="float-tool" data-board-tool="lockPads" type="button"><span class="ico">锁</span><strong>锁定平板</strong><span>课堂任务全屏接管</span></button>
+            <button class="float-tool" data-board-tool="clearBoard" type="button"><span class="ico">清</span><strong>清空批注</strong><span>撤掉当前圈画与浮层</span></button>
+            <button class="float-tool" data-board-tool="gateway" type="button"><span class="ico">网</span><strong>网关状态</strong><span>在线数、延迟、设备健康</span></button>
+            <button class="float-tool" data-board-tool="syncAll" type="button"><span class="ico">同</span><strong>三端同步</strong><span>教师端/白板/学生平板状态</span></button>
+          </div>
+          <div class="float-panel-foot">
+            <span>所有操作都留在当前白板舞台上，不切走课件。</span>
+            <button type="button" data-board-action="closeFloatingPanel">收起</button>
           </div>
         </div>
 
@@ -1500,19 +1538,47 @@ function showGatewayPanel(){
   showOverlay('gatewayPanel');
 }
 
-function snapFloatingBall(){
+function placeFloatingPanel(){
+  const ball = $('#floatingBall');
+  const panel = $('#floatingPanel');
+  const screen = $('#boardScreen');
+  if(!ball || !panel || !screen) return;
+  const b = ball.getBoundingClientRect();
+  const s = screen.getBoundingClientRect();
+  const panelW = Math.min(430, s.width - 36);
+  const panelH = Math.min(panel.offsetHeight || 420, s.height - 36);
+  let x = (b.left - s.left) - panelW - 14;
+  if(x < 18) x = (b.left - s.left) + b.width + 14;
+  x = Math.max(18, Math.min(x, s.width - panelW - 18));
+  let y = (b.top - s.top) - 112;
+  y = Math.max(18, Math.min(y, s.height - panelH - 18));
+  panel.style.left = `${x}px`;
+  panel.style.top = `${y}px`;
+}
+
+function moveFloatingBall(x, y){
   const ball = $('#floatingBall');
   const screen = $('#boardScreen');
   if(!ball || !screen) return;
-  const b = ball.getBoundingClientRect();
   const s = screen.getBoundingClientRect();
-  const left = b.left - s.left;
-  const top = Math.max(16, Math.min(b.top - s.top, s.height - b.height - 16));
-  const snapLeft = left < (s.width - b.width) / 2;
-  ball.style.left = snapLeft ? '18px' : `${s.width - b.width - 18}px`;
+  const nextX = Math.max(12, Math.min(x, s.width - ball.offsetWidth - 12));
+  const nextY = Math.max(12, Math.min(y, s.height - ball.offsetHeight - 12));
+  ball.style.left = `${nextX}px`;
+  ball.style.top = `${nextY}px`;
   ball.style.right = 'auto';
-  ball.style.top = `${top}px`;
   ball.style.bottom = 'auto';
+  placeFloatingPanel();
+}
+window.moveFloatingBall = moveFloatingBall;
+
+function toggleFloatingPanel(force){
+  const ball = $('#floatingBall');
+  const panel = $('#floatingPanel');
+  if(!ball || !panel) return;
+  const shouldOpen = typeof force === 'boolean' ? force : !panel.classList.contains('show');
+  panel.classList.toggle('show', shouldOpen);
+  ball.classList.toggle('open', shouldOpen);
+  if(shouldOpen) placeFloatingPanel();
 }
 
 function initFloatingBall(){
@@ -1528,39 +1594,42 @@ function initFloatingBall(){
   main.addEventListener('click', e=>{
     e.stopPropagation();
     if(moved){ moved = false; return; }
-    ball.classList.toggle('open');
+    toggleFloatingPanel();
   });
 
-  ball.addEventListener('pointerdown', e=>{
-    if(e.target.closest('.float-tool')) return;
+  function startDrag(e){
     dragging = true;
     moved = false;
     ball.classList.add('dragging');
     const b = ball.getBoundingClientRect();
     offsetX = e.clientX - b.left;
     offsetY = e.clientY - b.top;
-    ball.setPointerCapture?.(e.pointerId);
-  });
+    if(e.pointerId !== undefined) ball.setPointerCapture?.(e.pointerId);
+    e.preventDefault?.();
+  }
 
-  ball.addEventListener('pointermove', e=>{
+  function dragMove(e){
     if(!dragging) return;
     moved = true;
     const s = screen.getBoundingClientRect();
     const x = Math.max(12, Math.min(e.clientX - s.left - offsetX, s.width - ball.offsetWidth - 12));
     const y = Math.max(12, Math.min(e.clientY - s.top - offsetY, s.height - ball.offsetHeight - 12));
-    ball.style.left = `${x}px`;
-    ball.style.top = `${y}px`;
-    ball.style.right = 'auto';
-    ball.style.bottom = 'auto';
-  });
+    moveFloatingBall(x, y);
+  }
 
-  ball.addEventListener('pointerup', e=>{
+  function endDrag(e){
     if(!dragging) return;
     dragging = false;
     ball.classList.remove('dragging');
-    ball.releasePointerCapture?.(e.pointerId);
-    snapFloatingBall();
-  });
+    if(e.pointerId !== undefined) ball.releasePointerCapture?.(e.pointerId);
+  }
+
+  ball.addEventListener('pointerdown', startDrag);
+  ball.addEventListener('pointermove', dragMove);
+  ball.addEventListener('pointerup', endDrag);
+  ball.addEventListener('mousedown', startDrag);
+  document.addEventListener('mousemove', dragMove);
+  document.addEventListener('mouseup', endDrag);
 }
 
 // 切换 tab
@@ -1784,13 +1853,12 @@ document.addEventListener('click', e=>{
   const boardAction = e.target.closest('[data-board-action]');
   if(boardAction){
     if(boardAction.dataset.boardAction === 'openAnswer') showAnswerDrawer();
+    if(boardAction.dataset.boardAction === 'closeFloatingPanel') toggleFloatingPanel(false);
     return;
   }
   const tool = e.target.closest('[data-board-tool]');
   if(tool){
-    const ball = $('#floatingBall');
     const action = tool.dataset.boardTool;
-    ball?.classList.remove('open');
     $$('.float-tool').forEach(b=> b.classList.toggle('active', b === tool && action === 'pen'));
     if(action === 'pushLive'){
       selectScene('live', true);
@@ -1823,19 +1891,50 @@ document.addEventListener('click', e=>{
       showVoiceStrip();
       toast('语音助手以条带出现，不遮挡课件', 'info', 1800);
     }
+    if(action === 'answerDrawer'){
+      showAnswerDrawer();
+    }
+    if(action === 'timer'){
+      showModal('课堂计时器',
+        `<p><strong>1 分钟讨论</strong>已准备好。</p>
+        <div class="note accent">白板端实际使用时会在大屏右上角显示倒计时，同时同步到学生平板顶部状态条。</div>
+        <ul>
+          <li>30 秒：快速抢答</li>
+          <li>1 分钟：小组讨论</li>
+          <li>3 分钟：完整任务</li>
+        </ul>`, '白板工具', '开始 1 分钟');
+    }
+    if(action === 'lockPads'){
+      toast('学生平板已进入课堂锁定模式，只显示当前任务', 'ok', 2400);
+    }
+    if(action === 'clearBoard'){
+      hideBoardOverlays();
+      toast('已清空白板批注、圈选和浮层', 'ok', 1800);
+    }
     if(action === 'gateway'){
       showGatewayPanel();
     }
+    if(action === 'syncAll'){
+      showModal('三端同步状态',
+        `<ul>
+          <li><strong>教师端</strong>：王老师正在授课模式</li>
+          <li><strong>白板端</strong>：当前大屏已同步第 3 页课件</li>
+          <li><strong>学生端</strong>：26 / 28 在线，17 人已提交随堂练</li>
+        </ul>
+        <div class="note accent">所有状态会沉淀到课后报告，不需要老师课后手工整理。</div>`, '同步');
+    }
     return;
   }
-  if(!e.target.closest('#floatingBall')) $('#floatingBall')?.classList.remove('open');
+  if(!e.target.closest('#floatingBall') && !e.target.closest('#floatingPanel')){
+    toggleFloatingPanel(false);
+  }
 });
 
 document.addEventListener('keydown', e=>{
   if(e.key === 'Escape'){
     closeModal();
     hideBoardOverlays();
-    $('#floatingBall')?.classList.remove('open');
+    toggleFloatingPanel(false);
   }
 });
 
