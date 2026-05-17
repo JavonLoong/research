@@ -34,7 +34,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .appbar{background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 14px;height:54px;gap:10px;flex-shrink:0}
 .brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;letter-spacing:1px;color:var(--text);margin-left:6px}
 .brand-dot{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#10b981,#0d9488);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px}
-.nav{display:flex;gap:1px;margin-left:8px;flex:1;min-width:0;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.nav{display:flex;gap:1px;margin-left:0;flex:1;min-width:0;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
 .nav::-webkit-scrollbar{display:none}
 .nav-item{padding:7px 9px;font-size:12.5px;color:var(--muted);cursor:pointer;border-radius:6px;transition:.15s;font-weight:600;user-select:none;position:relative;flex:0 0 auto}
 .nav-item:hover{color:var(--text);background:var(--surface-3)}
@@ -141,8 +141,11 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .slide-layer.media{left:530px;top:102px;width:190px;height:116px;display:grid;place-items:center;text-align:center;background:#f8fafc;border:1px solid #cbd5e1;color:var(--muted)}
 .slide-layer.question{left:48px;top:320px;width:680px;padding:13px 16px;background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12}
 .slide-layer.question strong{color:#9a3412}
-.slide-layer.interaction{left:48px;top:320px;width:680px;padding:12px 14px;background:rgba(16,185,129,.06);border:1.5px dashed var(--primary);color:var(--primary-dark)}
-.slide-layer.interaction .layer-title{display:flex;align-items:center;gap:6px;font-weight:800;margin-bottom:4px}
+.slide-layer.interaction{left:48px;top:320px;width:680px;padding:12px 14px;background:rgba(16,185,129,.06);border:1.5px dashed var(--primary);color:var(--primary-dark);overflow:visible}
+.slide-layer.interaction .layer-title{display:flex;align-items:center;gap:6px;font-weight:800;margin-bottom:4px;line-height:1.35;flex-wrap:wrap}
+.slide-layer.interaction .layer-title .ip-tag{margin-left:2px}
+.interaction-config-btn{position:absolute;right:8px;top:-13px;z-index:10;border:1px solid var(--primary);background:#fff;color:var(--primary-dark);border-radius:999px;padding:2px 8px;font-size:10.5px;font-weight:800;line-height:1.4;cursor:pointer;font-family:inherit;box-shadow:0 4px 10px rgba(15,23,42,.12)}
+.interaction-config-btn:hover{background:var(--primary);color:#fff}
 .slide-layer.mind{left:260px;top:94px;width:250px;padding:12px;background:#fff;border:1px solid #ddd6fe}
 .mind-node{display:inline-flex;padding:4px 8px;border-radius:999px;background:#ede9fe;color:#5b21b6;font-size:11px;font-weight:800;margin:3px}
 .slide-layer.selected{z-index:8;box-shadow:0 12px 30px rgba(16,185,129,.24)}
@@ -205,7 +208,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .atab-pane{display:none}
 .atab-pane.active{display:block}
 
-.icard{background:#fff;border:1px solid var(--line);border-radius:6px;padding:9px 10px;margin-bottom:6px;cursor:grab;transition:.15s;position:relative;display:flex;align-items:center;gap:9px}
+.icard{background:#fff;border:1px solid var(--line);border-radius:6px;padding:9px 10px;margin-bottom:6px;cursor:grab;transition:.15s;position:relative;display:flex;align-items:flex-start;gap:9px;min-height:48px}
 .icard:hover{border-color:var(--primary);background:var(--primary-soft-2)}
 .icard:active{cursor:grabbing}
 .ic-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
@@ -215,11 +218,11 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .tone-discuss .ic-icon{background:#fce7f3;color:#be185d}
 .tone-lab .ic-icon{background:#cffafe;color:#0e7490}
 .tone-circle .ic-icon{background:#fee2e2;color:#991b1b}
-.ic-body{flex:1;min-width:0}
-.ic-name{font-size:12.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:5px}
+.ic-body{flex:1;min-width:0;overflow:hidden}
+.ic-name{font-size:12.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:5px;flex-wrap:wrap;line-height:1.3;min-width:0;overflow-wrap:anywhere}
 .ic-tag{font-size:9.5px;background:var(--primary);color:#fff;padding:1px 6px;border-radius:3px;font-weight:600;letter-spacing:.3px}
 .ic-desc{font-size:11px;color:var(--muted);line-height:1.45;margin-top:2px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-.ic-add{font-size:14px;color:var(--muted-2);width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--surface-2)}
+.ic-add{font-size:14px;color:var(--muted-2);width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--surface-2);align-self:center}
 .icard:hover .ic-add{background:var(--primary);color:#fff}
 
 /* 学科工具 */
@@ -230,8 +233,17 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .scard .sn{font-size:10.5px;font-weight:600;color:var(--text-soft)}
 
 /* 题库小卡（aside 内） */
-.qcard{background:#fff;border:1px solid var(--line);border-radius:6px;padding:8px 10px;margin-bottom:5px;cursor:pointer}
+.qcard{background:#fff;border:1px solid var(--line);border-radius:6px;padding:8px 10px 38px;margin-bottom:5px;cursor:pointer;position:relative}
 .qcard:hover{border-color:var(--primary);background:var(--surface-2)}
+.q-add-resource{position:absolute;right:10px;bottom:8px}
+.q-visual{margin:8px 0;border:1px solid var(--line-soft);border-radius:6px;background:#fff;min-height:58px;padding:8px;display:flex;align-items:center;gap:8px}
+.q-number-line{height:38px;flex:1;position:relative;border-bottom:2px solid #334155;margin:0 8px}
+.q-number-line::before,.q-number-line::after{content:"";position:absolute;bottom:-5px;width:2px;height:10px;background:#334155}
+.q-number-line::before{left:0}.q-number-line::after{right:0}
+.q-dot{position:absolute;bottom:-7px;width:12px;height:12px;border-radius:50%;background:var(--primary);box-shadow:0 0 0 4px var(--primary-soft)}
+.q-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;width:112px}
+.q-grid span{height:12px;border-radius:2px;background:#e2e8f0}.q-grid span.fill{background:var(--primary)}
+.q-money{display:flex;gap:6px;align-items:center;font-weight:800;color:#92400e}.q-money span{background:#fef3c7;border:1px solid #fde68a;border-radius:999px;padding:4px 8px}
 .qtags{display:flex;gap:3px;margin-bottom:4px;flex-wrap:wrap}
 .qtag{font-size:9.5px;padding:1px 5px;border-radius:3px;font-weight:600}
 .qtag.diff-easy{background:var(--primary-soft);color:#065f46}
@@ -279,7 +291,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .it-card.tone-discuss .it-banner{background:#ec4899}
 .it-card.tone-lab .it-banner{background:#06b6d4}
 .it-card.tone-circle .it-banner{background:#ef4444}
-.it-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.it-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;min-width:0}
+.it-head>div:last-child{min-width:0}
 .it-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
 .it-card.tone-listen .it-icon{background:#dbeafe;color:#1d4ed8}
 .it-card.tone-quiz .it-icon{background:#dcfce7;color:#15803d}
@@ -287,8 +300,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .it-card.tone-discuss .it-icon{background:#fce7f3;color:#be185d}
 .it-card.tone-lab .it-icon{background:#cffafe;color:#0e7490}
 .it-card.tone-circle .it-icon{background:#fee2e2;color:#991b1b}
-.it-title{font-size:14px;font-weight:800}
-.it-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.it-title{font-size:14px;font-weight:800;line-height:1.3;overflow-wrap:anywhere}
+.it-sub{font-size:11px;color:var(--muted);margin-top:1px;line-height:1.35;overflow-wrap:anywhere}
 .it-meta{display:flex;flex-direction:column;gap:5px;font-size:11.5px;color:var(--text-soft);margin-top:8px}
 .it-meta-row{display:flex;gap:6px;align-items:flex-start}
 .it-meta-row strong{color:var(--text);width:50px;flex-shrink:0;font-size:11px}
@@ -537,7 +550,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .mini-action:hover{border-color:var(--primary);background:var(--primary-soft-2)}
 .mini-action b{display:block;font-size:12.5px;color:var(--text);margin-bottom:2px}
 .mini-action span{display:block;font-size:11px;color:var(--muted);line-height:1.4}
-.library-clean{display:grid;grid-template-columns:1fr 320px;gap:14px;align-items:start}
+.library-clean{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
 .library-list{display:flex;flex-direction:column;gap:10px}
 .course-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(15,23,42,.04)}
 .course-row h3{font-size:15px;margin-bottom:4px;color:var(--text)}
@@ -549,6 +562,29 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .resource-chip:hover{border-color:var(--primary);background:var(--primary-soft-2)}
 .resource-chip b{display:block;font-size:12.5px;color:var(--text);margin-bottom:2px}
 .resource-chip span{font-size:11px;color:var(--muted)}
+.homework-layout{display:grid;grid-template-columns:1fr 290px;gap:14px;align-items:start}
+.homework-editor{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.homework-tabs{display:flex;gap:6px;margin-bottom:10px}
+.homework-tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:800;cursor:pointer}
+.homework-tab.active,.homework-tab:hover{border-color:var(--primary);background:var(--primary-soft-2);color:var(--primary-dark)}
+.homework-textarea{width:100%;min-height:110px;resize:vertical;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-family:inherit;font-size:13px;line-height:1.6;color:var(--text)}
+.homework-drop{border:1.5px dashed var(--primary-soft);background:#f8fffc;border-radius:8px;padding:12px;margin-top:10px}
+.homework-drop b{display:block;font-size:12.5px;margin-bottom:3px}.homework-drop span{font-size:11.5px;color:var(--muted)}
+.homework-question-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.homework-question{border:1px solid var(--line);border-radius:8px;background:#fff;padding:9px 10px;font-size:12px}
+.homework-question b{display:block;margin-bottom:3px}.homework-question span{color:var(--muted);font-size:11px}
+.publish-mini{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.publish-mini h3{font-size:14px;margin-bottom:8px}
+.mini-field{display:flex;flex-direction:column;gap:4px;margin-bottom:8px;font-size:11.5px;color:var(--muted)}
+.mini-field select,.mini-field input{height:30px;border:1px solid var(--line);border-radius:6px;padding:0 8px;font-family:inherit;font-size:12px;background:#fff;color:var(--text)}
+.resource-dock{position:absolute;right:16px;bottom:50px;width:300px;max-height:360px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 16px 44px rgba(15,23,42,.18);z-index:80;display:none;overflow:hidden}
+.resource-dock.open{display:block}
+.rd-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line);font-weight:900}
+.rd-list{max-height:210px;overflow:auto;padding:8px 10px;display:flex;flex-direction:column;gap:6px}
+.rd-item{border:1px solid var(--line-soft);border-radius:7px;padding:7px 8px;font-size:11.5px;background:var(--surface-2)}
+.rd-item b{display:block;color:var(--text);margin-bottom:2px}.rd-item span{color:var(--muted)}
+.rd-actions{display:flex;gap:6px;padding:10px;border-top:1px solid var(--line)}
+.rd-empty{padding:18px 12px;color:var(--muted);font-size:12px;text-align:center}
 .resource-chip .btn{padding:4px 8px}
 
 /* Toast */
@@ -573,17 +609,9 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
     <!-- App bar -->
     <div class="appbar">
-      <div class="brand"><div class="brand-dot">📘</div>步步</div>
-      <div class="context-filters">
-        <select class="ctx-select"><option>清华附小</option><option>海淀实验</option></select>
-        <select class="ctx-select"><option>四年级2班</option><option>四年级3班</option></select>
-        <select class="ctx-select"><option>数学</option><option>语文</option><option>英语</option></select>
-      </div>
       <nav class="nav">
-        <div class="nav-item" data-nav="workbench">工作台</div>
-        <div class="nav-item" data-nav="resource">课件库</div>
         <div class="nav-item active" data-nav="courseware">课件编辑</div>
-        <div class="nav-item" data-nav="interaction">互动设计</div>
+        <div class="nav-item" data-nav="resource">课件库</div>
         <div class="nav-item" data-nav="qbank">智能题库</div>
         <div class="nav-item" data-nav="homework">作业布置</div>
         <div class="nav-item" data-nav="grading">作业批阅</div>
@@ -596,15 +624,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
         <button class="icon-btn" title="帮助">？</button>
         <div class="user-pill"><div class="ua">王</div><div class="un">王老师</div></div>
       </div>
-    </div>
-
-    <!-- Sub-topbar -->
-    <div class="subtop">
-      <div class="spacer"></div>
-      <button class="btn btn-ghost btn-sm">🔄 版本</button>
-      <button class="btn btn-sm"><span class="group-mark" aria-hidden="true"></span>协作</button>
-      <button class="btn btn-sm">📤 导入/抓取课件</button>
-      <button class="btn btn-primary btn-sm" data-jump="resource">保存到课件库</button>
     </div>
 
     <!-- Panels -->
@@ -648,7 +667,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
               <div class="mini-actions">
                 <div class="mini-action" data-workbench-act="cloud"><b>导入旧课件</b><span>PPT/PDF 自动解析。</span></div>
                 <div class="mini-action" data-jump="resource"><b>课件库</b><span>找已有课件。</span></div>
-                <div class="mini-action" data-workbench-act="history"><b>版本</b><span>查看同步记录。</span></div>
+                <div class="mini-action" data-jump="courseware"><b>继续编辑</b><span>回到当前课件。</span></div>
               </div>
             </div>
           </div>
@@ -687,6 +706,14 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
               <strong id="canvasPageLabel">第 1 页 · 封面</strong>
               <div style="flex:1"></div>
               <span class="tool-label">100%</span>
+            </div>
+            <div class="resource-dock" id="resourceDock">
+              <div class="rd-head"><span>题目资源栏</span><button class="btn btn-sm" data-rd-act="close">收起</button></div>
+              <div class="rd-list" id="resourceDockList"><div class="rd-empty">还没有加入题目</div></div>
+              <div class="rd-actions">
+                <button class="btn btn-primary btn-sm" data-rd-act="paste-all" style="flex:1">全部粘贴到作业</button>
+                <button class="btn btn-sm" data-rd-act="clear">清空</button>
+              </div>
             </div>
 
             <div class="canvas-pad">
@@ -748,7 +775,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
                     <div class="ic-add">+</div>
                   </div>
                   <div class="icard tone-pick" data-itype="pick">
-                    <div class="ic-icon">🎲</div>
+                    <div class="ic-icon">抽</div>
                     <div class="ic-body">
                       <div class="ic-name">抽人回答</div>
                       <div class="ic-desc">随机单/多人 · 名单高亮 · 平板锁屏作答</div>
@@ -756,7 +783,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
                     <div class="ic-add">+</div>
                   </div>
                   <div class="icard tone-discuss" data-itype="discuss">
-                    <div class="ic-icon">💬</div>
+                    <div class="ic-icon">组</div>
                     <div class="ic-body">
                       <div class="ic-name">分组讨论</div>
                       <div class="ic-desc">共享画板 · 小组结论 · 白板分屏</div>
@@ -772,7 +799,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
                     <div class="ic-add">+</div>
                   </div>
                   <div class="icard tone-circle" data-itype="circle">
-                    <div class="ic-icon">⭕</div>
+                    <div class="ic-icon">圈</div>
                     <div class="ic-body">
                       <div class="ic-name">圈选提问 <span class="ic-tag">AI</span></div>
                       <div class="ic-desc">课件圈选 · AI 即时讲解 / 生成题目</div>
@@ -970,7 +997,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <div class="panel" id="panel-qbank">
         <div class="pad" style="display:flex;flex-direction:column">
           <div class="section-h">📚 智能题库</div>
-          <div class="section-sub">三路接入：校本沉淀题 + 第三方爬取 + AI 变式。<strong>三关验证</strong>：自动校验 → 教师确认 → 学情验证后沉淀为可复用的"校本练习册"。</div>
+          <div class="section-sub">从校本题、外部题源和 AI 变式里选题。每道题可先加入题目资源栏，再粘贴到作业。</div>
           <div class="qbank-layout">
             <div class="qside">
               <div class="qs-title">来源</div>
@@ -1032,48 +1059,40 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <div class="panel" id="panel-homework">
         <div class="pad">
           <div class="section-h">📮 作业布置</div>
-          <div class="section-sub">先把作业内容做出来：写文字说明、放图片材料、从题库挑题。班级、截止和订正放在右侧发布设置里。</div>
-          <div class="dash-grid">
-            <div class="dash-stack">
-              <div class="dash-card">
-                <h3>先布置内容</h3>
-                <div class="method-grid">
-                  <div class="method-card selected"><b>写文字说明</b><span>作业要求、完成提示、订正口径。</span></div>
-                  <div class="method-card"><b>放图片材料</b><span>插入板书截图、教材页或学生作品。</span></div>
-                  <div class="method-card" data-jump="qbank"><b>从题库找题</b><span>按知识点、难度和错因筛题。</span></div>
-                </div>
+          <div class="section-sub">直接编辑作业内容：文本、图片、题目。题目可从智能题库加入资源栏后一次粘贴。</div>
+          <div class="homework-layout">
+            <div class="homework-editor">
+              <div class="homework-tabs">
+                <button class="homework-tab active" data-homework-tab="text">文本</button>
+                <button class="homework-tab" data-homework-tab="image">图片</button>
+                <button class="homework-tab" data-homework-tab="question">题目</button>
               </div>
-              <div class="dash-card">
-                <h3>已选作业内容</h3>
-                <div class="slider-line"><span>题量控制</span><input type="range" min="3" max="12" value="5" id="improveRange"><strong id="improveValue">5 题</strong></div>
-                <table class="mini-table" style="margin-top:10px">
-                  <thead><tr><th>类型</th><th>内容</th><th>来源</th><th>操作</th></tr></thead>
-                  <tbody>
-                    <tr><td><span class="level-pill">文字</span></td><td>完成 P58 第 1-3 题，写清单位换算过程</td><td>教师输入</td><td><button class="btn btn-sm" data-homework-act="text">加入作业页</button></td></tr>
-                    <tr><td><span class="level-pill warn">图片</span></td><td>第 6 页板书截图：0.8 米 = 80 厘米</td><td>当前课件</td><td><button class="btn btn-sm" data-homework-act="image">加入作业页</button></td></tr>
-                    <tr><td><span class="level-pill danger">题库</span></td><td>单位换算 5 题 + 1 道应用题</td><td>智能题库</td><td><button class="btn btn-sm" data-homework-act="qbank">加入作业页</button></td></tr>
-                  </tbody>
-                </table>
+              <textarea class="homework-textarea" id="homeworkText">完成 P58 第 1-3 题，写清单位换算过程。订正时请把“先统一单位，再移动小数点”的步骤写出来。</textarea>
+              <div class="homework-drop">
+                <b>图片材料</b>
+                <span>拖入板书截图、教材页或学生作品，也可以从当前课件选择页面截图。</span>
+              </div>
+              <div class="homework-question-list" id="homeworkQuestionList">
+                <div class="homework-question"><b>单位换算 5 题</b><span>来自智能题库 · 点击资源栏“全部粘贴”可替换为刚选的题。</span></div>
+              </div>
+              <div style="margin-top:12px;display:flex;gap:8px">
+                <button class="btn btn-sm" data-jump="qbank">去题库选题</button>
+                <button class="btn btn-primary btn-sm" data-rd-act="paste-all">粘贴资源栏题目</button>
               </div>
             </div>
             <div class="dash-stack">
-              <div class="dash-card">
+              <div class="publish-mini">
                 <h3>发布设置</h3>
-                <div class="live-log">
-                  <div><strong>内容</strong>：文字说明 1 条 · 图片 1 张 · 题库 6 题</div>
-                  <div><strong>班级</strong>：四年级2班 · 35 人</div>
-                  <div><strong>截止</strong>：明天 20:00</div>
-                  <div><strong>订正</strong>：错题自动回流错题本</div>
-                </div>
-                <div style="margin-top:10px;display:flex;gap:8px">
-                  <button class="btn btn-primary btn-sm" data-homework-act="publish">发布作业</button>
-                  <button class="btn btn-sm" data-jump="qbank">继续选题</button>
-                </div>
-              </div>
-              <div class="dash-card">
-                <h3>发布记录</h3>
-                <div class="todo-row"><div class="todo-dot"></div><div class="todo-main"><b>小数读写基础练</b><span>已交 28/35 · 7 份待提交</span></div><button class="btn btn-sm" data-jump="grading">批阅</button></div>
-                <div class="todo-row"><div class="todo-dot"></div><div class="todo-main"><b>单位换算订正</b><span>4 份待批 · 自动识别步骤</span></div><button class="btn btn-sm" data-jump="grading">查看</button></div>
+                <label class="mini-field">班级
+                  <select id="homeworkClass"><option>四年级2班</option><option>四年级3班</option></select>
+                </label>
+                <label class="mini-field">截止
+                  <input id="homeworkDeadline" type="datetime-local" value="2026-05-18T20:00" />
+                </label>
+                <label class="mini-field">订正
+                  <select id="homeworkRevise"><option>错题自动回流错题本</option><option>仅收首次作答</option><option>允许一次订正</option></select>
+                </label>
+                <button class="btn btn-primary btn-sm" data-homework-act="publish" style="width:100%;justify-content:center">发布作业</button>
               </div>
             </div>
           </div>
@@ -1087,13 +1106,13 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
           <div class="section-sub">不只看最终答案，<strong>还原学生的真实思考过程</strong>：每一步手写步骤 + 时间戳 + 过程提醒（停留、擦改、AI 提示介入）。</div>
           <div class="grading-layout">
             <div class="stu-list">
-              <div class="sl-head"><span>四年级2班 · 35 人</span><em>已批 28/35</em></div>
-              <div class="stu-row tone-good"><div class="stu-avatar">张</div><div><div class="stu-name">张小红</div><div class="stu-tag">100% · 8 分钟</div></div><span class="stu-flag flag-good">优</span></div>
-              <div class="stu-row tone-warn active"><div class="stu-avatar">李</div><div><div class="stu-name">李小明</div><div class="stu-tag">80% · 18 分钟 · 卡步骤 3</div></div><span class="stu-flag flag-warn">关注</span></div>
-              <div class="stu-row tone-danger"><div class="stu-avatar">王</div><div><div class="stu-name">王小华</div><div class="stu-tag">60% · 22 分钟 · AI 提示 5</div></div><span class="stu-flag flag-danger">重点</span></div>
-              <div class="stu-row tone-good"><div class="stu-avatar">赵</div><div><div class="stu-name">赵小丽</div><div class="stu-tag">100% · 10 分钟</div></div><span class="stu-flag flag-good">优</span></div>
-              <div class="stu-row tone-danger"><div class="stu-avatar">陈</div><div><div class="stu-name">陈小刚</div><div class="stu-tag">33% · 25 分钟 · AI 提示 7</div></div><span class="stu-flag flag-danger">重点</span></div>
-              <div class="stu-row"><div class="stu-avatar">刘</div><div><div class="stu-name">刘小芳</div><div class="stu-tag">80% · 15 分钟</div></div><span class="stu-flag flag-good">良</span></div>
+              <div class="sl-head"><span>作业提交</span><em>28/35</em></div>
+              <div class="stu-row tone-good"><div class="stu-avatar">张</div><div><div class="stu-name">张小红</div><div class="stu-tag">已完成</div></div></div>
+              <div class="stu-row tone-warn active"><div class="stu-avatar">李</div><div><div class="stu-name">李小明</div><div class="stu-tag">已提交</div></div></div>
+              <div class="stu-row tone-danger"><div class="stu-avatar">王</div><div><div class="stu-name">王小华</div><div class="stu-tag">待订正</div></div></div>
+              <div class="stu-row tone-good"><div class="stu-avatar">赵</div><div><div class="stu-name">赵小丽</div><div class="stu-tag">已完成</div></div></div>
+              <div class="stu-row tone-danger"><div class="stu-avatar">陈</div><div><div class="stu-name">陈小刚</div><div class="stu-tag">待提交</div></div></div>
+              <div class="stu-row"><div class="stu-avatar">刘</div><div><div class="stu-name">刘小芳</div><div class="stu-tag">已提交</div></div></div>
             </div>
             <div class="gd">
               <div class="gd-head">
@@ -1210,39 +1229,34 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <div class="panel" id="panel-resource">
         <div class="pad">
           <div class="section-h">📚 课件库</div>
-          <div class="section-sub">课件库只放三个入口：继续当前课件、复用同组课件、导入旧课件。</div>
+          <div class="section-sub">课件库只保留两个入口：云端课件、本地拖拽导入 PPT/PDF。</div>
           <div class="library-clean">
             <div class="library-list">
               <div class="course-row">
                 <div>
-                  <h3>当前课件 · 第 1 课时</h3>
-                  <p>小数的意义和读写，8 页，4 个互动，云端已同步 v14。</p>
-                  <div class="course-meta"><span>四年级下</span><span>数学</span><span>我的课件</span></div>
+                  <h3>云端课件</h3>
+                  <p>查看已经保存和同步的课件，打开后继续编辑。</p>
+                  <div class="course-meta"><span>我的课件</span><span>云端同步</span><span>可继续编辑</span></div>
                 </div>
-                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="edit">继续编辑</button><button class="btn btn-sm" data-course-lib-act="share">共享</button></div>
+                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="edit">打开云端课件</button></div>
               </div>
               <div class="course-row">
                 <div>
-                  <h3>同组课件 · 小数比较</h3>
-                  <p>12 页，6 道题已转互动，含错因讲评页，可先预览再复用。</p>
-                  <div class="course-meta"><span>李老师</span><span>36 次复用</span><span>含学情标签</span></div>
+                  <h3>拖拽导入本地 PPT / PDF</h3>
+                  <p>把桌面上的 PPT、PDF 或图片拖到这里，系统按页解析成可编辑课件。</p>
+                  <div class="import-drop" id="importDrop" style="margin-top:10px">
+                    <b>拖入文件</b>
+                    <span>PPTX / PPT / PDF / 图片，解析后进入课件编辑。</span>
+                  </div>
                 </div>
-                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="reuse">复用</button><button class="btn btn-sm" data-course-lib-act="preview">预览</button></div>
-              </div>
-              <div class="course-row">
-                <div>
-                  <h3>导入旧课件 · PPT / PDF / 图片</h3>
-                  <p>上传后自动识别缩略图、题目和互动位置，解析完再进入编辑器。</p>
-                  <div class="course-meta"><span>自动识题</span><span>生成目录</span><span>入课件库</span></div>
-                </div>
-                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="import">导入</button><button class="btn btn-sm" data-course-lib-act="open-cloud">云端</button></div>
+                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="import">选择文件</button></div>
               </div>
             </div>
             <div class="resource-shelf">
               <h3>可插入资源</h3>
               <div class="resource-chip" data-resource-insert="quizpack"><div><b>经典 5 题包</b><span>小数初步 · 带解析</span></div><button class="btn btn-sm">加入</button></div>
               <div class="resource-chip" data-resource-insert="errorcard"><div><b>错因卡</b><span>小数点移位讲评</span></div><button class="btn btn-sm">加入</button></div>
-              <div class="resource-chip" data-resource-insert="outline"><div><b>讲评提纲</b><span>同类课直接复用</span></div><button class="btn btn-sm">加入</button></div>
+              <div class="resource-chip" data-resource-insert="outline"><div><b>讲评提纲</b><span>当前班级错因讲评</span></div><button class="btn btn-sm">加入</button></div>
             </div>
           </div>
         </div>
@@ -1261,7 +1275,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <div class="right-meta">
         <span>同步延迟 12ms</span>
         <span>·</span>
-        <span>云端版本 v2024.05.17</span>
+        <span>已同步</span>
       </div>
     </div>
   </div>
@@ -1273,7 +1287,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
   <div class="modal">
     <div class="modal-head">
       <div class="mh-icon">🎯</div>
-      <h3 id="modalTitle">配置互动 · 听写</h3>
+      <h3 id="modalTitle">配置互动</h3>
       <span class="m-close" onclick="closeModal()">✕</span>
     </div>
     <div class="modal-body">
@@ -1411,9 +1425,9 @@ const SLIDES = [
 
 const EXPLAINS = {
   workbench:{ icon:"🏠", title:"工作台 — 今日任务和快捷入口", body:'工作台是教师每天进入系统后的首页，能直接跳到备课、授课、学情和资源处理，不再只是导航壳。待办、风险学生、设备状态和 AI 建议都在这里汇总。' },
-  courseware:{ icon:"📝", title:"① 课件 — 备课的主战场", body:'这是教师每天打开次数最多的页面。<span class="key">核心范式 = 课堂流程编排 + PPT 编辑 + 拖拽互动卡片绑定</span>。所有互动都是"插件式"卡片，备课时只管"摆好"，上课时翻到那一页 <span class="key">自动触发</span>。教师端 / 白板 / 学生平板三端实时同步。' },
+  courseware:{ icon:"📝", title:"备课 — 编辑、导入与复用", body:'这是教师每天打开次数最多的页面。<span class="key">核心范式 = 课堂流程编排 + PPT 编辑 + 拖拽互动卡片绑定</span>。右侧聚合互动、题库和校本资源，课件本体沉淀到课件库，方便导入、抓取、复用。' },
   teaching:{ icon:"📺", title:"投屏预览", body:'' },
-  interaction:{ icon:"🎯", title:"② 课堂互动设计 — 统一模板降低教师学习成本", body:'六种互动遵循<span class="key">同一卡片模板</span>（形态 / 防作弊 / 回收方式 / 学情埋点）。教师只需学一次就能用所有互动，且回收的数据结构统一，便于后续做学情聚类和错因分析。' },
+  interaction:{ icon:"🎯", title:"互动设计 — 每类互动独立配置", body:'六种互动共用卡片外观，但每类都有自己的配置项：听写配置词语和防抄，随堂练配置题源和分层，抽人、讨论、实验、圈选都各自保存规则。' },
   qbank:{ icon:"📚", title:"③ 智能题库 — 三关验证沉淀校本资产", body:'三路接入：<span class="key">校本题库 + 第三方爬取 + AI 变式</span>。每道题经过<span class="key">自动校验 → 教师确认 → 学情验证</span>三关后才会沉淀到校本，长期累积成可复用的"校本练习册"。' },
   analytics:{ icon:"📈", title:"学情 — 从课堂和作业自动汇总", body:'学情页把课堂互动、作业步骤和错因聚类合成可行动的任务：补练、讲评、错因卡、学生跟进都可以从这里继续处理。' },
   grading:{ icon:"✍️", title:"④ 作业批阅 — 还原学生真实思考过程", body:'这是步步最差异化的能力。<span class="key">不只看最终答案，还原每一步手写过程 + 时间戳 + 过程提醒</span>（停留 / 擦改 / AI 提示介入）。教师能看到学生到底卡在哪里。' },
@@ -1466,11 +1480,15 @@ function layerStyle(layer){
   return style.join(';');
 }
 function layerHTML(layer){
-  const editable = layer.kind === 'text' || layer.kind === 'question';
+  const editable = layer.kind === 'text' || layer.kind === 'question' || layer.kind === 'interaction';
   const body = editable
     ? `<div class="layer-edit" contenteditable="true" spellcheck="false">${layer.html}</div>`
     : `<div class="layer-static">${layer.html}</div>`;
-  return `<div class="slide-layer ${layer.kind}" data-layer-id="${layer.id}" style="${layerStyle(layer)}"><span class="layer-drag-handle" contenteditable="false">⋮⋮</span>${body}</div>`;
+  const configAttr = layer.configType ? ` data-config-type="${escapeHTML(layer.configType)}"` : '';
+  const configBtn = layer.kind === 'interaction'
+    ? `<button class="interaction-config-btn" type="button" contenteditable="false" data-config-type="${escapeHTML(layer.configType || '')}">配置</button>`
+    : '';
+  return `<div class="slide-layer ${layer.kind}" data-layer-id="${layer.id}"${configAttr} style="${layerStyle(layer)}"><span class="layer-drag-handle" contenteditable="false">⋮⋮</span>${configBtn}${body}</div>`;
 }
 function renderLayers(s){
   ensureSlideState(s);
@@ -1539,13 +1557,23 @@ function insertCoursewarePage(config, opts={}){
 }
 function makeInteractionSlide(type, source='互动卡片'){
   const label=LABEL[type] || '互动';
+  const iconMap={listen:'🎧',quiz:'📝',pick:'🎲',discuss:'💬',lab:'🧪',circle:'⭕'};
   const detailKey = type === 'quiz' ? '随堂练 / 测验' : label;
   const detail = (typeof IT_DETAILS !== 'undefined' && (IT_DETAILS[detailKey] || IT_DETAILS[label])) || {};
   return {
     name:label, time:type === 'pick' ? "3'" : "5'", body:source,
     bind:{type,label},
-    caption:`<strong>已加入课件：</strong>${label} 被新建成独立互动页，授课时翻到这一页自动触发到白板和学生平板。`,
-    layers:[],
+    configType:type,
+    caption:`<strong>已加入课件：</strong>${label} 已作为可编辑互动卡加入备课画布。可拖动位置、直接改文字，并用卡片右上角“配置”调整互动规则。`,
+    layers:[{
+      id:`interaction-${type}-${Date.now().toString(36)}`,
+      kind:'interaction',
+      configType:type,
+      html:`<div class="layer-title">${iconMap[type] || '⚡'} ${escapeHTML(label)} 已加入课件 <span class="ip-tag">NEW-PAGE</span></div><div>${escapeHTML(detail.form || detail.desc || '翻到本页自动下发，完成后回收为学情数据。')}</div>`,
+      x:48,
+      y:320,
+      w:680
+    }],
     render:`<div class="slide-content">
       <div class="slide-title">${escapeHTML(label)}</div>
       <div class="slide-subtitle">${escapeHTML(detail.desc || '课堂互动模板')}</div>
@@ -1553,10 +1581,6 @@ function makeInteractionSlide(type, source='互动卡片'){
         <div class="rule-card"><b>触发</b><span>${escapeHTML(detail.trigger || '翻页自动 / 教师手动')}</span></div>
         <div class="rule-card"><b>回收</b><span>${escapeHTML(detail.collect || '实时上传')}</span></div>
         <div class="rule-card"><b>学情</b><span>${escapeHTML(detail.tracks || '统一数据结构')}</span></div>
-      </div>
-      <div class="interact-placeholder" data-config-type="${type}" style="left:48px;right:48px;bottom:30px;min-width:auto">
-        <div class="ip-header">⚡ <span>${escapeHTML(label)} 已加入课件</span><span class="ip-tag">NEW-PAGE</span></div>
-        <div class="ip-body">翻到本页自动下发，完成后回收为学情数据。</div>
       </div></div>`
   };
 }
@@ -1678,9 +1702,6 @@ function renderThumbs(){
 function renderCanvas(){
   const s=SLIDES.find(x=>x.num===curPage);
   ensureSlideState(s);
-  if(s.bind && s.layers?.some(l=>l.kind==='interaction') && s.render.includes('NEW-PAGE')){
-    s.layers = s.layers.filter(l=>l.kind!=='interaction');
-  }
   document.getElementById('canvas').innerHTML='<div class="import-badge">已导入公开示例PPT · 8页</div>' + s.render + renderLayers(s);
   document.getElementById('canvasPageLabel').textContent=`第 ${s.num} 页 · ${s.name}`;
   document.getElementById('canvasCaptionText').innerHTML=s.caption;
@@ -1747,9 +1768,6 @@ function showPanel(name){
   document.querySelectorAll(`[data-nav="${name}"]`).forEach(el=>el.classList.add('active'));
 }
 document.querySelectorAll('[data-nav]').forEach(el=>el.addEventListener('click',()=>showPanel(el.dataset.nav)));
-document.querySelectorAll('.ctx-select').forEach(sel=>{
-  sel.addEventListener('change',()=>showToast('✓ 已切换：' + [...document.querySelectorAll('.ctx-select')].map(x=>x.value).join(' · ')));
-});
 document.querySelectorAll('.method-card').forEach(card=>{
   card.addEventListener('click',()=>{
     document.querySelectorAll('.method-card').forEach(x=>x.classList.remove('selected'));
@@ -1761,6 +1779,14 @@ const improveRange=document.getElementById('improveRange');
 if(improveRange){
   improveRange.addEventListener('input',()=>document.getElementById('improveValue').textContent=improveRange.value+' 题');
 }
+document.querySelectorAll('[data-homework-tab]').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('[data-homework-tab]').forEach(x=>x.classList.remove('active'));
+    tab.classList.add('active');
+    const map={text:'文本区',image:'图片材料区',question:'题目区'};
+    showToast('✓ 已切换到' + (map[tab.dataset.homeworkTab] || '编辑区'));
+  });
+});
 
 document.querySelectorAll('.atab').forEach(t=>{
   t.addEventListener('click',()=>{
@@ -1806,6 +1832,10 @@ function addQuizPackSlide(){
   }, {toastText:'组卷篮已新建为测验页'});
 }
 function addHomeworkSlide(mode='publish'){
+  const selectedQuestions = getHomeworkQuestions();
+  const homeworkText = document.getElementById('homeworkText')?.value.trim() || '完成今天的课后练习。';
+  const className = document.getElementById('homeworkClass')?.value || '四年级2班';
+  const deadline = document.getElementById('homeworkDeadline')?.value || '2026-05-18T20:00';
   const modeMap = {
     text:['文字说明','完成 P58 第 1-3 题，写清单位换算过程'],
     image:['图片材料','加入第 6 页板书截图，提醒学生对照例题步骤'],
@@ -1817,18 +1847,30 @@ function addHomeworkSlide(mode='publish'){
     publish:['作业内容','文字说明 + 图片材料 + 题库练习']
   };
   const picked = modeMap[mode] || modeMap.publish;
+  const questionCards = selectedQuestions.length
+    ? selectedQuestions.slice(0,4).map((q,i)=>`<div class="rule-card"><b>题目 ${i+1}</b><span>${escapeHTML(q.title || q.text)}</span></div>`).join('')
+    : `<div class="rule-card"><b>题库题目</b><span>单位换算 5 题 + 应用题 1 题</span></div>`;
   insertCoursewarePage({
     name:'课后作业发布', time:"2'", body:'作业布置',
-    caption:'<strong>已加入课件：</strong>课后作业页已创建，包含文字说明、图片材料和题库练习。',
+    caption:`<strong>已发布作业：</strong>${escapeHTML(className)} · 截止 ${escapeHTML(deadline.replace('T',' '))} · ${selectedQuestions.length || 6} 道题。`,
     render:`<div class="slide-content"><span class="slide-tag">课后作业</span>
       <div class="slide-title">小数初步 · ${escapeHTML(picked[0])}</div>
       <div class="rule-board">
-        <div class="rule-card"><b>文字说明</b><span>P58 第 1-3 题，写清换算过程</span></div>
+        <div class="rule-card"><b>文字说明</b><span>${escapeHTML(homeworkText).slice(0,72)}</span></div>
         <div class="rule-card"><b>图片材料</b><span>对照第 6 页板书截图完成</span></div>
-        <div class="rule-card"><b>题库题目</b><span>单位换算 5 题 + 应用题 1 题</span></div>
+        ${questionCards}
       </div>
       <div class="formula-box">${escapeHTML(picked[1])}</div></div>`
   }, {toastText:`${picked[0]}已新建为课件页`});
+}
+function getHomeworkQuestions(){
+  const rows=[...document.querySelectorAll('#homeworkQuestionList .homework-question')];
+  return rows.map(row=>({
+    title:row.querySelector('b')?.textContent.trim() || row.textContent.trim(),
+    text:row.dataset.text || row.textContent.trim(),
+    source:row.dataset.source || '',
+    acc:row.dataset.acc || '80'
+  })).filter(q=>!q.title.includes('单位换算 5 题') || rows.length === 1);
 }
 function addOutlineSlide(){
   addResourcePage({
@@ -1991,12 +2033,12 @@ const DEMOS = {
         <li><strong>28/35</strong> 作业已批，剩余 7 份</li>
         <li><strong>2 条</strong> 智能提醒：三班单位换算偏弱 / 陈小刚连续 3 天未交</li></ul>
       <div class="demo-callout"><span class="dc-icon">💡</span><div>跨天数据持续累积，让<strong>每节课的备课</strong>都基于上一节的真实学情。</div></div>` },
-  'nav-授课': { icon:'▶', title:'授课模式 · 三端实时联动', primary:'立即进入授课', successMsg:'授课模式启动中…',
-    body:`<p>切换到授课模式，将自动完成：</p>
-      <ul><li>课件全屏投到<strong>白板</strong>（4K 60Hz · 12ms 延迟）</li>
-        <li>35 台<strong>学生平板</strong>同步锁屏待命</li>
+  'nav-授课': { icon:'检', title:'课堂端检查', primary:false, successMsg:'课堂端检查完成',
+    body:`<p>备课端只确认课件、设备和互动绑定状态；正式上课从课件库选择课件后进入课堂端。</p>
+      <ul><li>课件已同步到<strong>白板</strong>（4K 60Hz · 12ms 延迟）</li>
+        <li>35 台<strong>学生平板</strong>在线待命</li>
         <li>翻页时按绑定<strong>自动触发互动</strong></li>
-        <li><strong>教师 PC</strong> 显示授课视图（白板镜像 + 平板监控网格 + 抽人名单）</li></ul>
+        <li><strong>教师 PC</strong> 保留课件编辑、设备检查和课件库入口</li></ul>
       <h4>三端连接状态</h4>
       <div class="demo-grid"><div class="demo-stat"><div class="demo-stat-label">白板</div><div class="demo-stat-value green">已连接</div></div>
         <div class="demo-stat"><div class="demo-stat-label">学生平板</div><div class="demo-stat-value green">35/35</div></div></div>` },
@@ -2227,9 +2269,7 @@ document.querySelector('.user-pill').addEventListener('click', () => openDemo('u
 document.querySelectorAll('.subtop .btn').forEach(b => {
   const text = b.textContent.trim();
   b.addEventListener('click', () => {
-    if (text.includes('版本')) openDemo('version');
-    else if (text.includes('协作')) openDemo('collab');
-    else if (text.includes('上传') || text.includes('导入') || text.includes('抓取')) openDemo('import-ppt');
+    if (text.includes('上传') || text.includes('导入') || text.includes('抓取')) openDemo('import-ppt');
     else if (text.includes('授课')) openDemo('present');
   });
 });
@@ -2277,6 +2317,14 @@ document.body.addEventListener('click', e => {
     addHomeworkSlide(homework.dataset.homeworkAct);
     return;
   }
+  const dockAct = e.target.closest('[data-rd-act]');
+  if (dockAct) {
+    const act = dockAct.dataset.rdAct;
+    if(act === 'paste-all') pasteResourceItemsToHomework();
+    else if(act === 'clear') { qbankResourceItems.length = 0; renderResourceDock(true); showToast('✓ 题目资源栏已清空'); }
+    else if(act === 'close') document.getElementById('resourceDock')?.classList.remove('open');
+    return;
+  }
   const resourceInsert = e.target.closest('[data-resource-insert]');
   if (resourceInsert) {
     const map = {
@@ -2291,16 +2339,14 @@ document.body.addEventListener('click', e => {
   const courseLib = e.target.closest('[data-course-lib-act]');
   if (courseLib) {
     const act = courseLib.dataset.courseLibAct;
-    if (act === 'edit' || act === 'reuse') {
+    if (act === 'edit') {
       showPanel('courseware');
       goToPage(1);
-      showToast('✓ 已从课件库打开可编辑副本');
+      showToast('✓ 已打开云端课件');
     } else if (act === 'import') {
       openDemo('import-ppt');
     } else if (act === 'open-cloud') {
       showToast('✓ 已筛选云端课件');
-    } else if (act === 'share') {
-      openDemo('collab');
     } else {
       showToast('✓ 已打开课件预览');
     }
@@ -2330,10 +2376,11 @@ document.body.addEventListener('click', e => {
     else showToast('✓ ' + (map[analytics.dataset.analyticsAct] || '已处理'));
     return;
   }
-  const configTarget = e.target.closest('.interact-placeholder');
+  const configTarget = e.target.closest('.interact-placeholder,.interaction-config-btn');
   if (configTarget) {
+    const interactionLayer = configTarget.closest('.slide-layer.interaction');
     const slideType = getSlide()?.configType || getSlide()?.bind?.type;
-    const requestedType = configTarget.dataset.configType;
+    const requestedType = configTarget.dataset.configType || interactionLayer?.dataset.configType;
     const resolvedType = CONFIG_FIELDS[requestedType] ? requestedType : (CONFIG_FIELDS[slideType] ? slideType : 'listen');
     configModal(resolvedType);
     return;
@@ -2374,6 +2421,49 @@ document.querySelectorAll('.scard').forEach(c => {
 });
 
 // 8. 题库小卡（aside + qbank panel）：左侧每个分类都会切换为不同题池
+const qbankResourceItems = [];
+function qVisualFor(q){
+  const kp = q.kp || '';
+  if(kp.includes('比较')){
+    return `<div class="q-visual"><div class="q-number-line"><span class="q-dot" style="left:58%"></span><span class="q-dot" style="left:82%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)"></span></div><small>数轴比较</small></div>`;
+  }
+  if(kp.includes('单位') || q.text?.includes('厘米') || q.text?.includes('米')){
+    return `<div class="q-visual"><div class="q-grid">${Array.from({length:10},(_,i)=>`<span class="${i<8?'fill':''}"></span>`).join('')}</div><small>0.8 米 = 80 厘米</small></div>`;
+  }
+  if(q.text?.includes('元')){
+    return `<div class="q-visual"><div class="q-money"><span>5.0 元</span><span>-</span><span>2.5 元</span></div><small>价格情境</small></div>`;
+  }
+  return `<div class="q-visual"><div class="q-grid">${Array.from({length:10},(_,i)=>`<span class="${i<3?'fill':''}"></span>`).join('')}</div><small>小数模型</small></div>`;
+}
+function addQuestionToResourceBar(info){
+  const key = `${info.source}|${info.kp}|${info.text}`;
+  if(!qbankResourceItems.some(x=>x.key===key)){
+    qbankResourceItems.push({...info,key});
+  }
+  renderResourceDock(true);
+  showToast('✓ 已加入题目资源栏');
+}
+function renderResourceDock(open=false){
+  const dock=document.getElementById('resourceDock');
+  const list=document.getElementById('resourceDockList');
+  if(!dock || !list) return;
+  if(open) dock.classList.add('open');
+  list.innerHTML = qbankResourceItems.length
+    ? qbankResourceItems.map((q,i)=>`<div class="rd-item"><b>${i+1}. ${escapeHTML(q.title)}</b><span>${escapeHTML(q.kp)} · ${escapeHTML(q.source)}</span></div>`).join('')
+    : '<div class="rd-empty">还没有加入题目</div>';
+}
+function pasteResourceItemsToHomework(){
+  showPanel('homework');
+  const list=document.getElementById('homeworkQuestionList');
+  if(!list) return;
+  if(!qbankResourceItems.length){
+    showToast('题目资源栏还是空的');
+    return;
+  }
+  list.innerHTML = qbankResourceItems.map((q,i)=>`<div class="homework-question" data-text="${escapeHTML(q.text)}" data-source="${escapeHTML(q.source)}" data-acc="${escapeHTML(q.acc)}"><b>${i+1}. ${escapeHTML(q.title)}</b><span>${escapeHTML(q.source)} · ${escapeHTML(q.kp)} · 正确率 ${escapeHTML(q.acc)}%</span></div>`).join('');
+  document.getElementById('resourceDock')?.classList.add('open');
+  showToast('✓ 已全部粘贴到作业');
+}
 const QBANK_POOLS = {
   '校本题库': {
     desc:'本校教师课堂使用后沉淀的题，带有真实正确率和错因标签。',
@@ -2478,6 +2568,7 @@ function renderQBank(label){
       <div class="qcard" data-answer="${escapeHTML(q.answer)}" data-solution="${escapeHTML(q.solution)}" data-source="${escapeHTML(q.source)}" data-uses="${q.uses}" data-acc="${q.acc}">
         <div class="qtags"><span class="qtag ${qDiffClass(q.diff)}">${escapeHTML(q.diff)}</span><span class="qtag kp">${escapeHTML(q.kp)}</span><span class="qtag" style="background:#e0f2fe;color:#0369a1">${escapeHTML(q.tag)}</span></div>
         <div class="qtext">${escapeHTML(q.text)}</div>
+        ${qVisualFor(q)}
         <div class="qmeta"><span>📍 ${escapeHTML(q.source)}</span><span>👁 用过 ${q.uses} 次</span><span>📊 正确率 ${q.acc}%</span></div>
       </div>
     `).join('')}`;
@@ -2507,6 +2598,17 @@ function bindQuestionCards(root=document){
       };
     };
     setDragPayload(c, () => ({kind:'question', info:collectInfo()}));
+    if(!c.querySelector('.q-add-resource')){
+      const btn=document.createElement('button');
+      btn.type='button';
+      btn.className='btn btn-sm q-add-resource';
+      btn.textContent='加入资源栏';
+      btn.addEventListener('click', e=>{
+        e.stopPropagation();
+        addQuestionToResourceBar(collectInfo());
+      });
+      c.appendChild(btn);
+    }
     c.addEventListener('click', () => addQuestionPage(collectInfo()));
   });
 }
