@@ -577,8 +577,17 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .publish-mini h3{font-size:14px;margin-bottom:8px}
 .mini-field{display:flex;flex-direction:column;gap:4px;margin-bottom:8px;font-size:11.5px;color:var(--muted)}
 .mini-field select,.mini-field input{height:30px;border:1px solid var(--line);border-radius:6px;padding:0 8px;font-family:inherit;font-size:12px;background:#fff;color:var(--text)}
-.resource-dock{position:absolute;right:16px;bottom:50px;width:300px;max-height:360px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 16px 44px rgba(15,23,42,.18);z-index:80;display:none;overflow:hidden}
-.resource-dock.open{display:block}
+.resource-dock{position:absolute;right:22px;bottom:72px;z-index:180;display:block}
+.resource-dock.visible{display:block}
+.resource-fab{width:52px;height:52px;border-radius:50%;border:1px solid var(--primary-soft);background:var(--primary);color:#fff;box-shadow:0 14px 32px rgba(16,185,129,.28);display:grid;place-items:center;font-size:22px;cursor:pointer;position:relative;font-family:inherit}
+.resource-fab:hover{background:var(--primary-dark)}
+.resource-dock.open .resource-fab{background:var(--primary-dark);box-shadow:0 10px 24px rgba(16,185,129,.34)}
+.resource-fab-icon{font-size:18px;font-weight:900;line-height:1}
+.resource-count{position:absolute;right:-3px;top:-3px;min-width:19px;height:19px;border-radius:999px;background:#ef4444;color:#fff;border:2px solid #fff;font-size:10px;font-weight:900;display:none;align-items:center;justify-content:center;padding:0 4px}
+.resource-dock.has-items .resource-count{display:flex}
+.resource-popover{display:none;position:absolute;right:0;bottom:62px;width:300px;max-height:360px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 16px 44px rgba(15,23,42,.18);overflow:hidden}
+.resource-dock.open .resource-popover{display:block}
+.homework-inline-tip{font-size:11.5px;color:var(--muted);align-self:center}
 .rd-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line);font-weight:900}
 .rd-list{max-height:210px;overflow:auto;padding:8px 10px;display:flex;flex-direction:column;gap:6px}
 .rd-item{border:1px solid var(--line-soft);border-radius:7px;padding:7px 8px;font-size:11.5px;background:var(--surface-2)}
@@ -707,15 +716,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
               <div style="flex:1"></div>
               <span class="tool-label">100%</span>
             </div>
-            <div class="resource-dock" id="resourceDock">
-              <div class="rd-head"><span>题目资源栏</span><button class="btn btn-sm" data-rd-act="close">收起</button></div>
-              <div class="rd-list" id="resourceDockList"><div class="rd-empty">还没有加入题目</div></div>
-              <div class="rd-actions">
-                <button class="btn btn-primary btn-sm" data-rd-act="paste-all" style="flex:1">全部粘贴到作业</button>
-                <button class="btn btn-sm" data-rd-act="clear">清空</button>
-              </div>
-            </div>
-
             <div class="canvas-pad">
               <div class="canvas" id="canvas"></div>
               <div class="canvas-caption">
@@ -995,7 +995,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <div class="panel" id="panel-qbank">
         <div class="pad" style="display:flex;flex-direction:column">
           <div class="section-h">📚 智能题库</div>
-          <div class="section-sub">从校本题、外部题源和 AI 变式里选题。每道题可先加入题目资源栏，再粘贴到作业。</div>
+          <div class="section-sub">从校本题、外部题源和 AI 变式里选题。每道题可先加入右下角悬浮题篮，再粘贴到作业。</div>
           <div class="qbank-layout">
             <div class="qside">
               <div class="qs-title">来源</div>
@@ -1071,11 +1071,11 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
                 <span>拖入板书截图、教材页或学生作品，也可以从当前课件选择页面截图。</span>
               </div>
               <div class="homework-question-list" id="homeworkQuestionList">
-                <div class="homework-question"><b>单位换算 5 题</b><span>来自智能题库 · 点击资源栏“全部粘贴”可替换为刚选的题。</span></div>
+                <div class="homework-question"><b>单位换算 5 题</b><span>来自智能题库 · 点击右下角悬浮题篮可替换为刚选的题。</span></div>
               </div>
               <div style="margin-top:12px;display:flex;gap:8px">
                 <button class="btn btn-sm" data-jump="qbank">去题库选题</button>
-                <button class="btn btn-primary btn-sm" data-rd-act="paste-all">粘贴资源栏题目</button>
+                <span class="homework-inline-tip">右下角“题”悬浮球收纳已选题目，点开可全部粘贴。</span>
               </div>
             </div>
             <div class="dash-stack">
@@ -1260,6 +1260,21 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
         </div>
       </div>
 
+    </div>
+
+    <div class="resource-dock" id="resourceDock" aria-live="polite">
+      <button class="resource-fab" type="button" data-rd-act="toggle" title="题目资源栏">
+        <span class="resource-fab-icon">题</span>
+        <span class="resource-count" id="resourceDockCount">0</span>
+      </button>
+      <div class="resource-popover">
+        <div class="rd-head"><span>题目资源栏</span><button class="btn btn-sm" data-rd-act="close">收起</button></div>
+        <div class="rd-list" id="resourceDockList"><div class="rd-empty">还没有加入题目</div></div>
+        <div class="rd-actions">
+          <button class="btn btn-primary btn-sm" data-rd-act="paste-all" style="flex:1">全部粘贴到作业</button>
+          <button class="btn btn-sm" data-rd-act="clear">清空</button>
+        </div>
+      </div>
     </div>
 
     <!-- 三端同步底栏 -->
@@ -2340,7 +2355,11 @@ document.body.addEventListener('click', e => {
   const dockAct = e.target.closest('[data-rd-act]');
   if (dockAct) {
     const act = dockAct.dataset.rdAct;
-    if(act === 'paste-all') pasteResourceItemsToHomework();
+    if(act === 'toggle') {
+      renderResourceDock(false);
+      document.getElementById('resourceDock')?.classList.toggle('open');
+    }
+    else if(act === 'paste-all') pasteResourceItemsToHomework();
     else if(act === 'clear') { qbankResourceItems.length = 0; renderResourceDock(true); showToast('✓ 题目资源栏已清空'); }
     else if(act === 'close') document.getElementById('resourceDock')?.classList.remove('open');
     return;
@@ -2467,6 +2486,9 @@ function renderResourceDock(open=false){
   const dock=document.getElementById('resourceDock');
   const list=document.getElementById('resourceDockList');
   if(!dock || !list) return;
+  const count=dock.querySelector('.resource-count');
+  dock.classList.toggle('has-items', qbankResourceItems.length > 0);
+  if(count) count.textContent = qbankResourceItems.length > 99 ? '99+' : String(qbankResourceItems.length);
   if(open) dock.classList.add('open');
   list.innerHTML = qbankResourceItems.length
     ? qbankResourceItems.map((q,i)=>`<div class="rd-item"><b>${i+1}. ${escapeHTML(q.title)}</b><span>${escapeHTML(q.kp)} · ${escapeHTML(q.source)}</span></div>`).join('')
@@ -2481,9 +2503,10 @@ function pasteResourceItemsToHomework(){
     return;
   }
   list.innerHTML = qbankResourceItems.map((q,i)=>`<div class="homework-question" data-text="${escapeHTML(q.text)}" data-source="${escapeHTML(q.source)}" data-acc="${escapeHTML(q.acc)}"><b>${i+1}. ${escapeHTML(q.title)}</b><span>${escapeHTML(q.source)} · ${escapeHTML(q.kp)} · 正确率 ${escapeHTML(q.acc)}%</span></div>`).join('');
-  document.getElementById('resourceDock')?.classList.add('open');
+  document.getElementById('resourceDock')?.classList.remove('open');
   showToast('✓ 已全部粘贴到作业');
 }
+renderResourceDock(false);
 const QBANK_POOLS = {
   '校本题库': {
     desc:'本校教师课堂使用后沉淀的题，带有真实正确率和错因标签。',
