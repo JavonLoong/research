@@ -550,18 +550,12 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .mini-action:hover{border-color:var(--primary);background:var(--primary-soft-2)}
 .mini-action b{display:block;font-size:12.5px;color:var(--text);margin-bottom:2px}
 .mini-action span{display:block;font-size:11px;color:var(--muted);line-height:1.4}
-.library-clean{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.library-clean{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
 .library-list{display:flex;flex-direction:column;gap:10px}
 .course-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(15,23,42,.04)}
 .course-row h3{font-size:15px;margin-bottom:4px;color:var(--text)}
 .course-row p{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:8px}
 .course-row .course-meta{margin-bottom:0}
-.resource-shelf{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(15,23,42,.04)}
-.resource-shelf h3{font-size:14px;margin-bottom:10px;color:var(--text)}
-.resource-chip{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px;background:#fff;cursor:pointer}
-.resource-chip:hover{border-color:var(--primary);background:var(--primary-soft-2)}
-.resource-chip b{display:block;font-size:12.5px;color:var(--text);margin-bottom:2px}
-.resource-chip span{font-size:11px;color:var(--muted)}
 .homework-layout{display:grid;grid-template-columns:1fr 290px;gap:14px;align-items:start}
 .homework-editor{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(15,23,42,.04)}
 .homework-tabs{display:flex;gap:6px;margin-bottom:10px}
@@ -594,7 +588,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .rd-item b{display:block;color:var(--text);margin-bottom:2px}.rd-item span{color:var(--muted)}
 .rd-actions{display:flex;gap:6px;padding:10px;border-top:1px solid var(--line)}
 .rd-empty{padding:18px 12px;color:var(--muted);font-size:12px;text-align:center}
-.resource-chip .btn{padding:4px 8px}
 
 /* Toast */
 .toast{position:absolute;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--text);color:#fff;padding:8px 16px;border-radius:6px;font-size:12.5px;font-weight:600;opacity:0;pointer-events:none;z-index:200;transition:.2s;box-shadow:0 8px 24px rgba(15,23,42,.2);display:flex;align-items:center;gap:7px}
@@ -1249,12 +1242,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
                 </div>
                 <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="import">选择文件</button></div>
               </div>
-            </div>
-            <div class="resource-shelf">
-              <h3>可插入资源</h3>
-              <div class="resource-chip" data-resource-insert="quizpack"><div><b>经典 5 题包</b><span>小数初步 · 带解析</span></div><button class="btn btn-sm">加入</button></div>
-              <div class="resource-chip" data-resource-insert="errorcard"><div><b>错因卡</b><span>小数点移位讲评</span></div><button class="btn btn-sm">加入</button></div>
-              <div class="resource-chip" data-resource-insert="outline"><div><b>讲评提纲</b><span>当前班级错因讲评</span></div><button class="btn btn-sm">加入</button></div>
             </div>
           </div>
         </div>
@@ -2433,17 +2420,6 @@ document.body.addEventListener('click', e => {
     else if(act === 'paste-all') pasteResourceItemsToHomework();
     else if(act === 'clear') { qbankResourceItems.length = 0; renderResourceDock(true); showToast('✓ 题目资源栏已清空'); }
     else if(act === 'close') document.getElementById('resourceDock')?.classList.remove('open');
-    return;
-  }
-  const resourceInsert = e.target.closest('[data-resource-insert]');
-  if (resourceInsert) {
-    const map = {
-      quizpack:{title:'小数初步 · 经典 5 题包', desc:'5 道精选题 + 解析 + 学情标签', author:'张老师', uses:89, related:'第六单元'},
-      errorcard:{title:'错因卡：小数点移位', desc:'典型错因 + 易错步骤 + 讲评素材', author:'王老师', uses:14, related:'单位换算', preview:'先确定单位进率，再判断小数点移动方向。'},
-      outline:{title:'讲评提纲：小数初步', desc:'错因摘要 + 典型作答 + 变式题', author:'教研组', uses:36, related:'讲评课'},
-      textbook:{title:'教材页：小数的初步认识', desc:'封面、目录、课文图片、练习与原文标注', author:'人教版四下', uses:'教材资源', related:'第六单元', preview:'年级跟随班级锁定，只选择册次、单元和课时；原文标注可直接生成课件页。'}
-    };
-    addResourcePage(map[resourceInsert.dataset.resourceInsert] || {});
     return;
   }
   const courseLib = e.target.closest('[data-course-lib-act]');
