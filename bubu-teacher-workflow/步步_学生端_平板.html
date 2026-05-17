@@ -20,13 +20,14 @@
   --shadow-3:0 8px 24px rgba(15,23,42,.10);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;padding:24px 0 60px;-webkit-font-smoothing:antialiased}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;padding:24px 0 60px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
 /* ===== Stage (two tablets) ===== */
-.stage{max-width:1400px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start}
+.stage{max-width:1060px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr;gap:24px;align-items:start}
 .stage-col{display:flex;flex-direction:column;gap:14px}
 .stage-note{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:800;padding:0 6px}
 .stage-note strong{font-size:14px;color:var(--text)}
+#col-class{display:none}
 
 /* ===== Tablet shell ===== */
 .tablet{background:#0f172a;border-radius:38px;padding:13px;box-shadow:0 30px 60px rgba(15,23,42,.18),0 1px 0 rgba(255,255,255,.04) inset;position:relative}
@@ -58,12 +59,12 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .live-bar{margin:8px 12px 0;padding:7px 10px;background:var(--primary-soft-2);border:1px solid var(--primary-soft);border-radius:8px;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--primary-dark);font-weight:600;flex-shrink:0}
 .live-bar .pulse{width:7px;height:7px;border-radius:50%;background:var(--primary);box-shadow:0 0 0 0 rgba(16,185,129,.5);animation:pulse 1.8s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}70%{box-shadow:0 0 0 8px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
-.live-bar .grow{flex:1}
+.live-bar .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .live-bar .lb-btn{font-size:10.5px;font-weight:700;padding:3px 9px;background:#fff;border-radius:999px;border:1px solid var(--primary-soft);color:var(--primary-dark);cursor:pointer}
 .live-bar .lb-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
 
 /* scroll area */
-.scroll-area{flex:1;overflow-y:auto;padding:0 12px 12px;min-height:0}
+.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 12px 12px;min-height:0}
 .scroll-area::-webkit-scrollbar{width:5px}
 .scroll-area::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
 
@@ -136,11 +137,13 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .knowledge-card h4,.classroom-card h4,.repair-card h4{font-size:13px;font-weight:900;color:var(--text);line-height:1.35}
 .knowledge-card p,.classroom-card p,.repair-card p{font-size:10.8px;color:var(--muted);line-height:1.5;margin-top:4px;font-weight:600}
 .classroom-card.live{background:linear-gradient(135deg,#ecfdf5,#fff);border-color:var(--primary-soft)}
-.knowledge-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.knowledge-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;position:sticky;top:0;z-index:4;background:#fff;padding:2px}
 .knowledge-tab{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:900;color:var(--muted);cursor:pointer;font-family:inherit}
 .knowledge-tab.active{background:var(--primary);border-color:var(--primary);color:#fff}
 .ebook-view{display:none}
 .ebook-view.active{display:block}
+.knowledge-split{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(260px,.85fr);gap:10px;align-items:start}
+.knowledge-split [data-ebook-view]{display:block}
 .hidden{display:none!important}
 .bookshelf{background:linear-gradient(180deg,#f8fafc,#fff);border:1px solid var(--line);border-radius:14px;padding:12px}
 .bookshelf-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
@@ -151,6 +154,9 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .book-cover{height:122px;border-radius:8px 12px 12px 8px;padding:12px 10px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 10px 22px rgba(15,23,42,.16);position:relative;overflow:hidden}
 .book-cover::before{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;background:rgba(0,0,0,.18)}
 .book-cover::after{content:"";position:absolute;right:-28px;bottom:-28px;width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.16)}
+.book-cover.has-img{padding:0;background:#fff}
+.book-cover.has-img::before,.book-cover.has-img::after{display:none}
+.book-cover.has-img img{width:100%;height:100%;object-fit:cover;display:block}
 .book-cover.math,.book-mini-cover.math{background:linear-gradient(135deg,#168f7a,#10b981)}
 .book-cover.chinese,.book-mini-cover.chinese{background:linear-gradient(135deg,#b91c1c,#ef4444)}
 .book-cover.english,.book-mini-cover.english{background:linear-gradient(135deg,#3730a3,#6366f1)}
@@ -163,7 +169,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .book-detail{display:none;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px}
 .book-detail.active{display:block}
 .book-detail-head{display:flex;gap:11px;align-items:center;margin-bottom:10px}
-.book-mini-cover{width:54px;height:72px;border-radius:6px 9px 9px 6px;flex:none;box-shadow:var(--shadow-2)}
+.book-mini-cover{width:54px;height:72px;border-radius:6px 9px 9px 6px;flex:none;box-shadow:var(--shadow-2);overflow:hidden}
+.book-mini-cover.has-img img{width:100%;height:100%;object-fit:cover;display:block}
 .book-detail h3{font-size:15px;font-weight:900;color:var(--text)}
 .book-detail p{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:2px}
 .book-actions{display:flex;gap:6px;margin-top:7px}
@@ -177,17 +184,18 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .ebook-reader{display:none;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .ebook-reader.active{display:block}
 .reader-head{display:flex;align-items:center;gap:7px;justify-content:space-between;padding:10px 11px;border-bottom:1px solid var(--line);background:var(--surface-2)}
-.reader-head strong{font-size:12.5px;color:var(--text)}
+.reader-head strong{font-size:12.5px;color:var(--text);line-height:1.3}
 .reader-tools{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
 .reader-pages{display:grid;grid-template-columns:1fr;gap:10px;padding:12px;background:#f8fafc}
 .ebook-reader.landscape .reader-pages{grid-template-columns:1fr 1fr}
 .book-page{min-height:318px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px 16px 28px;box-shadow:0 4px 14px rgba(15,23,42,.05);position:relative;overflow:hidden}
+.ink-area{touch-action:none;cursor:crosshair}
 .book-page h4{font-size:17px;line-height:1.35;color:var(--text);margin-bottom:10px}
 .book-page p{font-size:12.5px;line-height:1.8;color:var(--text-soft);margin-bottom:8px}
 .page-num{position:absolute;right:14px;bottom:8px;font-size:10px;color:var(--muted);font-weight:800}
 .ink-layer{position:absolute;inset:0;pointer-events:none}
 .ink-line{position:absolute;height:3px;border-radius:999px;background:#ef4444;opacity:.75;transform-origin:left center}
-.note-workspace{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;grid-template-columns:1fr;gap:10px}
+.note-workspace{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;grid-template-columns:1fr;gap:10px;height:100%}
 .note-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .note-top h3{font-size:15px;font-weight:900;color:var(--text)}
 .note-page{min-height:330px;border:1px dashed #cbd5e1;border-radius:12px;background:repeating-linear-gradient(#fff 0,#fff 31px,#edf2f7 32px);padding:14px;font-size:13px;line-height:32px;color:var(--text);outline:none}
@@ -218,6 +226,13 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .class-scene-main span{display:block;font-size:10.4px;color:var(--muted);font-weight:600;line-height:1.45;margin-top:2px}
 .class-scene-state{font-size:9.5px;font-weight:900;border-radius:999px;padding:2px 7px;background:var(--surface-3);color:var(--muted);white-space:nowrap}
 .class-scene-card.live .class-scene-state{background:var(--primary-soft);color:var(--primary-dark)}
+.classroom-shell{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(220px,.85fr);gap:10px;align-items:start}
+.classroom-shell .class-cover{position:relative;inset:auto;min-height:430px;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.classroom-shell .class-stage{flex:1;padding:12px;overflow:auto}
+.classroom-shell .class-status{border-top:1px solid var(--line);border-radius:0}
+.classroom-side{display:flex;flex-direction:column;gap:8px}
+.classroom-side .class-mode-switch{grid-template-columns:1fr 1fr}
+.classroom-side-title{font-size:12px;font-weight:900;color:var(--text);padding:0 2px}
 .repair-card.warn{background:#fffafa;border-color:#fecaca}
 
 /* === Student home + homework center === */
@@ -387,7 +402,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .tb:hover{color:var(--primary-dark);background:var(--primary-soft-2)}
 .tb.active{color:var(--primary-dark);background:var(--primary-soft-2)}
 .tb.has-dot{position:relative}
-.tb.has-dot::after{content:"";position:absolute;top:4px;right:18px;width:6px;height:6px;border-radius:50%;background:var(--danger);border:1.5px solid #fff}
+.tb.has-dot::after{content:"";position:absolute;top:4px;left:calc(50% + 16px);width:6px;height:6px;border-radius:50%;background:var(--danger);border:1.5px solid #fff}
 
 /* ===== 课堂模式 (右平板 cover) ===== */
 .class-cover{position:absolute;inset:0;background:linear-gradient(180deg,#ecfdf5 0%,#fff 25%);display:flex;flex-direction:column}
@@ -519,8 +534,17 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 /* ===== Responsive (压栈) ===== */
 @media (max-width: 1024px){
   .stage{grid-template-columns:1fr}
+  .knowledge-split,.classroom-shell{grid-template-columns:1fr}
+  .knowledge-split [data-ebook-view]:not(.active){display:none}
 }
 @media (max-width: 640px){
+  body{padding:0;background:#fff}
+  .stage{padding:0}
+  .tablet{border-radius:0;padding:0;box-shadow:none}
+  .tablet.landscape .tablet-screen,.tablet-screen{aspect-ratio:auto;min-height:100vh;border-radius:0}
+  .book-grid{grid-template-columns:repeat(2,1fr)}
+  .note-split{grid-template-columns:1fr}
+  .classroom-shell .class-cover{min-height:520px}
 }
 
 </style>
@@ -532,7 +556,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
   <!-- ===== 左：课后模式 ===== -->
   <div class="stage-col" id="col-home">
-    <div class="tablet">
+    <div class="tablet landscape">
       <div class="tablet-screen">
         <div class="statusbar">
           <span>19:30</span>
@@ -562,110 +586,126 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
           <!-- ===== App 1: 知识内容 ===== -->
           <div class="s-panel active" data-pane="knowledge">
-            <div class="app-grid">
-              <div class="app-card" data-tab-go="knowledge">
-                <div class="app-top"><div class="app-icon knowledge">知</div><div><h3>知识内容</h3><p>课件、知识点、课堂板书沉淀</p></div></div>
-                <div class="app-foot"><span>6 个知识点</span><span class="app-open">打开</span></div>
-              </div>
-              <div class="app-card" data-tab-go="classroom">
-                <div class="app-top"><div class="app-icon classroom">课</div><div><h3>课堂互动</h3><p>老师推送、答题、听写、手写记录</p></div></div>
-                <div class="app-foot"><span>今日 4 次</span><span class="app-open">查看</span></div>
-              </div>
-              <div class="app-card" data-tab-go="homework">
-                <div class="app-top"><div class="app-icon homework">交</div><div><h3>作业提交</h3><p>按科目处理补交、录音、拍照</p></div></div>
-                <div class="app-foot"><span>补交 1 项</span><span class="app-open">处理</span></div>
-              </div>
-              <div class="app-card" data-tab-go="repair">
-                <div class="app-top"><div class="app-icon repair">订</div><div><h3>自主订正</h3><p>错题讲解、同类题、AI 思路提示</p></div></div>
-                <div class="app-foot"><span>待订正 3 题</span><span class="app-open">进入</span></div>
-              </div>
-            </div>
-
             <div class="knowledge-tabs">
               <button class="knowledge-tab active" data-knowledge-view="books">电子课本</button>
               <button class="knowledge-tab" data-knowledge-view="notes">课堂笔记</button>
             </div>
 
-            <div class="ebook-view active" data-ebook-view="books">
-              <div class="bookshelf" id="bookshelf">
-                <div class="bookshelf-head">
-                  <h3>我的书架</h3>
-                  <span>六年级常用教材 · 可翻页批注</span>
+            <div class="knowledge-split">
+              <div class="ebook-view active" data-ebook-view="books">
+                <div class="bookshelf" id="bookshelf">
+                  <div class="bookshelf-head">
+                    <h3>我的书架</h3>
+                    <span>六年级教材 · 点书进入目录</span>
+                  </div>
+                  <div class="book-grid">
+                    <button class="book-card" data-book="math6a">
+                      <div class="book-cover has-img"><img src="https://dl2.keben.app/63/%E5%B0%8F%E5%AD%A6/%E6%95%B0%E5%AD%A6/%E6%95%B0%E5%AD%A6%20%E4%BA%BA%E6%95%99%E7%89%88%20%E5%85%AD%E5%B9%B4%E7%BA%A7%E4%B8%8A%E5%86%8C%20%E5%85%AD%E4%B8%89%E5%88%B6%202022%E7%89%88_512w.webp" alt="数学六年级上册封面"></div>
+                      <strong>数学 六年级上册</strong><span>分数乘除法 · 圆</span>
+                    </button>
+                    <button class="book-card" data-book="chinese6a">
+                      <div class="book-cover has-img"><img src="https://dl2.keben.app/63/%E5%B0%8F%E5%AD%A6/%E8%AF%AD%E6%96%87/%E8%AF%AD%E6%96%87%20%E4%BA%BA%E6%95%99%E9%83%A8%E7%BC%96%E7%89%88%20%E5%85%AD%E5%B9%B4%E7%BA%A7%E4%B8%8A%E5%86%8C%20%E5%85%AD%E4%B8%89%E5%88%B6%202019%E7%89%88_512w.webp" alt="语文六年级上册封面"></div>
+                      <strong>语文 六年级上册</strong><span>草原 · 狼牙山五壮士</span>
+                    </button>
+                    <button class="book-card" data-book="english6a">
+                      <div class="book-cover english"><span class="bc-sub">义务教育教科书</span><span class="bc-title">英语<br>六年级上册</span><span class="bc-pub">人民教育出版社</span></div>
+                      <strong>英语 六年级上册</strong><span>Unit 1 · Unit 2</span>
+                    </button>
+                    <button class="book-card" data-book="science6a">
+                      <div class="book-cover science"><span class="bc-sub">义务教育教科书</span><span class="bc-title">科学<br>六年级上册</span><span class="bc-pub">教育科学出版社</span></div>
+                      <strong>科学 六年级上册</strong><span>工具与技术</span>
+                    </button>
+                  </div>
                 </div>
-                <div class="book-grid">
-                  <button class="book-card" data-book="math6a">
-                    <div class="book-cover math"><span class="bc-sub">义务教育教科书</span><span class="bc-title">数学<br>六年级上册</span><span class="bc-pub">人民教育出版社</span></div>
-                    <strong>数学 六年级上册</strong><span>分数乘除法 · 圆</span>
-                  </button>
-                  <button class="book-card" data-book="chinese6a">
-                    <div class="book-cover chinese"><span class="bc-sub">统编版</span><span class="bc-title">语文<br>六年级上册</span><span class="bc-pub">人民教育出版社</span></div>
-                    <strong>语文 六年级上册</strong><span>草原 · 狼牙山五壮士</span>
-                  </button>
-                  <button class="book-card" data-book="english6a">
-                    <div class="book-cover english"><span class="bc-sub">义务教育教科书</span><span class="bc-title">英语<br>六年级上册</span><span class="bc-pub">人民教育出版社</span></div>
-                    <strong>英语 六年级上册</strong><span>Unit 1 · Unit 2</span>
-                  </button>
-                  <button class="book-card" data-book="science6a">
-                    <div class="book-cover science"><span class="bc-sub">义务教育教科书</span><span class="bc-title">科学<br>六年级上册</span><span class="bc-pub">教育科学出版社</span></div>
-                    <strong>科学 六年级上册</strong><span>工具与技术</span>
-                  </button>
-                </div>
+
+                <div class="book-detail" id="bookDetail"></div>
+                <div class="ebook-reader" id="ebookReader"></div>
               </div>
 
-              <div class="book-detail" id="bookDetail"></div>
-              <div class="ebook-reader" id="ebookReader"></div>
-            </div>
-
-            <div class="ebook-view" data-ebook-view="notes">
-              <div class="note-workspace">
-                <div class="note-top">
-                  <h3>课堂笔记</h3>
-                  <span class="module-pill">和电子课本同步使用</span>
-                </div>
-                <div class="note-split">
-                  <div class="note-source">
-                    <h4>当前课本位置</h4>
-                    <p id="noteSourceText">数学六上 · 分数乘法。课本页可直接画线，笔记页留给自己的整理。</p>
+              <div class="ebook-view" data-ebook-view="notes">
+                <div class="note-workspace">
+                  <div class="note-top">
+                    <h3>课堂笔记</h3>
+                    <span class="module-pill">和电子课本并排</span>
                   </div>
-                  <div class="note-source">
-                    <h4>今日板书</h4>
-                    <p>单位 1 先找清楚；分数乘整数可以表示几个相同分数相加。</p>
+                  <div class="note-split">
+                    <div class="note-source">
+                      <h4>当前课本位置</h4>
+                      <p id="noteSourceText">数学六上 · 分数乘法。课本页可直接画线，笔记页留给自己的整理。</p>
+                    </div>
+                    <div class="note-source">
+                      <h4>今日板书</h4>
+                      <p>单位 1 先找清楚；分数乘整数可以表示几个相同分数相加。</p>
+                    </div>
                   </div>
-                </div>
-                <div class="note-page" id="classNotePage" contenteditable="true" spellcheck="false">我的笔记：
+                  <div class="note-page" id="classNotePage" contenteditable="true" spellcheck="false">我的笔记：
 1. 先找单位 1。
 2. 画图时平均分要标清楚。
 3. 课后再看例 1。</div>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- ===== App 2: 课堂互动 ===== -->
           <div class="s-panel" data-pane="classroom">
-            <div class="module-head">
-              <div class="mh-row"><h3>课堂互动</h3><span class="module-pill">老师推送中</span></div>
-              <p>像一个课堂接管软件：课上只接受老师推送，课后只保留记录，不让学生自己乱点功能。</p>
-            </div>
-
-            <div class="classroom-list">
-              <div class="classroom-live-panel" data-class-current>
-                <div class="classroom-live-top">
-                  <span class="cc-tag">课上当前</span>
-                  <span class="class-scene-state" data-class-current-time>14:21</span>
+            <div class="classroom-shell">
+              <div class="class-cover">
+                <div class="class-bar">
+                  <span class="cb-pulse"></span>
+                  <span class="cb-title" id="classTitle">王老师 · 手写题</span>
+                  <span class="cb-timer" id="classTimer">05:00</span>
                 </div>
-                <h4 data-class-current-title>第 1 次推送 · 手写题</h4>
-                <p data-class-current-desc>右侧课堂屏正在展示老师推送，提交后等待老师下一次推送。</p>
-                <div class="classroom-mini-row">
-                  <span>老师推送</span><span>AI 学伴禁用</span><span>只回收本人作答</span>
+
+                <div class="class-stage" id="classStage">
+                  <div class="q-card handwrite-card">
+                    <div class="q-prompt"><span class="qp-tag">重点 1 · 手写题</span><span>题目固定在上方，下面只留作答区</span></div>
+                    <div class="q-text">请用自己的话说明：为什么 <strong style="color:var(--primary-dark)">0.8 米 = 80 厘米</strong>？写出换算过程。</div>
+                    <div class="unit-basis">先写清：<strong>1 米 = 100 厘米</strong></div>
+                    <div class="write-pad" id="writePad">
+                      <div class="write-note" style="top:58px"><span class="hi">1米 = 100厘米</span></div>
+                      <div class="write-note" style="top:104px">0.8米 = 0.8 × 100厘米</div>
+                      <div class="write-note" style="top:150px">= 80厘米</div>
+                      <div class="write-note" style="top:196px">所以 0.8米 = 80厘米</div>
+                      <span class="write-stroke" style="left:48px;top:82px;width:170px;transform:rotate(.8deg)"></span>
+                      <span class="write-stroke" style="left:50px;top:128px;width:250px;transform:rotate(-.6deg)"></span>
+                      <span class="write-stroke" style="left:52px;top:174px;width:120px;transform:rotate(.4deg)"></span>
+                    </div>
+                    <div class="q-submit-row"><div class="q-sub-l">支持手写过程回收</div><button class="q-sub-btn" id="handSubmit">提交</button></div>
+                    <div class="q-feedback" id="handFB"><span class="qf-ico">✓</span><span id="handFBText"></span></div>
+                  </div>
+                </div>
+
+                <div class="class-status" id="classStatusBar" title="模拟老师端推送下一题">
+                  <div class="class-status-text">
+                    <strong id="classStep">第 1 / 9 次推送 · 手写题</strong>
+                    <span id="classStatusSub">课堂接管中，提交后等待老师推送</span>
+                  </div>
+                  <div class="class-dots" id="classDots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
                 </div>
               </div>
 
-              <div class="class-mode-switch" id="classModeSwitch">
-                <button class="class-mode-chip active" data-class-mode="live">课上当前</button>
-                <button class="class-mode-chip" data-class-mode="record">课后记录</button>
-              </div>
+              <div class="classroom-side">
+                <div class="classroom-live-panel" data-class-current>
+                  <div class="classroom-live-top">
+                    <span class="cc-tag">当前推送</span>
+                    <span class="class-scene-state" data-class-current-time>14:21</span>
+                  </div>
+                  <h4 data-class-current-title>第 1 次推送 · 手写题</h4>
+                  <p data-class-current-desc>学生端自动进入老师推送内容，提交后等待下一次推送。</p>
+                  <div class="classroom-mini-row">
+                    <span>AI 学伴禁用</span><span>只回收本人作答</span>
+                  </div>
+                </div>
 
-              <div class="class-record-list" id="classRecordList"></div>
+                <div class="class-mode-switch" id="classModeSwitch">
+                  <button class="class-mode-chip active" data-class-mode="live">当前</button>
+                  <button class="class-mode-chip" data-class-mode="record">记录</button>
+                </div>
+
+                <div class="classroom-side-title">老师推送队列</div>
+                <div class="class-record-list" id="classRecordList"></div>
+              </div>
             </div>
           </div>
 
@@ -707,6 +747,16 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
                       <div class="hw-title-row"><div class="hw-title">第 12 课生字听写订正</div><span class="hw-status late">需补交</span></div>
                       <div class="hw-desc">刘老师退回：少拍第 2 页。补拍上传后进入复核。</div>
                       <div class="hw-meta"><span>昨天 21:00</span><span>拍照补交</span><span>刘老师</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hw-card" data-hw="math_monday" data-date="monday" data-subject="math" data-kind="online" data-status="done">
+                  <div class="hw-top">
+                    <div class="subject-mark math">数</div>
+                    <div class="hw-main">
+                      <div class="hw-title-row"><div class="hw-title">分数乘整数 · 课后 6 题</div><span class="hw-status done">已完成</span></div>
+                      <div class="hw-desc">周一数学作业，老师已批改；第 4 题进入自主订正。</div>
+                      <div class="hw-meta"><span>周一 21:30</span><span>在线作答</span><span>王老师</span></div>
                     </div>
                   </div>
                 </div>
@@ -950,52 +1000,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
       </div><!-- /tablet-screen -->
     </div><!-- /tablet -->
-  </div>
-
-  <!-- ===== 右：课堂模式 ===== -->
-  <div class="stage-col" id="col-class">
-    <div class="tablet">
-      <div class="tablet-screen">
-
-        <div class="class-cover">
-          <div class="class-bar">
-            <span class="cb-pulse"></span>
-            <span class="cb-title" id="classTitle">王老师 · 手写题</span>
-            <span class="cb-timer" id="classTimer">05:00</span>
-          </div>
-
-          <div class="class-stage" id="classStage">
-            <!-- 默认显示：手写题 -->
-            <div class="q-card handwrite-card">
-              <div class="q-prompt"><span class="qp-tag">重点 1 · 手写题</span><span>题目固定在上方，下面只留作答区</span></div>
-              <div class="q-text">请用自己的话说明：为什么 <strong style="color:var(--primary-dark)">0.8 米 = 80 厘米</strong>？写出换算过程。</div>
-              <div class="unit-basis">先写清：<strong>1 米 = 100 厘米</strong></div>
-              <div class="write-pad" id="writePad">
-                <div class="write-note" style="top:58px"><span class="hi">1米 = 100厘米</span></div>
-                <div class="write-note" style="top:104px">0.8米 = 0.8 × 100厘米</div>
-                <div class="write-note" style="top:150px">= 80厘米</div>
-                <div class="write-note" style="top:196px">所以 0.8米 = 80厘米</div>
-                <span class="write-stroke" style="left:48px;top:82px;width:170px;transform:rotate(.8deg)"></span>
-                <span class="write-stroke" style="left:50px;top:128px;width:250px;transform:rotate(-.6deg)"></span>
-                <span class="write-stroke" style="left:52px;top:174px;width:120px;transform:rotate(.4deg)"></span>
-              </div>
-              <div class="q-submit-row"><div class="q-sub-l">支持手写过程回收</div><button class="q-sub-btn" id="handSubmit">提交</button></div>
-              <div class="q-feedback" id="handFB"><span class="qf-ico">✓</span><span id="handFBText"></span></div>
-            </div>
-          </div>
-
-          <div class="class-status" id="classStatusBar" title="演示用：模拟老师端推送下一题">
-            <div class="class-status-text">
-              <strong id="classStep">第 1 / 9 次推送 · 手写题</strong>
-              <span id="classStatusSub">课堂接管中，提交后等待老师推送</span>
-            </div>
-            <div class="class-dots" id="classDots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-          </div>
-
-        </div><!-- /class-cover -->
-
-      </div><!-- /tablet-screen -->
-    </div>
   </div>
 
 </div><!-- /stage -->
@@ -1419,6 +1423,7 @@ const EBOOKS = {
     cls:'math',
     title:'数学 六年级上册',
     meta:'人民教育出版社 · 分数乘除法 / 圆',
+    coverImg:'https://dl2.keben.app/63/%E5%B0%8F%E5%AD%A6/%E6%95%B0%E5%AD%A6/%E6%95%B0%E5%AD%A6%20%E4%BA%BA%E6%95%99%E7%89%88%20%E5%85%AD%E5%B9%B4%E7%BA%A7%E4%B8%8A%E5%86%8C%20%E5%85%AD%E4%B8%89%E5%88%B6%202022%E7%89%88_512w.webp',
     cover:['义务教育教科书','数学<br>六年级上册','人民教育出版社'],
     articles:[
       {id:'m1', title:'第 1 单元 · 分数乘法', sub:'例 1：几个相同分数相加', pages:[
@@ -1439,6 +1444,7 @@ const EBOOKS = {
     cls:'chinese',
     title:'语文 六年级上册',
     meta:'统编版 · 第一单元 / 第二单元',
+    coverImg:'https://dl2.keben.app/63/%E5%B0%8F%E5%AD%A6/%E8%AF%AD%E6%96%87/%E8%AF%AD%E6%96%87%20%E4%BA%BA%E6%95%99%E9%83%A8%E7%BC%96%E7%89%88%20%E5%85%AD%E5%B9%B4%E7%BA%A7%E4%B8%8A%E5%86%8C%20%E5%85%AD%E4%B8%89%E5%88%B6%202019%E7%89%88_512w.webp',
     cover:['统编版','语文<br>六年级上册','人民教育出版社'],
     articles:[
       {id:'c1', title:'草原', sub:'老舍 · 第一课', pages:[
@@ -1485,10 +1491,15 @@ let currentArticle = null;
 function switchKnowledgeView(view){
   $$('.knowledge-tab').forEach(t => t.classList.toggle('active', t.dataset.knowledgeView === view));
   $$('[data-ebook-view]').forEach(v => v.classList.toggle('active', v.dataset.ebookView === view));
+  const target = $(`[data-ebook-view="${view}"]`);
+  const split = $('.knowledge-split');
+  if(target && split && window.innerWidth <= 1024) target.scrollIntoView({block:'nearest', behavior:'smooth'});
 }
 function coverHTML(book, mini=false){
   const [sub,title,pub] = book.cover;
-  return `<div class="${mini?'book-mini-cover':'book-cover'} ${book.cls}"${mini?'':' aria-hidden="true"'}>${mini?'':`<span class="bc-sub">${sub}</span><span class="bc-title">${title}</span><span class="bc-pub">${pub}</span>`}</div>`;
+  const sizeClass = mini ? 'book-mini-cover' : 'book-cover';
+  if(book.coverImg) return `<div class="${sizeClass} has-img"><img src="${book.coverImg}" alt="${book.title}封面"></div>`;
+  return `<div class="${sizeClass} ${book.cls}"${mini?'':' aria-hidden="true"'}>${mini?'':`<span class="bc-sub">${sub}</span><span class="bc-title">${title}</span><span class="bc-pub">${pub}</span>`}</div>`;
 }
 function openBook(bookId){
   const book = EBOOKS[bookId] || EBOOKS.math6a;
@@ -1516,20 +1527,24 @@ function openBook(bookId){
   const src = $('#noteSourceText');
   if(src) src.textContent = `${book.title} · ${book.articles[0].title}。课本页可批注，课堂笔记同步保留。`;
 }
-function openArticle(articleId, mode='portrait'){
+function openArticle(articleId, mode='auto'){
   const book = EBOOKS[currentBook] || EBOOKS.math6a;
   const article = book.articles.find(a => a.id === articleId) || book.articles[0];
+  const readMode = mode === 'auto'
+    ? ($('#col-home .tablet')?.classList.contains('landscape') ? 'landscape' : 'portrait')
+    : mode;
   currentArticle = article.id;
   $('#bookDetail')?.classList.remove('active');
   const reader = $('#ebookReader');
-  reader.className = `ebook-reader active ${mode === 'landscape' ? 'landscape' : ''}`;
+  reader.className = `ebook-reader active ${readMode === 'landscape' ? 'landscape' : ''}`;
   reader.innerHTML = `
     <div class="reader-head">
       <button class="reader-tool" data-act="readerBack">书架</button>
       <strong>${article.title}</strong>
       <div class="reader-tools">
-        <button class="reader-tool ${mode === 'portrait' ? 'active' : ''}" data-reader-mode="portrait">竖屏一页</button>
-        <button class="reader-tool ${mode === 'landscape' ? 'active' : ''}" data-reader-mode="landscape">横屏双页</button>
+        <button class="reader-tool ${readMode === 'portrait' ? 'active' : ''}" data-reader-mode="portrait">竖屏一页</button>
+        <button class="reader-tool ${readMode === 'landscape' ? 'active' : ''}" data-reader-mode="landscape">横屏双页</button>
+        <button class="reader-tool" data-act="readerSyncNote">记到笔记</button>
         <button class="reader-tool" data-act="readerClearInk">清除批注</button>
       </div>
     </div>
@@ -1566,6 +1581,45 @@ function drawInkLine(area, start, end){
   layer.appendChild(line);
 }
 
+let inkDrag = null;
+let suppressNextInkClick = false;
+function inkPoint(area, e){
+  const r = area.getBoundingClientRect();
+  return {
+    x: Math.max(8, Math.min(e.clientX - r.left, r.width - 8)),
+    y: Math.max(8, Math.min(e.clientY - r.top, r.height - 8))
+  };
+}
+document.addEventListener('pointerdown', e=>{
+  const area = e.target.closest?.('[data-ink-area]');
+  if(!area) return;
+  inkDrag = {area, last:inkPoint(area, e), moved:false};
+  area.setPointerCapture?.(e.pointerId);
+});
+document.addEventListener('pointermove', e=>{
+  if(!inkDrag) return;
+  const next = inkPoint(inkDrag.area, e);
+  if(Math.hypot(next.x - inkDrag.last.x, next.y - inkDrag.last.y) > 3){
+    drawInkLine(inkDrag.area, inkDrag.last, next);
+    inkDrag.last = next;
+    inkDrag.moved = true;
+  }
+});
+document.addEventListener('pointerup', ()=>{
+  if(inkDrag?.moved){
+    suppressNextInkClick = true;
+    setTimeout(()=> suppressNextInkClick = false, 220);
+  }
+  inkDrag = null;
+});
+
+function appendNoteLine(text){
+  const note = $('#classNotePage');
+  if(!note) return;
+  const prefix = note.textContent.trim() ? '\n' : '';
+  note.textContent += `${prefix}${text}`;
+}
+
 // ============ 作业中心：科目 / 状态 / 补交流程 ============
 const hwState = { date:'today', subject:'math', kind:'all', status:'all' };
 const HOMEWORKS = {
@@ -1581,6 +1635,19 @@ const HOMEWORKS = {
     toast:'已进入补拍上传。补交后会变为“待刘老师复核”。',
     note:'刘老师退回：第 2 页没有拍到，前 8 个词已经通过，只需要补拍缺页。',
     steps:['拍第 2 页订正本','确认图片清楚','提交后等待老师复核']
+  },
+  math_monday: {
+    tag:'数学 · 已完成',
+    title:'分数乘整数 · 课后 6 题',
+    subject:'数学',
+    status:'已批改',
+    due:'周一 21:30 完成',
+    teacher:'王老师',
+    method:'在线作答',
+    primary:'查看批改',
+    toast:'已打开周一数学作业记录，第 4 题已经进入自主订正。',
+    note:'这份作业保留了每题作答时间、草稿和老师批注。第 4 题错因是“单位 1 没圈出来”。',
+    steps:['6 题已提交','老师已批改','第 4 题进入自主订正']
   },
   math_basic: {
     tag:'数学 · 进行中',
@@ -1929,7 +1996,7 @@ document.addEventListener('click', e=>{
     return;
   }
   const inkArea = e.target.closest('[data-ink-area]');
-  if(inkArea && e.type === 'click'){
+  if(inkArea && e.type === 'click' && !suppressNextInkClick){
     const r = inkArea.getBoundingClientRect();
     const x = Math.max(20, Math.min(e.clientX - r.left - 30, r.width - 70));
     const y = Math.max(80, Math.min(e.clientY - r.top, r.height - 55));
@@ -2004,6 +2071,14 @@ document.addEventListener('click', e=>{
       $$('#ebookReader .ink-layer').forEach(layer => layer.innerHTML = '');
       toast('已清除本页批注', 'ok', 1200, a);
       break;
+    case 'readerSyncNote': {
+      const book = EBOOKS[currentBook] || EBOOKS.math6a;
+      const article = book.articles.find(x => x.id === currentArticle) || book.articles[0];
+      appendNoteLine(`- ${book.title} / ${article.title}：这里需要课后再看一遍。`);
+      switchKnowledgeView('notes');
+      toast('已写入课堂笔记', 'ok', 1200, a);
+      break;
+    }
     case 'liveBarSwitch': showDemo('liveBarSwitch', a); break;
     case 'search': showDemo('search', a); break;
     case 'notify': showDemo('notify', a); break;
@@ -2094,7 +2169,7 @@ function aiReply(q){
     const ss = String(s%60).padStart(2,'0');
     const el = $('#classTimer');
     if(el) el.textContent = m+':'+ss;
-    if(s===0){ el.textContent='时间到'; toast('右屏：时间到，自动提交','info'); }
+    if(s===0){ el.textContent='时间到'; toast('课堂互动：时间到，自动提交','info'); }
   }, 1000);
 })();
 
@@ -2102,6 +2177,8 @@ function aiReply(q){
 setHomeworkFilter('subject','math');
 openBook('math6a');
 backToBookshelf();
+const initialTab = new URLSearchParams(location.search).get('tab') || location.hash.replace('#','');
+if(['knowledge','classroom','homework','repair'].includes(initialTab)) switchStudentTab(initialTab);
 </script>
 </body>
 </html>
