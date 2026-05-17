@@ -31,13 +31,20 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
 /* ===== Tablet shell ===== */
 .tablet{background:#0f172a;border-radius:38px;padding:13px;box-shadow:0 30px 60px rgba(15,23,42,.18),0 1px 0 rgba(255,255,255,.04) inset;position:relative}
+.tablet:not(.landscape){max-width:520px;margin:0 auto}
 .tablet::before{content:"";position:absolute;left:50%;top:18px;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:#1e293b}
 .tablet::after{content:"";position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:60px;height:4px;border-radius:2px;background:#1e293b}
 .tablet-screen{background:#fff;border-radius:26px;overflow:hidden;width:100%;aspect-ratio:3/4.05;display:flex;flex-direction:column;position:relative;min-height:660px}
 .tablet.landscape{border-radius:32px}
+.tablet.landscape{max-width:none}
 .tablet.landscape::before{left:18px;top:50%;transform:translateY(-50%)}
 .tablet.landscape::after{left:auto;right:7px;bottom:50%;transform:translateY(50%);width:4px;height:60px}
 .tablet.landscape .tablet-screen{aspect-ratio:4.2/3;min-height:520px;border-radius:22px}
+.rotate-tablet-btn{position:absolute;right:-72px;top:50%;transform:translateY(-50%);width:54px;min-height:72px;border:1px solid var(--line);border-radius:18px;background:#fff;color:var(--text);box-shadow:0 16px 36px rgba(15,23,42,.14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-family:inherit;font-weight:900;cursor:pointer;z-index:20}
+.rotate-tablet-btn:hover{border-color:var(--primary);color:var(--primary-dark);box-shadow:0 18px 42px rgba(16,185,129,.18)}
+.rotate-tablet-btn .rt-ico{font-size:22px;line-height:1}
+.rotate-tablet-btn .rt-txt{font-size:10px;line-height:1.2}
+.tablet:not(.landscape) .rotate-tablet-btn{right:-70px}
 
 /* iOS-like statusbar */
 .statusbar{display:flex;justify-content:space-between;padding:9px 26px 4px;font-size:11px;font-weight:700;color:var(--text);flex-shrink:0}
@@ -144,6 +151,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .ebook-view.active{display:block}
 .knowledge-split{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(260px,.85fr);gap:10px;align-items:start}
 .knowledge-split [data-ebook-view]{display:block}
+.tablet:not(.landscape) .knowledge-split,.tablet:not(.landscape) .classroom-shell{grid-template-columns:1fr}
+.tablet:not(.landscape) .knowledge-split [data-ebook-view]:not(.active){display:none}
 .hidden{display:none!important}
 .bookshelf{background:linear-gradient(180deg,#f8fafc,#fff);border:1px solid var(--line);border-radius:14px;padding:12px}
 .bookshelf-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
@@ -542,6 +551,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
   body{padding:0;background:#fff}
   .stage{padding:0}
   .tablet{border-radius:0;padding:0;box-shadow:none}
+  .rotate-tablet-btn{right:10px;top:auto;bottom:78px;transform:none;width:48px;min-height:48px;border-radius:14px}
+  .rotate-tablet-btn .rt-txt{display:none}
   .tablet.landscape .tablet-screen,.tablet-screen{aspect-ratio:auto;min-height:100vh;border-radius:0}
   .book-grid{grid-template-columns:repeat(2,1fr)}
   .note-split{grid-template-columns:1fr}
@@ -558,6 +569,10 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
   <!-- ===== 左：课后模式 ===== -->
   <div class="stage-col" id="col-home">
     <div class="tablet landscape">
+      <button class="rotate-tablet-btn" data-act="rotateTablet" title="旋转平板">
+        <span class="rt-ico">⟳</span>
+        <span class="rt-txt" id="rotateTabletText">竖屏</span>
+      </button>
       <div class="tablet-screen">
         <div class="statusbar">
           <span>19:30</span>
@@ -1069,6 +1084,27 @@ function switchStudentTab(k){
 $$('#tabbar .tb').forEach(t=>{
   t.addEventListener('click', ()=> switchStudentTab(t.dataset.tab));
 });
+
+function isTabletLandscape(){
+  return !!$('#col-home .tablet')?.classList.contains('landscape');
+}
+function updateRotateTabletButton(){
+  const txt = $('#rotateTabletText');
+  if(txt) txt.textContent = isTabletLandscape() ? '竖屏' : '横屏';
+}
+function setStudentTabletOrientation(mode){
+  const tablet = $('#col-home .tablet');
+  if(!tablet) return;
+  tablet.classList.toggle('landscape', mode !== 'portrait');
+  updateRotateTabletButton();
+  if(currentArticle) openArticle(currentArticle, 'auto');
+}
+function rotateStudentTablet(){
+  const tablet = $('#col-home .tablet');
+  if(!tablet) return;
+  setStudentTabletOrientation(isTabletLandscape() ? 'portrait' : 'landscape');
+  toast(isTabletLandscape() ? '已切换为横屏双页' : '已切换为竖屏一页', 'ok', 1200, $('#rotateTabletText'));
+}
 
 // ============ 课堂：单选题逻辑 ============
 const CORRECT_MCQ = 'C';
@@ -2069,6 +2105,7 @@ document.addEventListener('click', e=>{
   const act = a.dataset.act;
   switch(act){
     case 'modalClose': closeModal(); break;
+    case 'rotateTablet': rotateStudentTablet(); break;
     case 'readerBack': backToBookshelf(); break;
     case 'readerClearInk':
       $$('#ebookReader .ink-layer').forEach(layer => layer.innerHTML = '');
@@ -2182,6 +2219,9 @@ openBook('math6a');
 backToBookshelf();
 const initialTab = new URLSearchParams(location.search).get('tab') || location.hash.replace('#','');
 if(['knowledge','classroom','homework','repair'].includes(initialTab)) switchStudentTab(initialTab);
+const initialOrientation = new URLSearchParams(location.search).get('orient');
+if(initialOrientation === 'portrait') setStudentTabletOrientation('portrait');
+updateRotateTabletButton();
 </script>
 </body>
 </html>
