@@ -65,9 +65,12 @@ body{
   border-radius:12px;
   backdrop-filter: blur(10px);
   box-shadow:0 10px 28px rgba(15,23,42,.18);
+  opacity:.12;
+  transition:opacity .18s ease;
 }
+.lesson-controls:hover,.lesson-controls:focus-within{opacity:1}
 .lesson-nav-btn{
-  height:30px; min-width:64px; padding:0 12px;
+  height:30px; min-width:34px; padding:0 10px;
   border-radius:8px; border:1px solid rgba(255,255,255,.18);
   background:#fff; color:#111827; font:inherit; font-size:12px; font-weight:900;
   cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,.12);
@@ -75,7 +78,7 @@ body{
 .lesson-nav-btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
 .lesson-nav-btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
 .lesson-page-label{
-  min-width:156px; max-width:220px; text-align:center;
+  min-width:46px; max-width:70px; text-align:center;
   font-size:12px; color:#cbd5e1; font-weight:800;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
@@ -442,9 +445,9 @@ body{
       <div class="board-screen" id="boardScreen">
         <div class="scene-root" id="sceneRoot"></div>
         <div class="lesson-controls" id="lessonControls">
-          <button class="lesson-nav-btn" data-act="prevPage" id="prevPage">上一页</button>
-          <div class="lesson-page-label" id="lessonPageLabel">第 1 / 6 页</div>
-          <button class="lesson-nav-btn primary" data-act="nextPage" id="nextPage">下一页</button>
+          <button class="lesson-nav-btn" data-act="prevPage" id="prevPage" aria-label="上一页">‹</button>
+          <div class="lesson-page-label" id="lessonPageLabel">1 / 6</div>
+          <button class="lesson-nav-btn primary" data-act="nextPage" id="nextPage" aria-label="下一页">›</button>
         </div>
         <div class="toast-stack" id="toastStack"></div>
         <div class="modal-bg" id="modalBg">
@@ -488,6 +491,9 @@ function closeModal(){ $('#modalBg').classList.remove('show'); }
 $('#modalBg').addEventListener('click', e=>{ if(e.target===$('#modalBg')) closeModal(); });
 
 const CLASSMATES = ['李小明','陈思雨','张佳怡','王浩然','赵一诺','孙晨','刘安琪','周航','何雨桐','郑嘉豪','钱乐乐','许知远'];
+const RESPONSE_LIVE = { total:28, answered:17, counts:{A:3,B:2,C:7,D:5} };
+const RESPONSE_FINAL = { total:28, counts:{A:5,B:3,C:11,D:9}, correct:'C', answer:'4/9' };
+const resultPct = Math.round(RESPONSE_FINAL.counts[RESPONSE_FINAL.correct] / RESPONSE_FINAL.total * 100);
 const LESSON_FLOW = [
   {scene:'teach', title:'课件讲解 · 分数加减法'},
   {scene:'live', title:'随堂题 · 学生平板作答'},
@@ -629,7 +635,7 @@ const SCENES = {
       </div>
     </div>
     <div class="bd-aibar">
-      <div class="ai-text">下一页进入随堂题，学生端同步作答</div>
+      <div class="ai-text">学生端已同步随堂题</div>
     </div>
   `,
   live: () => `
@@ -651,19 +657,19 @@ const SCENES = {
         <div class="live-opt"><div class="k">D</div><div class="v">5/8</div></div>
       </div>
       <div class="live-prog-row">
-        <div class="lpr-l">已答 <strong id="liveAns">17</strong> / 28</div>
+        <div class="lpr-l">已答 <strong id="liveAns">${RESPONSE_LIVE.answered}</strong> / ${RESPONSE_LIVE.total}</div>
         <div class="live-bar"><div class="fill" id="liveFill" style="width:0%"></div></div>
         <div class="lpr-r" id="livePct">0%</div>
       </div>
       <div class="live-summary" aria-label="匿名选项分布">
-        <div class="ls-item"><span class="ls-key">A</span><span class="ls-num" id="liveA">4</span></div>
-        <div class="ls-item"><span class="ls-key">B</span><span class="ls-num" id="liveB">2</span></div>
-        <div class="ls-item"><span class="ls-key">C</span><span class="ls-num" id="liveC">7</span></div>
-        <div class="ls-item"><span class="ls-key">D</span><span class="ls-num" id="liveD">4</span></div>
+        <div class="ls-item"><span class="ls-key">A</span><span class="ls-num" id="liveA">${RESPONSE_LIVE.counts.A}</span></div>
+        <div class="ls-item"><span class="ls-key">B</span><span class="ls-num" id="liveB">${RESPONSE_LIVE.counts.B}</span></div>
+        <div class="ls-item"><span class="ls-key">C</span><span class="ls-num" id="liveC">${RESPONSE_LIVE.counts.C}</span></div>
+        <div class="ls-item"><span class="ls-key">D</span><span class="ls-num" id="liveD">${RESPONSE_LIVE.counts.D}</span></div>
       </div>
     </div>
     <div class="bd-aibar">
-      <div class="ai-text">匿名统计中 · 点击下一页揭晓全班汇总</div>
+      <div class="ai-text">匿名统计中 · 只显示全班汇总</div>
     </div>
   `,
   result: () => `
@@ -679,19 +685,19 @@ const SCENES = {
     <div class="scn-result">
       <div class="result-h">
         <span class="lab">正确答案：</span>
-        <span class="ans">C · 4/9</span>
-        <span class="stats">全班正确率 <strong>39%</strong> · 11 / 28 答对</span>
+        <span class="ans">${RESPONSE_FINAL.correct} · ${RESPONSE_FINAL.answer}</span>
+        <span class="stats">全班正确率 <strong>${resultPct}%</strong> · ${RESPONSE_FINAL.counts[RESPONSE_FINAL.correct]} / ${RESPONSE_FINAL.total} 答对</span>
         <span class="result-privacy">🔒 大屏仅显示全班汇总，不公开个人对错</span>
       </div>
       <div class="bars">
-        <div class="bar-col"><div class="bar-wrap"><div class="bar" data-h="32" style="height:6px"><span class="ct">5</span></div></div><div class="lab2"><span class="key">A</span>2/5</div></div>
-        <div class="bar-col"><div class="bar-wrap"><div class="bar" data-h="20" style="height:6px"><span class="ct">3</span></div></div><div class="lab2"><span class="key">B</span>3/7</div></div>
-        <div class="bar-col correct"><div class="bar-wrap"><div class="bar" data-h="72" style="height:6px"><span class="ct">11</span></div></div><div class="lab2"><span class="key">C</span>4/9</div></div>
-        <div class="bar-col"><div class="bar-wrap"><div class="bar" data-h="58" style="height:6px"><span class="ct">9</span></div></div><div class="lab2"><span class="key">D</span>5/8</div></div>
+        <div class="bar-col"><div class="bar-wrap"><div class="bar" data-h="45" style="height:6px"><span class="ct">${RESPONSE_FINAL.counts.A}</span></div></div><div class="lab2"><span class="key">A</span>2/5</div></div>
+        <div class="bar-col"><div class="bar-wrap"><div class="bar" data-h="27" style="height:6px"><span class="ct">${RESPONSE_FINAL.counts.B}</span></div></div><div class="lab2"><span class="key">B</span>3/7</div></div>
+        <div class="bar-col correct"><div class="bar-wrap"><div class="bar" data-h="100" style="height:6px"><span class="ct">${RESPONSE_FINAL.counts.C}</span></div></div><div class="lab2"><span class="key">C</span>4/9</div></div>
+        <div class="bar-col"><div class="bar-wrap"><div class="bar" data-h="82" style="height:6px"><span class="ct">${RESPONSE_FINAL.counts.D}</span></div></div><div class="lab2"><span class="key">D</span>5/8</div></div>
       </div>
     </div>
     <div class="bd-aibar">
-      <div class="ai-text">仅展示全班分布 · 下一页随机抽一位同学说理由</div>
+      <div class="ai-text">仅展示全班分布 · 个人名单留在教师端</div>
     </div>
   `,
   draw: () => `
@@ -706,17 +712,11 @@ const SCENES = {
     </div>
     <div class="scn-draw">
       <div class="draw-pool">
-        <div class="draw-pool-title"><span>候选名单</span><strong>28 人</strong></div>
+        <div class="draw-pool-title"><span>抽人规则</span><strong>1 人</strong></div>
         <div class="draw-list" id="drawList">
-          <div class="draw-student">李小明</div>
-          <div class="draw-student">陈思雨</div>
-          <div class="draw-student">王浩然</div>
-          <div class="draw-student">赵一诺</div>
-          <div class="draw-student active">张嘉怡</div>
-          <div class="draw-student">孙晨</div>
-          <div class="draw-student">刘安琪</div>
-          <div class="draw-student">周航</div>
-          <div class="draw-student dim">其余 20 人</div>
+          <div class="draw-student active">全班随机</div>
+          <div class="draw-student">可求助同桌</div>
+          <div class="draw-student">老师确认后回答</div>
         </div>
         <div class="draw-status" id="drawStatus">进入本页后自动抽取</div>
       </div>
@@ -823,8 +823,9 @@ function setupSceneEffects(scene){
   // ---- live：匿名进度 / 倒计时 / 已答数 ----
   if(scene==='live'){
     setTimeout(()=>{
-      const fill = $('#liveFill'); if(fill) fill.style.width = '60.7%';
-      const pct = $('#livePct'); if(pct) pct.textContent='61%';
+      const p = Math.round(RESPONSE_LIVE.answered / RESPONSE_LIVE.total * 100);
+      const fill = $('#liveFill'); if(fill) fill.style.width = p + '%';
+      const pct = $('#livePct'); if(pct) pct.textContent = p + '%';
     }, 200);
     let cd = 2*60+8;
     liveCDInterval = setInterval(()=>{
@@ -835,20 +836,24 @@ function setupSceneEffects(scene){
       const ss = String(cd%60).padStart(2,'0');
       el.textContent = m+':'+ss;
     }, 1000);
-    let ans = 17;
+    const liveSteps = [
+      {answered:21, counts:{A:4,B:2,C:9,D:6}},
+      {answered:24, counts:{A:4,B:3,C:10,D:7}},
+      {answered:28, counts:RESPONSE_FINAL.counts}
+    ];
+    let stepIndex = 0;
     liveAnsInterval = setInterval(()=>{
       const el = $('#liveAns'); if(!el){ clearInterval(liveAnsInterval); return; }
-      if(ans>=27) return;
-      if(Math.random()<0.35){
-        ans++;
-        el.textContent = ans;
-        const p = Math.round(ans/28*100);
-        const fill = $('#liveFill'); if(fill) fill.style.width = p+'%';
-        const pct = $('#livePct'); if(pct) pct.textContent = p+'%';
-        const target = ['liveA','liveB','liveC','liveD'][Math.floor(Math.random()*4)];
-        const countEl = $('#' + target);
-        if(countEl) countEl.textContent = String(Number(countEl.textContent || 0) + 1);
-      }
+      const next = liveSteps[stepIndex++];
+      if(!next){ clearInterval(liveAnsInterval); return; }
+      el.textContent = next.answered;
+      const p = Math.round(next.answered / RESPONSE_LIVE.total * 100);
+      const fill = $('#liveFill'); if(fill) fill.style.width = p+'%';
+      const pct = $('#livePct'); if(pct) pct.textContent = p+'%';
+      ['A','B','C','D'].forEach(k => {
+        const countEl = $('#live' + k);
+        if(countEl) countEl.textContent = next.counts[k];
+      });
     }, 1500);
   }
   // ---- result：柱状图增长（只显示汇总，不展示个人） ----
@@ -929,7 +934,7 @@ document.addEventListener('click', e=>{
     jumpScene('result');
   }
   if(act==='showSlowList'){
-    showModal('未答名单', '<p><strong>芷雨、明轩、星辰、嘉豪、乐乐、知远、晨晨、雨桐、佳宁、书航、子墨</strong>尚未提交。</p><p>可延长 30 秒后收题。</p>', '课堂状态', '延长 30 秒');
+    showModal('未提交统计', '<p><strong>还有 11 人未提交。</strong></p><p>白板端只显示全班数量，个人名单保留在教师端。</p>', '课堂状态', '延长 30 秒');
   }
   if(act==='explainWrong'){
     showModal('D 选项错因', '<p>9 名学生选了 <strong>D · 5/8</strong>。</p><p><strong>C · 4/9</strong> 离 1/2 更近。讲评时用数轴比较 4/9、1/2、5/8。</p>', '错因');
@@ -942,19 +947,17 @@ document.addEventListener('click', e=>{
     const name = $('#drawName');
     const why = $('#drawWhy');
     const status = $('#drawStatus');
-    $$('.draw-student').forEach(s=>s.classList.remove('active'));
-    const students = $$('.draw-student');
-    if(students[5]) students[5].classList.add('active');
+    $$('.draw-student').forEach((s, i)=>s.classList.toggle('active', i === 0));
     if(status) status.textContent = '正在抽取…';
     if(wait) wait.style.display='block';
     if(name){ name.style.display='none'; name.textContent='孙晨'; }
-    if(why){ why.style.display='none'; why.innerHTML='请回答：5/8 为什么最接近 1/2？'; }
+    if(why){ why.style.display='none'; why.innerHTML='请回答：4/9 为什么比 5/8 更接近 1/2？'; }
     setTimeout(()=>{
       if(wait) wait.style.display='none';
       if(name) name.style.display='block';
       if(why) why.style.display='block';
       if(status) status.textContent = '已抽中 · 等待回答';
-      toast('🎯 抽中：孙晨', 'info', 1800);
+      toast('已重新抽取 1 位同学', 'info', 1800);
     }, 900);
   }
   if(act==='switchDrawMode'){
@@ -1012,12 +1015,14 @@ function syncLessonControls(){
   const label = $('#lessonPageLabel');
   if(prev) prev.disabled = lessonPageIndex === 0;
   if(next) next.disabled = lessonPageIndex === LESSON_FLOW.length - 1;
-  if(label) label.textContent = `第 ${lessonPageIndex + 1} / ${LESSON_FLOW.length} 页 · ${page.title}`;
+  if(label) label.textContent = `${lessonPageIndex + 1} / ${LESSON_FLOW.length}`;
 }
 
 // 初次渲染
 setTimeout(()=>{
-  renderLessonPage(0);
+  const hashScene = decodeURIComponent(location.hash.replace('#','')).trim();
+  const initialIndex = LESSON_FLOW.findIndex(p => p.scene === hashScene);
+  renderLessonPage(initialIndex >= 0 ? initialIndex : 0);
 }, 50);
 </script>
 </body>

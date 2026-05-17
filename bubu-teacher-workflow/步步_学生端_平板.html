@@ -671,13 +671,13 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
           <!-- ===== App 3: 作业提交 ===== -->
           <div class="s-panel" data-pane="homework">
-            <div class="hw-shell" id="homeworkShell">
+            <div class="hw-shell hw-subject-math" id="homeworkShell">
               <div class="hw-summary">
                 <div class="hw-summary-top">
-                  <h4 id="homeworkTitle">今天作业</h4>
-                  <span class="priority-pill ok" id="homeworkCount">先选学科</span>
+                  <h4 id="homeworkTitle">今天作业 · 数学</h4>
+                  <span class="priority-pill ok" id="homeworkCount">2 项</span>
                 </div>
-                <p id="homeworkSummary">先选学科，再看今天对应老师布置的任务；可切换日期翻找每天作业。</p>
+                <p id="homeworkSummary">王老师布置：在线题和应用题分开处理，错题会进入订正。</p>
               </div>
 
               <div class="hw-filter-block">
@@ -688,7 +688,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
                   <button class="filter-chip" data-hw-date="sunday">周日</button>
                 </div>
                 <div class="filter-row" data-filter-kind="subject">
-                  <button class="filter-chip" data-hw-subject="math">数学</button>
+                  <button class="filter-chip active" data-hw-subject="math">数学</button>
                   <button class="filter-chip" data-hw-subject="chinese">语文</button>
                   <button class="filter-chip" data-hw-subject="english">英语</button>
                   <button class="filter-chip" data-hw-subject="science">科学</button>
@@ -942,10 +942,10 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
         <!-- 底部 Tab Bar -->
         <div class="tabbar" id="tabbar">
-          <div class="tb active" data-tab="knowledge"><i>知</i>知识</div>
-          <div class="tb" data-tab="classroom"><i>课</i>课堂</div>
+          <div class="tb active" data-tab="knowledge"><i>知</i>知识内容</div>
+          <div class="tb" data-tab="classroom"><i>课</i>课堂互动</div>
           <div class="tb has-dot" data-tab="homework"><i>交</i>作业</div>
-          <div class="tb" data-tab="repair"><i>订</i>订正</div>
+          <div class="tb" data-tab="repair"><i>订</i>自主订正</div>
         </div>
 
       </div><!-- /tablet-screen -->
@@ -986,7 +986,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
           <div class="class-status" id="classStatusBar" title="演示用：模拟老师端推送下一题">
             <div class="class-status-text">
-              <strong id="classStep">第 1 / 4 次推送 · 手写题</strong>
+              <strong id="classStep">第 1 / 9 次推送 · 手写题</strong>
               <span id="classStatusSub">课堂接管中，提交后等待老师推送</span>
             </div>
             <div class="class-dots" id="classDots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -1066,7 +1066,7 @@ $$('#tabbar .tb').forEach(t=>{
 });
 
 // ============ 课堂：单选题逻辑 ============
-const CORRECT_MCQ = 'D';
+const CORRECT_MCQ = 'C';
 let mcqDone = false;
 
 // ============ 课堂场景库 ============
@@ -1135,7 +1135,7 @@ const SCENES = {
     html:`<div class="draw-card">
       <div class="dc-emo">🎯</div>
       <div class="dc-t">嘉怡，请回答</div>
-      <div class="dc-sub">告诉大家<strong>"5/8 为什么最接近 1/2"</strong>。<br>不会可以求助同桌或老师。</div>
+      <div class="dc-sub">告诉大家<strong>"4/9 为什么最接近 1/2"</strong>。<br>不会可以求助同桌或老师。</div>
       <button class="q-sub-btn" id="drawAccept" style="margin-top:14px;display:none">我准备好了 →</button>
     </div>
     <div class="q-card" style="margin-top:10px">
@@ -1203,11 +1203,13 @@ const SCENES = {
   }
 };
 
-const classQueue = ['handwrite','mcq','dict','draw','read','fill','done'];
+const classQueue = ['handwrite','mcq','dict','circle','vote','draw','read','fill','done'];
 const classLabels = {
   handwrite:'手写题',
   mcq:'单选题',
   dict:'听写',
+  circle:'圈选',
+  vote:'投票',
   draw:'抽人',
   read:'朗读',
   fill:'填空',
@@ -1220,9 +1222,11 @@ const CLASS_PUSH_RECORDS = [
   { scene:'handwrite', icon:'写', time:'14:21', title:'第 1 次推送 · 手写题', desc:'0.8 米 = 80 厘米，回收本人的手写过程。', state:'进行中' },
   { scene:'mcq', icon:'选', time:'14:24', title:'第 2 次推送 · 单选题', desc:'选出最接近 1/2 的分数，提交后只给本人反馈。', state:'待推送' },
   { scene:'dict', icon:'听', time:'14:28', title:'第 3 次推送 · 听写', desc:'播放老师录音，课堂内限听次数。', state:'待推送' },
-  { scene:'draw', icon:'抽', time:'14:31', title:'第 4 次推送 · 抽人提问', desc:'老师点名后自动进入回答界面，不开放学生自选。', state:'待推送' },
-  { scene:'read', icon:'读', time:'14:35', title:'第 5 次推送 · 朗读', desc:'按老师指定段落录音，记录只保留给本人和老师。', state:'待推送' },
-  { scene:'fill', icon:'填', time:'14:39', title:'第 6 次推送 · 填空题', desc:'填写通分结果，错题课后进入自主订正。', state:'待推送' }
+  { scene:'circle', icon:'圈', time:'14:30', title:'第 4 次推送 · 圈选题', desc:'圈出最简分数，提交后只显示本人反馈。', state:'待推送' },
+  { scene:'vote', icon:'投', time:'14:32', title:'第 5 次推送 · 课堂投票', desc:'开放问题无对错，只回收全班倾向。', state:'待推送' },
+  { scene:'draw', icon:'抽', time:'14:34', title:'第 6 次推送 · 抽人提问', desc:'老师点名后自动进入回答界面，不开放学生自选。', state:'待推送' },
+  { scene:'read', icon:'读', time:'14:37', title:'第 7 次推送 · 朗读', desc:'按老师指定段落录音，记录只保留给本人和老师。', state:'待推送' },
+  { scene:'fill', icon:'填', time:'14:40', title:'第 8 次推送 · 填空题', desc:'填写通分结果，错题课后进入自主订正。', state:'待推送' }
 ];
 
 function ensureClassDots(){
@@ -1290,7 +1294,7 @@ function bindMCQ(){
     const sel = $('#optList .opt.sel');
     if(!sel){ toast('请先选一个答案','warn'); return; }
     mcqDone = true;
-    const ok = sel.dataset.opt === 'D';
+    const ok = sel.dataset.opt === CORRECT_MCQ;
     sel.classList.add(ok?'correct':'wrong');
     $('#optSubmit').textContent='已提交'; $('#optSubmit').disabled=true; $('#optSubmit').classList.add('done');
     const fb=$('#optFB'); fb.classList.remove('ok','no'); fb.classList.add('show', ok?'ok':'no');
@@ -1526,6 +1530,7 @@ function openArticle(articleId, mode='portrait'){
       <div class="reader-tools">
         <button class="reader-tool ${mode === 'portrait' ? 'active' : ''}" data-reader-mode="portrait">竖屏一页</button>
         <button class="reader-tool ${mode === 'landscape' ? 'active' : ''}" data-reader-mode="landscape">横屏双页</button>
+        <button class="reader-tool" data-act="readerClearInk">清除批注</button>
       </div>
     </div>
     <div class="reader-pages">
@@ -1995,6 +2000,10 @@ document.addEventListener('click', e=>{
   switch(act){
     case 'modalClose': closeModal(); break;
     case 'readerBack': backToBookshelf(); break;
+    case 'readerClearInk':
+      $$('#ebookReader .ink-layer').forEach(layer => layer.innerHTML = '');
+      toast('已清除本页批注', 'ok', 1200, a);
+      break;
     case 'liveBarSwitch': showDemo('liveBarSwitch', a); break;
     case 'search': showDemo('search', a); break;
     case 'notify': showDemo('notify', a); break;
