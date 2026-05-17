@@ -23,23 +23,21 @@
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;padding:24px 0 60px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
 /* ===== Stage (two tablets) ===== */
-.stage{max-width:1060px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr;gap:24px;align-items:start}
+.stage{max-width:1180px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr;gap:24px;align-items:start}
 .stage-col{display:flex;flex-direction:column;gap:14px}
 .stage-note{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:800;padding:0 6px}
 .stage-note strong{font-size:14px;color:var(--text)}
 #col-class{display:none}
 
 /* ===== Tablet shell ===== */
-.tablet{background:#0f172a;border-radius:38px;padding:13px;box-shadow:0 30px 60px rgba(15,23,42,.18),0 1px 0 rgba(255,255,255,.04) inset;position:relative}
-.tablet:not(.landscape){max-width:520px;margin:0 auto}
+.tablet{--tablet-long:1000px;--tablet-short:700px;background:#0f172a;border-radius:38px;padding:13px;box-shadow:0 30px 60px rgba(15,23,42,.18),0 1px 0 rgba(255,255,255,.04) inset;position:relative;width:var(--tablet-short);height:var(--tablet-long);margin:0 auto;transition:width .28s ease,height .28s ease,border-radius .28s ease}
 .tablet::before{content:"";position:absolute;left:50%;top:18px;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:#1e293b}
 .tablet::after{content:"";position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:60px;height:4px;border-radius:2px;background:#1e293b}
-.tablet-screen{background:#fff;border-radius:26px;overflow:hidden;width:100%;aspect-ratio:3/4.05;display:flex;flex-direction:column;position:relative;min-height:660px}
-.tablet.landscape{border-radius:32px}
-.tablet.landscape{max-width:none}
+.tablet-screen{background:#fff;border-radius:26px;overflow:hidden;width:100%;height:100%;display:flex;flex-direction:column;position:relative;min-height:0}
+.tablet.landscape{border-radius:32px;width:var(--tablet-long);height:var(--tablet-short)}
 .tablet.landscape::before{left:18px;top:50%;transform:translateY(-50%)}
 .tablet.landscape::after{left:auto;right:7px;bottom:50%;transform:translateY(50%);width:4px;height:60px}
-.tablet.landscape .tablet-screen{aspect-ratio:4.2/3;min-height:520px;border-radius:22px}
+.tablet.landscape .tablet-screen{border-radius:22px}
 .rotate-tablet-btn{position:absolute;right:-72px;top:50%;transform:translateY(-50%);width:54px;min-height:72px;border:1px solid var(--line);border-radius:18px;background:#fff;color:var(--text);box-shadow:0 16px 36px rgba(15,23,42,.14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-family:inherit;font-weight:900;cursor:pointer;z-index:20}
 .rotate-tablet-btn:hover{border-color:var(--primary);color:var(--primary-dark);box-shadow:0 18px 42px rgba(16,185,129,.18)}
 .rotate-tablet-btn .rt-ico{font-size:22px;line-height:1}
@@ -288,6 +286,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .hw-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 11px;cursor:pointer;transition:.15s}
 .hw-card:hover{border-color:var(--primary);box-shadow:var(--shadow-2)}
 .hw-card.hidden{display:none}
+.hw-card.synced{border-color:var(--primary);background:linear-gradient(135deg,#ecfdf5,#fff);box-shadow:0 10px 24px rgba(16,185,129,.12)}
 .hw-card.late{border-color:#fecaca;background:#fffafa}
 .hw-card.pending{background:#f8fafc}
 .hw-top{display:flex;align-items:flex-start;gap:9px}
@@ -550,10 +549,10 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 @media (max-width: 640px){
   body{padding:0;background:#fff}
   .stage{padding:0}
-  .tablet{border-radius:0;padding:0;box-shadow:none}
+  .tablet,.tablet.landscape{width:100vw;height:100vh;border-radius:0;padding:0;box-shadow:none}
   .rotate-tablet-btn{right:10px;top:auto;bottom:78px;transform:none;width:48px;min-height:48px;border-radius:14px}
   .rotate-tablet-btn .rt-txt{display:none}
-  .tablet.landscape .tablet-screen,.tablet-screen{aspect-ratio:auto;min-height:100vh;border-radius:0}
+  .tablet.landscape .tablet-screen,.tablet-screen{min-height:0;border-radius:0}
   .book-grid{grid-template-columns:repeat(2,1fr)}
   .note-split{grid-template-columns:1fr}
   .classroom-shell .class-cover{min-height:520px}
@@ -1073,6 +1072,120 @@ function showModal(title, html, tag='演示', priText='我知道了', onPri=null
 }
 function closeModal(){ $('#modalBg').classList.remove('show'); }
 $('#modalBg').addEventListener('click', e => { if(e.target===$('#modalBg')) closeModal(); });
+
+const BUBU_SYNC_KEY = 'bubu-three-end-demo-sync-v1';
+const BUBU_SYNC_CHANNEL = 'bubu-three-end-demo-channel';
+let bubuSyncChannel = null;
+try { bubuSyncChannel = new BroadcastChannel(BUBU_SYNC_CHANNEL); } catch {}
+function escapeSyncHTML(value=''){
+  return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function readBubuSync(){
+  try { return JSON.parse(localStorage.getItem(BUBU_SYNC_KEY) || '{}') || {}; }
+  catch { return {}; }
+}
+function listenBubuSync(handler){
+  window.addEventListener('storage', e => {
+    if(e.key === BUBU_SYNC_KEY && e.newValue){
+      try { handler(JSON.parse(e.newValue), true); } catch {}
+    }
+  });
+  try { bubuSyncChannel?.addEventListener('message', e => handler(e.data || {}, true)); } catch {}
+}
+function subjectMark(subject='math'){
+  const map = {math:'数', chinese:'语', english:'英', science:'科', art:'美'};
+  return map[subject] || '作';
+}
+function syncedHomeworkId(hw){
+  return `synced_${String(hw?.id || 'latest').replace(/[^\w-]/g,'_')}`;
+}
+function applySyncedHomework(hw, flash=false){
+  if(!hw || !$('#homeworkList')) return;
+  const id = syncedHomeworkId(hw);
+  const subject = hw.subject || 'math';
+  const subjectName = hw.subjectName || '数学';
+  const title = hw.title || '老师新发布的作业';
+  const deadlineText = hw.deadlineText || (hw.deadline || '').replace('T',' ') || '今晚';
+  HOMEWORKS[id] = {
+    tag:`${subjectName} · 新发布`,
+    title,
+    subject:subjectName,
+    status:'待完成',
+    due:`截止 ${deadlineText}`,
+    teacher:hw.teacher || '王老师',
+    method:'文字 / 图片 / 题目',
+    primary:'开始作业',
+    toast:'已进入老师刚发布的作业。',
+    note:hw.desc || '老师刚刚从教师端发布，学生端已同步收到。',
+    steps:(hw.questions && hw.questions.length)
+      ? hw.questions.slice(0,4).map((q,i)=>`题目 ${i+1}：${q.title || '题库题目'}`)
+      : ['阅读文字说明','完成题目','提交后进入老师批阅']
+  };
+  const html = `
+    <div class="hw-top">
+      <div class="subject-mark ${escapeSyncHTML(subject)}">${subjectMark(subject)}</div>
+      <div class="hw-main">
+        <div class="hw-title-row"><div class="hw-title">${escapeSyncHTML(title)}</div><span class="hw-status todo">新发布</span></div>
+        <div class="hw-desc">${escapeSyncHTML(hw.desc || '老师刚刚发布，点击开始处理。')}</div>
+        <div class="hw-meta"><span>截止 ${escapeSyncHTML(deadlineText)}</span><span>${escapeSyncHTML(String(hw.count || 0))} 道题</span><span>${escapeSyncHTML(hw.teacher || '王老师')}</span></div>
+      </div>
+    </div>`;
+  let card = $(`[data-hw="${id}"]`);
+  if(!card){
+    card = document.createElement('div');
+    card.className = 'hw-card synced';
+    card.dataset.hw = id;
+    card.dataset.date = 'today';
+    card.dataset.subject = subject;
+    card.dataset.kind = 'online';
+    card.dataset.status = 'todo';
+    $('#homeworkList').prepend(card);
+  }
+  card.innerHTML = html;
+  const live = $('#liveBar');
+  if(live){
+    const grow = live.querySelector('.grow');
+    const btn = live.querySelector('.lb-btn');
+    if(grow) grow.textContent = `${hw.teacher || '王老师'}新发布：${title}，截止 ${deadlineText}`;
+    if(btn){
+      btn.textContent = '去作业';
+      btn.dataset.tabGo = 'homework';
+      delete btn.dataset.hwFilter;
+    }
+  }
+  if(typeof renderHomeworkKinds === 'function') renderHomeworkKinds();
+  if(typeof setHomeworkFilter === 'function'){
+    hwState.date = 'today';
+    hwState.subject = subject;
+    hwState.kind = 'all';
+    setHomeworkFilter('date','today');
+    setHomeworkFilter('subject',subject);
+  }
+  if(flash){
+    switchStudentTab('homework');
+    toast('收到老师新发布的作业', 'info', 1800, $('#liveBar'));
+  }
+}
+function applySyncedClassroom(cls, flash=false){
+  if(!cls) return;
+  const scene = classQueue.includes(cls.scene) ? cls.scene : 'handwrite';
+  classIndex = Math.max(0, classQueue.indexOf(scene));
+  renderClassScene(scene);
+  const title = $('[data-class-current-title]');
+  const desc = $('[data-class-current-desc]');
+  if(title) title.textContent = cls.title || '老师推送了课堂任务';
+  if(desc) desc.textContent = cls.desc || '学生端自动进入老师推送内容。';
+  const live = $('#liveBar .grow');
+  if(live) live.textContent = cls.desc || '老师推送了新的课堂任务。';
+  if(flash){
+    switchStudentTab('classroom');
+    toast('收到老师课堂推送', 'info', 1600, $('#classStatusBar'));
+  }
+}
+function applyBubuSyncState(state, flash=false){
+  if(state?.homework) applySyncedHomework(state.homework, flash && state.source === 'teacher');
+  if(state?.classroom) applySyncedClassroom(state.classroom, flash && state.source === 'teacher');
+}
 
 // ============ 课后模式：Tab 切换 ============
 function switchStudentTab(k){
@@ -2222,6 +2335,8 @@ if(['knowledge','classroom','homework','repair'].includes(initialTab)) switchStu
 const initialOrientation = new URLSearchParams(location.search).get('orient');
 if(initialOrientation === 'portrait') setStudentTabletOrientation('portrait');
 updateRotateTabletButton();
+applyBubuSyncState(readBubuSync(), false);
+listenBubuSync(applyBubuSyncState);
 </script>
 </body>
 </html>
