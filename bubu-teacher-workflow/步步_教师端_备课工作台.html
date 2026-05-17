@@ -1867,6 +1867,7 @@ function addHomeworkSlide(mode='publish'){
   const homeworkText = document.getElementById('homeworkText')?.value.trim() || '完成今天的课后练习。';
   const className = document.getElementById('homeworkClass')?.value || '四年级2班';
   const deadline = document.getElementById('homeworkDeadline')?.value || '2026-05-18T20:00';
+  const deadlineText = deadline.replace('T',' ');
   const modeMap = {
     text:['文字说明','完成 P58 第 1-3 题，写清单位换算过程'],
     image:['图片材料','加入第 6 页板书截图，提醒学生对照例题步骤'],
@@ -1883,7 +1884,7 @@ function addHomeworkSlide(mode='publish'){
     : `<div class="rule-card"><b>题库题目</b><span>单位换算 5 题 + 应用题 1 题</span></div>`;
   insertCoursewarePage({
     name:'课后作业发布', time:"2'", body:'作业布置',
-    caption:`<strong>已发布作业：</strong>${escapeHTML(className)} · 截止 ${escapeHTML(deadline.replace('T',' '))} · ${selectedQuestions.length || 6} 道题。`,
+    caption:`<strong>已发布作业：</strong>${escapeHTML(className)} · 截止 ${escapeHTML(deadlineText)} · ${selectedQuestions.length || 6} 道题。`,
     render:`<div class="slide-content"><span class="slide-tag">课后作业</span>
       <div class="slide-title">小数初步 · ${escapeHTML(picked[0])}</div>
       <div class="rule-board">
@@ -1893,6 +1894,22 @@ function addHomeworkSlide(mode='publish'){
       </div>
       <div class="formula-box">${escapeHTML(picked[1])}</div></div>`
   }, {toastText:`${picked[0]}已新建为课件页`});
+  syncHomeworkToOtherEnds({
+    id:`hw-${Date.now()}`,
+    subject:'math',
+    subjectName:'数学',
+    teacher:'王老师',
+    className,
+    title:`小数初步 · ${picked[0]}`,
+    desc:homeworkText,
+    deadline,
+    deadlineText,
+    count:selectedQuestions.length || 6,
+    questions:selectedQuestions.map(q=>({title:q.title || q.text, source:q.source || '', acc:q.acc || ''})),
+    action:'homework',
+    createdAt:Date.now()
+  });
+  setTimeout(()=>showToast('✓ 已同步到学生端和白板端'), 260);
 }
 function getHomeworkQuestions(){
   const rows=[...document.querySelectorAll('#homeworkQuestionList .homework-question')];
@@ -2057,6 +2074,53 @@ function showToast(msg) {
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+const BUBU_SYNC_KEY = 'bubu-three-end-demo-sync-v1';
+const BUBU_SYNC_CHANNEL = 'bubu-three-end-demo-channel';
+let bubuSyncChannel = null;
+try { bubuSyncChannel = new BroadcastChannel(BUBU_SYNC_CHANNEL); } catch {}
+function readBubuSync(){
+  try { return JSON.parse(localStorage.getItem(BUBU_SYNC_KEY) || '{}') || {}; }
+  catch { return {}; }
+}
+function writeBubuSync(patch){
+  const next = {...readBubuSync(), ...patch, updatedAt:Date.now(), source:'teacher'};
+  try { localStorage.setItem(BUBU_SYNC_KEY, JSON.stringify(next)); } catch {}
+  try { bubuSyncChannel?.postMessage(next); } catch {}
+  return next;
+}
+function syncHomeworkToOtherEnds(payload){
+  writeBubuSync({
+    homework: payload,
+    board: {
+      scene:'end',
+      title:'课后作业已发布',
+      message:`${payload.className} · ${payload.title} · 截止 ${payload.deadlineText}`
+    },
+    lastEvent: {
+      type:'homework',
+      title:payload.title,
+      message:`教师端已发布作业，同步到学生端作业列表和白板课后提示。`,
+      at:Date.now()
+    }
+  });
+}
+function syncClassroomToOtherEnds(payload){
+  writeBubuSync({
+    classroom: payload,
+    board: {
+      scene:payload.boardScene || 'teach',
+      title:payload.title,
+      message:payload.desc
+    },
+    lastEvent: {
+      type:'classroom',
+      title:payload.title,
+      message:'教师端课堂推送已同步到学生端和白板端。',
+      at:Date.now()
+    }
+  });
 }
 
 /* ===== DEMOS 字典：所有非主流程按钮的演示弹窗内容 ===== */
@@ -2317,6 +2381,13 @@ document.querySelectorAll('.canvas-toolbar .tool').forEach(t => {
     t.classList.add('active');
     if (title === '预览') {
       showPanel('teaching');
+      syncClassroomToOtherEnds({
+        scene:'handwrite',
+        boardScene:'teach',
+        title:'课件预览 · 小数初步认识',
+        desc:'教师端打开课件预览，学生端进入课堂任务，白板显示讲解页。',
+        at:Date.now()
+      });
       showToast('✓ 已打开课件预览');
       return;
     }

@@ -498,6 +498,13 @@ body{
 .scene-btn.secondary{ background:var(--surface); color:var(--text); border:1px solid var(--line); box-shadow:none; }
 .scene-btn.purple{ background:var(--accent); box-shadow:0 6px 16px rgba(125,108,242,.24); }
 .scene-btn:active{ transform:translateY(1px); }
+.board-sync-strip{
+  position:absolute; right:22px; top:22px; z-index:35; max-width:420px;
+  background:rgba(15,23,42,.88); color:#fff; border:1px solid rgba(255,255,255,.18);
+  border-radius:12px; padding:10px 14px; box-shadow:0 14px 34px rgba(15,23,42,.22);
+  font-size:13px; line-height:1.45; pointer-events:none;
+}
+.board-sync-strip strong{display:block;font-size:13px;margin-bottom:2px;color:#d1fae5}
 .metric-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
 .metric-card{
   background:var(--surface); border:1px solid var(--line-soft); border-radius:10px;
@@ -745,6 +752,44 @@ function showModal(title, html, tag='演示', priText='我知道了'){
 }
 function closeModal(){ $('#modalBg').classList.remove('show'); }
 $('#modalBg').addEventListener('click', e=>{ if(e.target===$('#modalBg')) closeModal(); });
+
+const BUBU_SYNC_KEY = 'bubu-three-end-demo-sync-v1';
+const BUBU_SYNC_CHANNEL = 'bubu-three-end-demo-channel';
+let bubuSyncChannel = null;
+try { bubuSyncChannel = new BroadcastChannel(BUBU_SYNC_CHANNEL); } catch {}
+function readBubuSync(){
+  try { return JSON.parse(localStorage.getItem(BUBU_SYNC_KEY) || '{}') || {}; }
+  catch { return {}; }
+}
+function listenBubuSync(handler){
+  window.addEventListener('storage', e => {
+    if(e.key === BUBU_SYNC_KEY && e.newValue){
+      try { handler(JSON.parse(e.newValue), true); } catch {}
+    }
+  });
+  try { bubuSyncChannel?.addEventListener('message', e => handler(e.data || {}, true)); } catch {}
+}
+function setBoardSyncStrip(title, message){
+  const host = $('#boardScreen');
+  if(!host) return;
+  let strip = $('#boardSyncStrip');
+  if(!strip){
+    strip = document.createElement('div');
+    strip.className = 'board-sync-strip';
+    strip.id = 'boardSyncStrip';
+    host.appendChild(strip);
+  }
+  strip.innerHTML = `<strong>${title || '三端同步'}</strong><span>${message || '教师端状态已同步'}</span>`;
+}
+function applyBoardSyncState(state, flash=false){
+  const board = state?.board;
+  if(!board) return;
+  const scene = board.scene || (state.homework ? 'end' : 'teach');
+  if(typeof selectScene === 'function') selectScene(scene, true);
+  else if(typeof renderScene === 'function') renderScene(scene);
+  setBoardSyncStrip(board.title || '三端同步', board.message || '教师端状态已同步');
+  if(flash && state.source === 'teacher') toast(board.message || '教师端状态已同步', 'info', 2000);
+}
 
 const CLASSMATES = ['李小明','陈思雨','张佳怡','王浩然','赵一诺','孙晨','刘安琪','周航','何雨桐','郑嘉豪','钱乐乐','许知远'];
 function avatarHTML(names=CLASSMATES.slice(0,7)){
@@ -1660,6 +1705,8 @@ setTimeout(()=>{
   initBoardInk();
   initBoardSwipe();
   renderScene('welcome');
+  applyBoardSyncState(readBubuSync(), false);
+  listenBubuSync(applyBoardSyncState);
   setTimeout(()=> toast('点击悬浮球打开白板笔，或左右滑动翻页','info', 3200), 600);
 }, 50);
 </script>
