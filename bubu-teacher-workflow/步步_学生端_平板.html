@@ -22,28 +22,9 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;padding:24px 0 60px;-webkit-font-smoothing:antialiased}
 
-/* ===== Page intro ===== */
-.page-intro{max-width:1400px;margin:0 auto 16px;padding:0 24px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.intro-left h1{font-size:20px;font-weight:800;letter-spacing:.5px;color:var(--text)}
-.intro-left p{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.6;max-width:760px}
-
-/* ===== Explain bar ===== */
-.explain-bar{max-width:1400px;margin:0 auto 22px;padding:14px 18px;background:#fff;border-radius:var(--radius);border:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
-.eb-icon{width:34px;height:34px;flex-shrink:0;border-radius:8px;background:var(--primary-soft-2);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid var(--primary-soft)}
-.eb-text h3{font-size:13.5px;color:var(--text);margin-bottom:3px;font-weight:700}
-.eb-text p{font-size:12.5px;color:var(--muted);line-height:1.65}
-.eb-text .key{color:var(--primary-dark);font-weight:700}
-.eb-text .key.accent{color:var(--accent-dark)}
-
 /* ===== Stage (two tablets) ===== */
 .stage{max-width:1400px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start}
 .stage-col{display:flex;flex-direction:column;gap:14px}
-.stage-label{display:flex;justify-content:space-between;align-items:flex-end;padding:0 4px}
-.stage-label .sl-title{font-size:13px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:6px}
-.stage-label .sl-pill{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--surface-3);color:var(--muted)}
-.stage-label .sl-pill.live{background:var(--primary);color:#fff}
-.stage-label .sl-pill.idle{background:var(--accent-soft);color:var(--accent-dark)}
-.stage-label .sl-meta{font-size:11px;color:var(--muted)}
 
 /* ===== Tablet shell ===== */
 .tablet{background:#0f172a;border-radius:38px;padding:13px;box-shadow:0 30px 60px rgba(15,23,42,.18),0 1px 0 rgba(255,255,255,.04) inset;position:relative}
@@ -312,19 +293,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .cls-switch .cs-btn:hover{border-color:var(--primary);color:var(--primary-dark)}
 .cls-switch .cs-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 
-/* ===== Feature grid (底部解读卡) ===== */
-.feat-grid{max-width:1400px;margin:32px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.feat{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;gap:12px;align-items:flex-start}
-.feat .f-ico{width:38px;height:38px;border-radius:10px;background:var(--primary-soft-2);color:var(--primary-dark);border:1px solid var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.feat.accent .f-ico{background:var(--accent-soft);color:var(--accent-dark);border-color:var(--accent-soft)}
-.feat.warn .f-ico{background:var(--warn-soft);color:#92400e;border-color:#fde68a}
-.feat h4{font-size:13px;font-weight:800;color:var(--text);margin-bottom:4px}
-.feat p{font-size:11.5px;color:var(--muted);line-height:1.65}
-.feat p .key{color:var(--primary-dark);font-weight:700}
-.feat.accent p .key{color:var(--accent-dark)}
-
 /* ===== Toast / Modal ===== */
-.toast-stack{position:fixed;top:24px;right:24px;display:flex;flex-direction:column;gap:8px;z-index:9999;pointer-events:none}
+.toast-stack{position:absolute;top:18px;right:18px;display:flex;flex-direction:column;gap:8px;z-index:90;pointer-events:none}
 .toast{padding:10px 14px;background:#1f2937;color:#fff;border-radius:8px;font-size:12.5px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.18);display:flex;gap:8px;align-items:center;animation:toastIn .25s ease;max-width:380px;pointer-events:all}
 .toast.ok{background:var(--primary-dark)}
 .toast.warn{background:var(--warn)}
@@ -356,42 +326,19 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 /* ===== Responsive (压栈) ===== */
 @media (max-width: 1024px){
   .stage{grid-template-columns:1fr}
-  .feat-grid{grid-template-columns:1fr 1fr}
 }
 @media (max-width: 640px){
-  .feat-grid{grid-template-columns:1fr}
 }
 
 </style>
 </head>
 <body>
 
-<!-- ===== Page intro ===== -->
-<div class="page-intro">
-  <div class="intro-left">
-    <h1>步步 · 学生端 · 平板（手写作答优先）</h1>
-    <p><strong>重点 1：课堂手写题。</strong>题目固定在上方，下面只留大面积书写区，并回收完整书写过程；课后 AI 学伴只是第二身份。</p>
-  </div>
-</div>
-
-<!-- ===== Explain bar ===== -->
-<div class="explain-bar">
-  <div class="eb-icon">📱</div>
-  <div class="eb-text">
-    <h3>重点 1 = 课堂手写作答；左屏只说明课后身份，右屏才是课堂接管后的核心界面。</h3>
-    <p>手写题要先强调单位换算依据：<span class="key">1 米 = 100 厘米</span>。学生在平板上写过程，老师回收看到的是步骤、停顿和擦改，不只是最后答案。AI 能力只出现在<span class="key accent">课后</span>，<span class="key accent">不在课堂上代替老师</span>。</p>
-  </div>
-</div>
-
 <!-- ===== Stage ===== -->
 <div class="stage" id="stage">
 
   <!-- ===== 左：课后模式 ===== -->
   <div class="stage-col" id="col-home">
-    <div class="stage-label">
-      <div class="sl-title">📚 课后模式 <span class="sl-pill idle">默认主屏</span></div>
-      <div class="sl-meta">王嘉怡 · 五（2）班 · 周三 19:30</div>
-    </div>
     <div class="tablet">
       <div class="tablet-screen">
         <div class="statusbar">
@@ -619,10 +566,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
   <!-- ===== 右：课堂模式 ===== -->
   <div class="stage-col" id="col-class">
-    <div class="stage-label">
-      <div class="sl-title">🎓 课堂模式 · 重点 1：手写作答 <span class="sl-pill live">老师推送中</span></div>
-      <div class="sl-meta">题目固定上方 · 书写过程回收</div>
-    </div>
     <div class="tablet">
       <div class="tablet-screen">
 
@@ -674,31 +617,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
 </div><!-- /stage -->
 
-<!-- ===== Feature grid ===== -->
-<div class="feat-grid">
-  <div class="feat">
-    <div class="f-ico">⚡</div>
-    <div>
-      <h4>课堂上不喧宾夺主</h4>
-      <p>老师推送时<span class="key">全屏接管</span>，AI 入口自动隐藏；课堂结束后回到主屏，AI 学伴才可见。<br>避免学生上课时偷偷"用 AI 写答案"。</p>
-    </div>
-  </div>
-  <div class="feat accent">
-    <div class="f-ico">🤖</div>
-    <div>
-      <h4>AI 不直接给答案</h4>
-      <p>错题本与学伴对话都遵守<span class="key">"先思路、后答案"</span>原则：先抛提示词、追问、给同类例题，最后才确认答案。家长可在"我的"里看到完整对话。</p>
-    </div>
-  </div>
-  <div class="feat warn">
-    <div class="f-ico">📊</div>
-    <div>
-      <h4>错题 ↔ 复习闭环</h4>
-      <p>课堂错的、作业错的会自动进错题本；复习页"错题重练"和"AI 出题"基于<span class="key">真实薄弱点</span>而不是题库随机。</p>
-    </div>
-  </div>
-</div>
-
 <!-- ===== Toast / Modal ===== -->
 <div class="toast-stack" id="toastStack"></div>
 
@@ -718,8 +636,15 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 const $  = (s, p=document) => p.querySelector(s);
 const $$ = (s, p=document) => Array.from(p.querySelectorAll(s));
 
-function toast(msg, type='ok', ms=2200){
+let lastToastAnchor = null;
+document.addEventListener('click', e => { lastToastAnchor = e.target; }, true);
+function toastHostFrom(anchor){
+  return anchor?.closest?.('.tablet-screen') || lastToastAnchor?.closest?.('.tablet-screen') || $('#col-class .tablet-screen') || $('#col-home .tablet-screen') || document.body;
+}
+function toast(msg, type='ok', ms=2200, anchor=null){
   const stack = $('#toastStack'); if(!stack) return;
+  const host = toastHostFrom(anchor);
+  if(stack.parentElement !== host) host.appendChild(stack);
   const el = document.createElement('div');
   el.className = 'toast ' + (type||'');
   const ic = type==='no'?'⛔':type==='warn'?'⚠️':type==='info'?'💡':'✓';

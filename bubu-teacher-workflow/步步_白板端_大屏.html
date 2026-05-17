@@ -28,59 +28,6 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 
-/* page intro */
-.page-intro{ max-width:1240px; margin:24px auto 0; padding:0 20px; }
-.page-intro h1{ margin:0 0 6px; font-size:22px; font-weight:800; color:var(--text); }
-.page-intro h1 .sub{ font-size:13px; font-weight:600; color:var(--muted); margin-left:8px; }
-.page-intro > p{ margin:0 0 14px; font-size:13.5px; color:var(--muted); line-height:1.6; }
-.page-intro > p strong{ color:var(--text); }
-.intro-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px; }
-.ic{ background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius-lg); padding:14px 16px; box-shadow:var(--shadow); }
-.ic h3{ margin:0 0 6px; font-size:14px; font-weight:800; }
-.ic p{ margin:0; font-size:12.5px; color:var(--muted); line-height:1.65; }
-.ic strong{ color:var(--text); }
-
-.explain-bar{
-  max-width:1240px; margin:0 auto 18px; padding:10px 18px;
-  display:flex; gap:12px; align-items:center;
-  background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius-lg);
-}
-.eb-icon{ width:30px; height:30px; flex:none; background:var(--primary-soft); color:var(--primary-dark); border-radius:50%; display:grid; place-items:center; font-size:13px; }
-.eb-text{ font-size:13px; color:var(--text); line-height:1.55; }
-.eb-text .key{ color:var(--primary-dark); font-weight:700; }
-
-/* scene tabs */
-.scene-tabs{
-  max-width:1240px; margin:0 auto 18px; padding:0 20px;
-  display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
-}
-.scene-tabs .tab{
-  background:var(--surface); border:1px solid var(--line); border-radius:99px;
-  display:inline-flex; align-items:center; gap:6px;
-  padding:8px 16px; font-size:13px; font-weight:600;
-  cursor:pointer; color:var(--text); transition: all .2s;
-  user-select:none;
-}
-.scene-tabs .tab:hover{ border-color:var(--primary); color:var(--primary-dark); }
-.scene-tabs .tab.active{
-  background:var(--primary); color:#fff; border-color:var(--primary);
-  box-shadow: 0 6px 16px rgba(34,201,147,.32);
-}
-.feature-bar{
-  max-width:1240px; margin:0 auto 18px; padding:0 20px;
-  display:grid; grid-template-columns:repeat(5,1fr); gap:10px;
-}
-.feature-pill{
-  min-height:42px; border-radius:999px; border:1px solid var(--line);
-  background:var(--surface); color:var(--text);
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  font-size:14px; font-weight:800; cursor:pointer;
-  box-shadow:0 3px 10px rgba(20,30,55,.05);
-  transition:all .18s ease;
-}
-.feature-pill:hover{ border-color:var(--primary); color:var(--primary-dark); transform:translateY(-1px); }
-.feature-pill.active{ background:var(--primary); color:#fff; border-color:var(--primary); box-shadow:0 8px 20px rgba(34,201,147,.28); }
-.feature-pill .fp-icon{ font-size:16px; line-height:1; }
 .group-mark{
   width:17px; height:17px; display:inline-block; position:relative; flex:none;
 }
@@ -98,22 +45,32 @@ body{
 .board-frame{ width:1100px; max-width:100%; position:relative; }
 .board-outer{
   background: #1a1f2c;
-  padding: 22px 18px 22px;
+  padding: 22px 18px 14px;
   border-radius: 16px;
   box-shadow: 0 24px 60px rgba(20, 30, 55, .26), inset 0 0 0 1px rgba(255,255,255,.04);
 }
-.board-camera{
-  position:absolute; top:6px; left:50%; transform:translateX(-50%);
-  display:flex; gap:6px; align-items:center;
-  font-size:10px; color:#8b94aa; font-weight:600; z-index:2;
-  letter-spacing:.4px;
-}
-.board-camera::before{ content:""; width:6px; height:6px; border-radius:50%; background:#3a4256; box-shadow:0 0 0 2px #232938; }
 .board-screen{
   width:100%; aspect-ratio: 16 / 9;
   background: linear-gradient(135deg, #f6f8fa 0%, #edf2f7 100%);
   border-radius: 8px;
   position:relative; overflow:hidden;
+}
+.scene-root{position:absolute;inset:0;overflow:hidden}
+.lesson-controls{
+  display:flex; align-items:center; justify-content:center; gap:12px;
+  padding:12px 6px 0;
+}
+.lesson-nav-btn{
+  height:30px; min-width:74px; padding:0 14px;
+  border-radius:8px; border:1px solid rgba(255,255,255,.18);
+  background:#fff; color:#111827; font:inherit; font-size:12px; font-weight:900;
+  cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,.12);
+}
+.lesson-nav-btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.lesson-nav-btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
+.lesson-page-label{
+  min-width:230px; text-align:center;
+  font-size:12px; color:#cbd5e1; font-weight:800;
 }
 .board-stand{
   position:absolute; left:50%; bottom:-32px; transform:translateX(-50%);
@@ -127,10 +84,6 @@ body{
   width:140px; height:8px;
   background: linear-gradient(180deg, #1a1f2c 0%, #0d1018 100%);
   border-radius: 0 0 12px 12px;
-}
-.board-base-text{
-  position:absolute; left:50%; bottom:-50px; transform:translateX(-50%);
-  font-size:10.5px; color:#8b94aa; font-weight:700; letter-spacing:1.2px;
 }
 
 /* ====== 大屏内部通用 UI ====== */
@@ -449,54 +402,8 @@ body{
 .end-mini-list{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:4px; }
 .end-mini-list span{ background:var(--surface-2); border:1px solid var(--line-soft); border-radius:8px; padding:8px 10px; font-size:12px; font-weight:700; color:var(--text); }
 
-/* ====== 三端联动小图 ====== */
-.link-row{
-  max-width:1240px; margin: 56px auto 28px; padding: 0 20px;
-  display:flex; gap:12px; align-items:center; justify-content:center;
-}
-.link-card{
-  flex:1; max-width:300px;
-  background: var(--surface); border:1px solid var(--line-soft);
-  border-radius:14px; padding:12px; text-align:center;
-  box-shadow: var(--shadow);
-}
-.lc-h{ font-size:13px; font-weight:800; color:var(--text); margin-bottom:8px; }
-.lc-mini{
-  width:100%; height:130px; border-radius:10px;
-  background: var(--surface-2);
-  display:grid; place-items:center;
-  border:1px solid var(--line-soft);
-  position:relative; overflow:hidden;
-  font-size:11.5px; color:var(--muted); font-weight:600;
-  padding:6px;
-}
-.lc-foot{ font-size:11px; color:var(--muted); margin-top:8px; }
-.link-arrow{ font-size:22px; color:var(--accent); font-weight:800; }
-.lc-teacher{ background: linear-gradient(135deg, #fff, #f6f8fa); }
-.lc-board{
-  background:#1a1f2c; color:#fff;
-  font-weight:700; font-size:12px;
-}
-.lc-board::before{
-  content:""; position:absolute; left:8px; right:8px; top:8px; bottom:8px;
-  background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
-  border-radius:6px;
-}
-.lc-board > span{ position:relative; z-index:1; color:var(--text); background: rgba(255,255,255,.85); padding:3px 10px; border-radius:6px; }
-.lc-pads{ background: linear-gradient(135deg, #f5f0ff, #ecf9f3); position:relative; }
-.lc-pads .pad-mini{
-  position:absolute; width:11%; aspect-ratio:.74;
-  background:var(--surface); border:1px solid var(--line); border-radius:3px;
-  box-shadow: 0 1px 2px rgba(0,0,0,.05);
-}
-.lc-pads .pad-mini.off{ background: var(--line-soft); border-color:var(--line); }
-.lc-pads .pad-mini.on::after{
-  content:""; position:absolute; inset:1.5px; border-radius:2px;
-  background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
-}
-
 /* ====== Toast / Modal ====== */
-.toast-stack{ position:fixed; right:20px; top:80px; display:flex; flex-direction:column; gap:8px; z-index:1000; pointer-events:none; }
+.toast-stack{ position:absolute; right:18px; top:18px; display:flex; flex-direction:column; gap:8px; z-index:80; pointer-events:none; }
 .toast{
   background: var(--surface); border:1px solid var(--line);
   border-radius:10px; padding:10px 14px; font-size:13px; font-weight:600;
@@ -508,7 +415,7 @@ body{
 .toast.warn{ border-left:4px solid var(--warn); }
 .toast.info{ border-left:4px solid var(--accent); }
 
-.modal-bg{ position:fixed; inset:0; background: rgba(20,30,55,.45); display:none; align-items:center; justify-content:center; z-index:1001; }
+.modal-bg{ position:absolute; inset:0; background: rgba(20,30,55,.52); display:none; align-items:center; justify-content:center; z-index:90; padding:18px; }
 .modal-bg.show{ display:flex; }
 .modal{
   background: var(--surface); border-radius: var(--radius-lg);
@@ -534,13 +441,7 @@ body{
 .m-foot button.pri{ background: var(--primary); color:#fff; border-color: var(--primary); }
 .m-foot button.pri:hover{ background: var(--primary-dark); }
 
-.design-note{
-  max-width:1240px; margin:24px auto 0; padding:0 20px;
-  display:grid; grid-template-columns:repeat(3,1fr); gap:12px;
-}
-.design-note .ic{ box-shadow:none; }
-.foot-note{ text-align:center; font-size:12px; color:var(--muted); padding:18px 20px 50px; max-width:1240px; margin: 0 auto; }
-.radial-tools{position:fixed;right:28px;top:52%;z-index:80;width:58px;height:58px}
+.radial-tools{position:absolute;right:16px;top:50%;z-index:70;width:58px;height:58px}
 .radial-main,.radial-tool{position:absolute;width:54px;height:54px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--text);font-size:12px;font-weight:900;display:grid;place-items:center;box-shadow:0 10px 26px rgba(15,23,42,.16);cursor:pointer;transition:.2s;font-family:inherit}
 .radial-main{right:0;top:0;background:var(--primary);color:#fff;border-color:var(--primary)}
 .radial-tool{right:2px;top:2px;opacity:0;pointer-events:none}
@@ -550,108 +451,44 @@ body{
 .radial-tools.open .radial-tool:nth-child(4),.radial-tools:hover .radial-tool:nth-child(4){transform:translate(-72px,72px)}
 .radial-tools.open .radial-tool:nth-child(5),.radial-tools:hover .radial-tool:nth-child(5){transform:translate(0,88px)}
 @media (max-width:900px){
-  .feature-bar{ grid-template-columns:repeat(2,1fr); }
-  .design-note{ grid-template-columns:1fr; }
+  .lesson-controls{flex-wrap:wrap}
+  .lesson-page-label{order:-1;width:100%}
 }
 </style>
 </head>
 <body>
-<!-- ===== Page intro ===== -->
-<div class="page-intro">
-  <h1>步步 · 白板端 <span class="sub">教室大屏</span></h1>
-  <p>课堂公共屏，只保留全班需要看的内容。</p>
-</div>
-
-<!-- ===== Core classroom functions ===== -->
-<div class="feature-bar" id="featureBar">
-  <button class="feature-pill active" data-scene="live"><span class="fp-icon">⏱</span>实时答题</button>
-  <button class="feature-pill" data-scene="result"><span class="fp-icon">📊</span>揭晓答案</button>
-  <button class="feature-pill" data-scene="draw"><span class="fp-icon">🎯</span>抽人提问</button>
-  <button class="feature-pill" data-scene="group"><span class="group-mark" aria-hidden="true"></span>小组讨论</button>
-  <button class="feature-pill" data-scene="end"><span class="fp-icon">🌙</span>下课总结</button>
-</div>
-
-<!-- ===== Scene tabs ===== -->
-<div class="scene-tabs" id="sceneTabs" style="display:none">
-  <div class="tab active" data-scene="welcome">📅 上课前</div>
-  <div class="tab" data-scene="teach">📖 课件讲解</div>
-  <div class="tab" data-scene="live">⏱ 实时答题</div>
-  <div class="tab" data-scene="result">📊 揭晓答案</div>
-  <div class="tab" data-scene="draw">🎯 抽人提问</div>
-  <div class="tab" data-scene="group"><span class="group-mark" aria-hidden="true"></span>小组讨论</div>
-  <div class="tab" data-scene="end">🌙 下课总结</div>
-</div>
-
 <!-- ===== Whiteboard device shell ===== -->
 <div class="board-shell">
   <div class="board-frame">
-    <div class="board-camera">📡 步步教学一体机 · WB-A23</div>
     <div class="board-outer">
       <div class="board-screen" id="boardScreen">
-        <!-- 由 JS 渲染 -->
+        <div class="scene-root" id="sceneRoot"></div>
+        <div class="radial-tools" id="radialTools">
+          <button class="radial-main" id="radialMain">工具</button>
+          <button class="radial-tool" data-board-tool="pen">笔</button>
+          <button class="radial-tool" data-board-tool="eraser">擦</button>
+          <button class="radial-tool" data-board-tool="timer">1分</button>
+          <button class="radial-tool" data-board-tool="feedback">反馈</button>
+        </div>
+        <div class="toast-stack" id="toastStack"></div>
+        <div class="modal-bg" id="modalBg">
+          <div class="modal">
+            <h3 id="modalTitle">标题 <span class="mh-tag" id="modalTag">说明</span></h3>
+            <div class="m-body" id="modalBody"></div>
+            <div class="m-foot">
+              <button data-act="modalClose">关闭</button>
+              <button class="pri" id="modalPri" data-act="modalClose">我知道了</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lesson-controls" id="lessonControls">
+        <button class="lesson-nav-btn" data-act="prevPage" id="prevPage">上一页</button>
+        <div class="lesson-page-label" id="lessonPageLabel">第 1 / 6 页</div>
+        <button class="lesson-nav-btn primary" data-act="nextPage" id="nextPage">下一页</button>
       </div>
     </div>
     <div class="board-stand"></div>
-    <div class="board-base-text">STEP · STEP · CLASSROOM 65"</div>
-  </div>
-</div>
-
-<div class="radial-tools" id="radialTools">
-  <button class="radial-main" id="radialMain">工具</button>
-  <button class="radial-tool" data-board-tool="pen">笔</button>
-  <button class="radial-tool" data-board-tool="eraser">擦</button>
-  <button class="radial-tool" data-board-tool="timer">1分</button>
-  <button class="radial-tool" data-board-tool="feedback">反馈</button>
-</div>
-
-<div class="design-note">
-  <div class="ic">
-    <h3>公共屏</h3>
-    <p>只呈现学生和老师当下都需要看到的状态、题目和结果。</p>
-  </div>
-  <div class="ic">
-    <h3>老师主导</h3>
-    <p>讲解、点名、收题由老师触发，系统只做显示和记录。</p>
-  </div>
-  <div class="ic">
-    <h3>三端联动</h3>
-    <p>教师端发起，学生端提交，大屏显示全班进度。</p>
-  </div>
-</div>
-
-<!-- ===== 三端联动小图 ===== -->
-<div class="link-row">
-  <div class="link-card">
-    <div class="lc-h">👩‍🏫 老师手里</div>
-    <div class="lc-mini lc-teacher">教师手机端 · 上课遥控</div>
-    <div class="lc-foot">点"推送"→ 大屏切换</div>
-  </div>
-  <div class="link-arrow">⇄</div>
-  <div class="link-card">
-    <div class="lc-h">📺 教室前面</div>
-    <div class="lc-mini lc-board"><span id="miniBoardLabel">本端 · 当前展示</span></div>
-    <div class="lc-foot">白板大屏（本页）</div>
-  </div>
-  <div class="link-arrow">⇄</div>
-  <div class="link-card">
-    <div class="lc-h">📱 28 个学生平板</div>
-    <div class="lc-mini lc-pads" id="miniPads"></div>
-    <div class="lc-foot">学生端 · 平板</div>
-  </div>
-</div>
-
-<div class="foot-note">※ 本原型独立运行，所有交互均在浏览器内完成。三端真实使用时通过教室局域网/云端同步。</div>
-
-<!-- ===== Toast / Modal ===== -->
-<div class="toast-stack" id="toastStack"></div>
-<div class="modal-bg" id="modalBg">
-  <div class="modal">
-    <h3 id="modalTitle">标题 <span class="mh-tag" id="modalTag">说明</span></h3>
-    <div class="m-body" id="modalBody"></div>
-    <div class="m-foot">
-      <button data-act="modalClose">关闭</button>
-      <button class="pri" id="modalPri" data-act="modalClose">我知道了</button>
-    </div>
   </div>
 </div>
 <script>
@@ -685,6 +522,15 @@ function closeModal(){ $('#modalBg').classList.remove('show'); }
 $('#modalBg').addEventListener('click', e=>{ if(e.target===$('#modalBg')) closeModal(); });
 
 const CLASSMATES = ['李小明','陈思雨','张佳怡','王浩然','赵一诺','孙晨','刘安琪','周航','何雨桐','郑嘉豪','钱乐乐','许知远'];
+const LESSON_FLOW = [
+  {scene:'teach', title:'课件讲解 · 分数加减法'},
+  {scene:'live', title:'随堂题 · 学生平板作答'},
+  {scene:'result', title:'答案揭晓 · 全班汇总'},
+  {scene:'draw', title:'抽人追问 · 说清理由'},
+  {scene:'group', title:'小组成果 · 生活中的分数'},
+  {scene:'end', title:'下课总结 · 今日重点'}
+];
+let lessonPageIndex = 0;
 
 function padGridHTML(){
   return Array.from({length:28}, (_,i)=>{
@@ -1011,7 +857,7 @@ let welcomeCDInterval, liveCDInterval, liveAnsInterval;
 
 function renderScene(scene){
   const fn = SCENES[scene];
-  const screen = $('#boardScreen');
+  const screen = $('#sceneRoot');
   if(!fn){ screen.innerHTML = '<div style="padding:80px;text-align:center;color:#999">场景不存在</div>'; return; }
   // 清理 interval
   welcomeCDInterval && clearInterval(welcomeCDInterval);
@@ -1128,25 +974,20 @@ function updateMiniBoard(scene){
 }
 
 // 切换 tab
-$$('#sceneTabs .tab').forEach(t=>{
-  t.addEventListener('click', ()=>{
-    $$('#sceneTabs .tab').forEach(x => x.classList.toggle('active', x===t));
-    renderScene(t.dataset.scene);
-    syncFeature(t.dataset.scene);
-  });
-});
-$$('#featureBar .feature-pill').forEach(b=>{
-  b.addEventListener('click', ()=>{
-    jumpScene(b.dataset.scene);
-  });
-});
-
 // 全局事件
 document.addEventListener('click', e=>{
   const a = e.target.closest('[data-act]');
   if(!a) return;
   const act = a.dataset.act;
   if(act==='modalClose') closeModal();
+  if(act==='prevPage'){
+    renderLessonPage(lessonPageIndex - 1);
+    return;
+  }
+  if(act==='nextPage'){
+    renderLessonPage(lessonPageIndex + 1);
+    return;
+  }
   if(act==='pushLive'){
     toast('已向 28 台学生平板推送随堂题', 'ok', 1800);
     jumpScene('live');
@@ -1206,21 +1047,48 @@ document.addEventListener('click', e=>{
   }
 });
 
-function jumpScene(scene){
-  const tab = $(`#sceneTabs .tab[data-scene="${scene}"]`);
-  if(tab){
-    $$('#sceneTabs .tab').forEach(x => x.classList.toggle('active', x===tab));
+document.addEventListener('keydown', e=>{
+  if($('#modalBg')?.classList.contains('show')) return;
+  if(e.key === 'ArrowRight' || e.key === 'PageDown'){
+    e.preventDefault();
+    renderLessonPage(lessonPageIndex + 1);
   }
-  syncFeature(scene);
-  renderScene(scene);
+  if(e.key === 'ArrowLeft' || e.key === 'PageUp'){
+    e.preventDefault();
+    renderLessonPage(lessonPageIndex - 1);
+  }
+});
+
+function renderLessonPage(index){
+  const max = LESSON_FLOW.length - 1;
+  lessonPageIndex = Math.max(0, Math.min(index, max));
+  const page = LESSON_FLOW[lessonPageIndex];
+  renderScene(page.scene);
+  syncLessonControls();
 }
-function syncFeature(scene){
-  $$('#featureBar .feature-pill').forEach(x => x.classList.toggle('active', x.dataset.scene===scene));
+
+function jumpScene(scene){
+  const idx = LESSON_FLOW.findIndex(p => p.scene === scene);
+  if(idx >= 0){
+    renderLessonPage(idx);
+    return;
+  }
+  renderScene(scene);
+  syncLessonControls();
+}
+function syncLessonControls(){
+  const page = LESSON_FLOW[lessonPageIndex] || {title:'课件页'};
+  const prev = $('#prevPage');
+  const next = $('#nextPage');
+  const label = $('#lessonPageLabel');
+  if(prev) prev.disabled = lessonPageIndex === 0;
+  if(next) next.disabled = lessonPageIndex === LESSON_FLOW.length - 1;
+  if(label) label.textContent = `第 ${lessonPageIndex + 1} / ${LESSON_FLOW.length} 页 · ${page.title}`;
 }
 
 // 初次渲染
 setTimeout(()=>{
-  jumpScene('live');
+  renderLessonPage(0);
 }, 50);
 </script>
 </body>

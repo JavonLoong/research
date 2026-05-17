@@ -32,8 +32,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
 /* Top app bar (替代深色 sidebar) */
 .appbar{background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 14px;height:54px;gap:10px}
-.tag-stamp{position:relative;padding:5px 11px;background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff;font-size:11px;font-weight:700;border-radius:5px;letter-spacing:1px;transform:rotate(-1.5deg);box-shadow:0 2px 6px rgba(124,58,237,.3)}
-.tag-stamp::before{content:"";position:absolute;left:-3px;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:#fff;box-shadow:1px 0 0 var(--accent)}
 .brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;letter-spacing:1px;color:var(--text);margin-left:6px}
 .brand-dot{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#10b981,#0d9488);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px}
 .nav{display:flex;gap:1px;margin-left:8px;flex:1;min-width:0;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
@@ -541,7 +539,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
     <!-- App bar -->
     <div class="appbar">
-      <div class="tag-stamp">教师端备课</div>
       <div class="brand"><div class="brand-dot">📘</div>步步</div>
       <div class="context-filters">
         <select class="ctx-select"><option>清华附小</option><option>海淀实验</option></select>
@@ -569,14 +566,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
     <!-- Sub-topbar -->
     <div class="subtop">
-      <div class="crumbs">
-        <span>四年级下</span><span class="sep">›</span>
-        <span>第六单元 小数的初步认识</span><span class="sep">›</span>
-        <span class="doc-title">第1课时 · 小数的意义和读写</span>
-        <span class="doc-tag">备课中</span>
-      </div>
       <div class="spacer"></div>
-      <div class="save-ind">已自动保存 · 14:32</div>
       <button class="btn btn-ghost btn-sm">🔄 版本</button>
       <button class="btn btn-sm"><span class="group-mark" aria-hidden="true"></span>协作</button>
       <button class="btn btn-sm">📤 导入/抓取课件</button>
@@ -855,7 +845,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <div class="panel" id="panel-teaching">
         <div class="pad">
           <div class="section-h">投屏预览</div>
-          <div class="section-sub">备课端只保留投屏检查和设备状态，不在这里催老师开始上课；正式课堂入口由课堂端选择课件和班级后进入。</div>
           <div class="teach-layout">
             <div class="teach-stage">
               <div style="display:flex;justify-content:space-between;align-items:center">
@@ -1480,7 +1469,7 @@ const SLIDES = [
 const EXPLAINS = {
   workbench:{ icon:"🏠", title:"工作台 — 今日任务和快捷入口", body:'工作台是教师每天进入系统后的首页，能直接跳到备课、授课、学情和资源处理，不再只是导航壳。待办、风险学生、设备状态和 AI 建议都在这里汇总。' },
   courseware:{ icon:"📝", title:"① 课件 — 备课的主战场", body:'这是教师每天打开次数最多的页面。<span class="key">核心范式 = 课堂流程编排 + PPT 编辑 + 拖拽互动卡片绑定</span>。所有互动都是"插件式"卡片，备课时只管"摆好"，上课时翻到那一页 <span class="key">自动触发</span>。教师端 / 白板 / 学生平板三端实时同步。' },
-  teaching:{ icon:"📺", title:"投屏预览 — 设备与课件检查", body:'备课端只保留投屏检查、学生平板在线状态和互动绑定状态；正式课堂从课件库选择课件与班级后进入。' },
+  teaching:{ icon:"📺", title:"投屏预览", body:'' },
   interaction:{ icon:"🎯", title:"② 课堂互动设计 — 统一模板降低教师学习成本", body:'六种互动遵循<span class="key">同一卡片模板</span>（形态 / 防作弊 / 回收方式 / 学情埋点）。教师只需学一次就能用所有互动，且回收的数据结构统一，便于后续做学情聚类和错因分析。' },
   qbank:{ icon:"📚", title:"③ 智能题库 — 三关验证沉淀校本资产", body:'三路接入：<span class="key">校本题库 + 第三方爬取 + AI 变式</span>。每道题经过<span class="key">自动校验 → 教师确认 → 学情验证</span>三关后才会沉淀到校本，长期累积成可复用的"校本练习册"。' },
   analytics:{ icon:"📈", title:"学情 — 从课堂和作业自动汇总", body:'学情页把课堂互动、作业步骤和错因聚类合成可行动的任务：补练、讲评、错因卡、学生跟进都可以从这里继续处理。' },
@@ -2055,8 +2044,7 @@ const DEMOS = {
       <ul><li><strong>3 节课</strong> 待备课（数学 1 / 语文 2）</li>
         <li><strong>28/35</strong> 作业已批，剩余 7 份</li>
         <li><strong>2 条</strong> 智能提醒：三班单位换算偏弱 / 陈小刚连续 3 天未交</li></ul>
-      <div class="demo-callout"><span class="dc-icon">💡</span><div>跨天数据持续累积，让<strong>每节课的备课</strong>都基于上一节的真实学情。</div></div>
-      <p style="color:var(--muted);font-size:11.5px">本原型聚焦"备课"路径，工作台完整界面在另一原型 <code>tmp/步步_教师端模拟.html</code> 中。</p>` },
+      <div class="demo-callout"><span class="dc-icon">💡</span><div>跨天数据持续累积，让<strong>每节课的备课</strong>都基于上一节的真实学情。</div></div>` },
   'nav-授课': { icon:'▶', title:'授课模式 · 三端实时联动', primary:'立即进入授课', successMsg:'授课模式启动中…',
     body:`<p>切换到授课模式，将自动完成：</p>
       <ul><li>课件全屏投到<strong>白板</strong>（4K 60Hz · 12ms 延迟）</li>
@@ -2299,8 +2287,11 @@ document.querySelectorAll('.subtop .btn').forEach(b => {
     else if (text.includes('授课')) openDemo('present');
   });
 });
-document.querySelector('.save-ind').style.cursor = 'pointer';
-document.querySelector('.save-ind').addEventListener('click', () => showToast('✓ 已保存到云 · v14 · 14:32'));
+const saveIndicator = document.querySelector('.save-ind');
+if(saveIndicator){
+  saveIndicator.style.cursor = 'pointer';
+  saveIndicator.addEventListener('click', () => showToast('✓ 已保存到云 · v14 · 14:32'));
+}
 
 // 4. 画布工具栏 - 工具切换 active + 弹 demo
 document.querySelectorAll('.canvas-toolbar .tool').forEach(t => {
