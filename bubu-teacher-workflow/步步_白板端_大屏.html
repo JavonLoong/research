@@ -28,16 +28,42 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 
-.group-mark{
-  width:17px; height:17px; display:inline-block; position:relative; flex:none;
+/* page intro */
+.page-intro{ max-width:1240px; margin:24px auto 0; padding:0 20px; }
+.page-intro h1{ margin:0 0 6px; font-size:22px; font-weight:800; color:var(--text); }
+.page-intro h1 .sub{ font-size:13px; font-weight:600; color:var(--muted); margin-left:8px; }
+.page-intro > p{ margin:0 0 14px; font-size:13.5px; color:var(--muted); line-height:1.6; }
+.page-intro > p strong{ color:var(--text); }
+.intro-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px; }
+.ic{ background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius-lg); padding:14px 16px; box-shadow:var(--shadow); }
+.ic h3{ margin:0 0 6px; font-size:14px; font-weight:800; }
+.ic p{ margin:0; font-size:12.5px; color:var(--muted); line-height:1.65; }
+.ic strong{ color:var(--text); }
+
+.explain-bar{
+  max-width:1240px; margin:0 auto 18px; padding:10px 18px;
+  display:flex; gap:12px; align-items:center;
+  background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius-lg);
 }
-.group-mark::before{
-  content:""; position:absolute; left:1px; top:1px; width:7px; height:7px; border-radius:3px;
-  background:#7d6cf2; box-shadow:8px 0 0 #22c993, 4px 8px 0 #f59e0b;
+.eb-icon{ width:30px; height:30px; flex:none; background:var(--primary-soft); color:var(--primary-dark); border-radius:50%; display:grid; place-items:center; font-size:13px; }
+.eb-text{ font-size:13px; color:var(--text); line-height:1.55; }
+.eb-text .key{ color:var(--primary-dark); font-weight:700; }
+
+/* scene tabs */
+.scene-tabs{
+  max-width:1240px; margin:0 auto 18px; padding:0 20px;
+  display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
 }
-.group-mark::after{
-  content:""; position:absolute; left:4px; top:4px; width:9px; height:9px; border-radius:4px;
-  border:2px solid currentColor; opacity:.42;
+.scene-tabs .tab{
+  background:var(--surface); border:1px solid var(--line); border-radius:99px;
+  padding:8px 16px; font-size:13px; font-weight:600;
+  cursor:pointer; color:var(--text); transition: all .2s;
+  user-select:none;
+}
+.scene-tabs .tab:hover{ border-color:var(--primary); color:var(--primary-dark); }
+.scene-tabs .tab.active{
+  background:var(--primary); color:#fff; border-color:var(--primary);
+  box-shadow: 0 6px 16px rgba(34,201,147,.32);
 }
 
 /* ====== Whiteboard device shell（大屏外壳） ====== */
@@ -45,33 +71,159 @@ body{
 .board-frame{ width:1100px; max-width:100%; position:relative; }
 .board-outer{
   background: #1a1f2c;
-  padding: 22px 18px 14px;
+  padding: 22px 18px 22px;
   border-radius: 16px;
   box-shadow: 0 24px 60px rgba(20, 30, 55, .26), inset 0 0 0 1px rgba(255,255,255,.04);
 }
+.board-camera{
+  position:absolute; top:6px; left:50%; transform:translateX(-50%);
+  display:flex; gap:6px; align-items:center;
+  font-size:10px; color:#8b94aa; font-weight:600; z-index:2;
+  letter-spacing:.4px;
+}
+.board-camera::before{ content:""; width:6px; height:6px; border-radius:50%; background:#3a4256; box-shadow:0 0 0 2px #232938; }
 .board-screen{
   width:100%; aspect-ratio: 16 / 9;
   background: linear-gradient(135deg, #f6f8fa 0%, #edf2f7 100%);
   border-radius: 8px;
   position:relative; overflow:hidden;
 }
-.scene-root{position:absolute;inset:0;overflow:hidden}
-.lesson-controls{
-  display:flex; align-items:center; justify-content:center; gap:12px;
-  padding:12px 6px 0;
+.scene-root{ position:absolute; inset:0; overflow:hidden; }
+.floating-ball{
+  position:absolute; right:22px; bottom:104px; z-index:80;
+  width:76px; height:76px; border-radius:50%;
+  touch-action:none; user-select:none;
 }
-.lesson-nav-btn{
-  height:30px; min-width:74px; padding:0 14px;
-  border-radius:8px; border:1px solid rgba(255,255,255,.18);
-  background:#fff; color:#111827; font:inherit; font-size:12px; font-weight:900;
-  cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,.12);
+.floating-ball.dragging{ transition:none; }
+.float-main{
+  width:76px; height:76px; border-radius:50%;
+  border:1px solid rgba(255,255,255,.56);
+  background:linear-gradient(135deg,#152033,#263f69);
+  color:#fff; box-shadow:0 18px 44px rgba(15,23,42,.32);
+  display:grid; place-items:center; cursor:pointer;
+  font-weight:900; font-size:15px; letter-spacing:0;
 }
-.lesson-nav-btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
-.lesson-nav-btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
-.lesson-page-label{
-  min-width:230px; text-align:center;
-  font-size:12px; color:#cbd5e1; font-weight:800;
+.float-main span{ display:block; font-size:24px; line-height:1; margin-bottom:2px; }
+.float-main small{ display:block; font-size:10px; color:#cbd5e1; font-weight:800; }
+.float-menu{
+  position:absolute; inset:0; pointer-events:none;
 }
+.float-tool{
+  position:absolute; left:9px; top:9px; width:58px; height:58px;
+  border-radius:50%; border:1px solid rgba(255,255,255,.72);
+  background:rgba(15,23,42,.92); color:#fff;
+  box-shadow:0 12px 30px rgba(15,23,42,.24);
+  opacity:0; transform:translate(0,0) scale(.7);
+  transition:.18s ease; cursor:pointer;
+  display:grid; place-items:center; text-align:center;
+  font-size:12px; font-weight:900;
+}
+.float-tool strong{ display:block; font-size:17px; line-height:1; }
+.floating-ball.open .float-menu{ pointer-events:auto; }
+.floating-ball.open .float-tool{ opacity:1; transform:translate(var(--tx),var(--ty)) scale(1); }
+.float-tool.active{ background:var(--primary); border-color:#fff; }
+.collection-drawer,
+.answer-drawer,
+.gateway-panel,
+.voice-strip,
+.ai-anchor-card{ position:absolute; z-index:72; }
+.collection-drawer{
+  left:22px; right:22px; bottom:18px;
+  padding:16px 18px;
+  background:rgba(15,23,42,.93); color:#fff;
+  border:1px solid rgba(255,255,255,.16); border-radius:14px;
+  box-shadow:0 18px 42px rgba(15,23,42,.30);
+  transform:translateY(calc(100% + 30px)); opacity:0; pointer-events:none;
+  transition:.22s ease;
+}
+.collection-drawer.show{ transform:translateY(0); opacity:1; pointer-events:auto; }
+.drawer-head,.answer-head,.gateway-head{
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+  font-weight:900; margin-bottom:12px;
+}
+.drawer-head button,.answer-head button,.gateway-head button,.voice-strip button{
+  border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.12);
+  color:inherit; border-radius:8px; padding:7px 10px; cursor:pointer; font-weight:800;
+}
+.drawer-grid{ display:grid; grid-template-columns:1.15fr 1fr 1fr; gap:12px; }
+.drawer-stat{
+  background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.12);
+  border-radius:10px; padding:12px;
+}
+.drawer-stat .big{ font-size:31px; line-height:1; font-weight:900; color:#8ef0ca; }
+.drawer-stat p{ margin:8px 0 0; color:#dbeafe; font-size:13px; }
+.answer-drawer{
+  top:22px; right:0; width:33%;
+  min-width:320px; height:calc(100% - 44px);
+  background:rgba(255,255,255,.96); color:var(--text);
+  border-left:1px solid var(--line); border-radius:14px 0 0 14px;
+  box-shadow:-18px 0 42px rgba(15,23,42,.18);
+  padding:16px; transform:translateX(105%); opacity:0; pointer-events:none;
+  transition:.22s ease;
+}
+.answer-drawer.show{ transform:translateX(0); opacity:1; pointer-events:auto; }
+.answer-sample{
+  background:linear-gradient(180deg,#fff,#f8fafc); border:1px solid var(--line);
+  border-radius:10px; padding:14px; margin-bottom:12px;
+}
+.answer-sample h4{ margin:0 0 8px; font-size:15px; }
+.answer-sample .work{ font-family:"Times New Roman",serif; font-size:20px; line-height:1.45; }
+.answer-note{
+  background:var(--warn-soft); color:#8a5b00; border:1px solid #fde3ac;
+  border-radius:10px; padding:12px; font-size:13px; line-height:1.6;
+}
+.ai-anchor-card{
+  left:36%; top:31%; width:300px;
+  background:#111827; color:#fff; border:1px solid rgba(255,255,255,.16);
+  border-radius:12px; padding:14px; box-shadow:0 18px 46px rgba(15,23,42,.32);
+  opacity:0; transform:translateY(10px); pointer-events:none; transition:.18s ease;
+}
+.ai-anchor-card.show{ opacity:1; transform:translateY(0); pointer-events:auto; }
+.ai-anchor-card::before{
+  content:""; position:absolute; left:20px; top:-10px; width:18px; height:18px;
+  background:#111827; transform:rotate(45deg);
+}
+.ai-anchor-card h4{ margin:0 0 8px; font-size:15px; }
+.ai-anchor-card p{ margin:0; color:#dbeafe; line-height:1.55; font-size:13px; }
+.selection-ghost{
+  position:absolute; left:22%; top:30%; width:23%; height:22%;
+  border:3px dashed var(--primary); border-radius:14px;
+  background:rgba(34,201,147,.10); box-shadow:0 0 0 999px rgba(15,23,42,.06);
+  display:none; z-index:65; pointer-events:none;
+}
+.selection-ghost.show{ display:block; }
+.voice-strip{
+  left:50%; top:18px; transform:translate(-50%,-130%);
+  min-width:520px; max-width:78%;
+  background:rgba(15,23,42,.92); color:#fff;
+  border:1px solid rgba(255,255,255,.16); border-radius:999px;
+  padding:10px 14px 10px 18px; display:flex; align-items:center; gap:12px;
+  box-shadow:0 14px 34px rgba(15,23,42,.25);
+  opacity:0; pointer-events:none; transition:.22s ease;
+}
+.voice-strip.show{ transform:translate(-50%,0); opacity:1; pointer-events:auto; }
+.voice-dot{
+  width:10px; height:10px; border-radius:50%; background:#f43f5e;
+  box-shadow:0 0 0 0 rgba(244,63,94,.7); animation:pulseRed 1.2s infinite;
+}
+@keyframes pulseRed{ 70%{ box-shadow:0 0 0 12px rgba(244,63,94,0); } 100%{ box-shadow:0 0 0 0 rgba(244,63,94,0); } }
+.voice-text{ flex:1; font-size:14px; font-weight:800; }
+.gateway-panel{
+  left:22px; top:22px; width:310px;
+  background:rgba(255,255,255,.96); color:var(--text);
+  border:1px solid var(--line); border-radius:14px; padding:15px;
+  box-shadow:0 18px 40px rgba(15,23,42,.18);
+  transform:translateX(-110%); opacity:0; pointer-events:none; transition:.22s ease;
+}
+.gateway-panel.show{ transform:translateX(0); opacity:1; pointer-events:auto; }
+.gateway-row{ display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-top:1px solid var(--line-soft); font-size:13px; }
+.gateway-row strong{ color:var(--primary-dark); }
+.gateway-health{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px;
+}
+.gateway-health div{ background:var(--surface-2); border-radius:8px; padding:9px; text-align:center; }
+.gateway-health b{ display:block; font-size:18px; color:var(--text); }
+.gateway-health span{ font-size:11px; color:var(--muted); }
 .board-stand{
   position:absolute; left:50%; bottom:-32px; transform:translateX(-50%);
   width:280px; height:14px;
@@ -84,6 +236,10 @@ body{
   width:140px; height:8px;
   background: linear-gradient(180deg, #1a1f2c 0%, #0d1018 100%);
   border-radius: 0 0 12px 12px;
+}
+.board-base-text{
+  position:absolute; left:50%; bottom:-50px; transform:translateX(-50%);
+  font-size:10.5px; color:#8b94aa; font-weight:700; letter-spacing:1.2px;
 }
 
 /* ====== 大屏内部通用 UI ====== */
@@ -120,7 +276,7 @@ body{
   z-index:5;
 }
 .bd-aibar::before{
-  content:"状态"; flex:none;
+  content:"AI"; flex:none;
   font-weight:800; font-size:10px; letter-spacing:.5px;
   background: rgba(255,255,255,.22); padding:3px 7px; border-radius:5px;
 }
@@ -263,11 +419,6 @@ body{
 }
 .result-h .stats{ margin-left:auto; font-size:14px; color:var(--muted); font-weight:600; }
 .result-h .stats strong{ color:var(--primary-dark); font-size:20px; }
-.result-privacy{
-  flex-basis:100%;
-  font-size:12px; color:var(--muted); font-weight:700;
-  display:inline-flex; gap:6px; align-items:center;
-}
 .bars{ display:grid; grid-template-columns:repeat(4,1fr); gap:24px; flex:1; align-items:end; margin-bottom:14px; padding-bottom:30px; }
 .bar-col{ display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; }
 .bar-wrap{ width:100%; height:100%; display:flex; flex-direction:column; justify-content:flex-end; position:relative; }
@@ -290,26 +441,49 @@ body{
   font-size:12px; font-weight:800;
 }
 .bar-col.correct .lab2 .key{ background: var(--primary); color:#fff; }
+.bar-avatars{ display:flex; flex-wrap:wrap; gap:2px; padding:4px; align-content:flex-end; }
+.bar-avatars .a{
+  width:14px; height:14px; border-radius:50%;
+  background: rgba(255,255,255,.7);
+  font-size:8px; font-weight:800; display:grid; place-items:center;
+  color:var(--text);
+}
 
 /* ====== Scene · draw（抽人） ====== */
-.scn-draw{ position:absolute; inset:0; padding: 58px 56px 82px; display:grid; grid-template-columns: 1fr 1.15fr; gap:32px; align-items:center; }
-.draw-pool{
-  background: var(--surface); border:1px solid var(--line-soft); border-radius:14px;
-  padding:18px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:12px;
+.scn-draw{ position:absolute; inset:0; padding: 50px 40px 80px; display:flex; align-items:center; justify-content:center; gap:50px; }
+.draw-wheel{
+  width:300px; height:300px; border-radius:50%;
+  background: conic-gradient(from 0deg,
+    var(--primary) 0 30deg, var(--accent) 30deg 60deg,
+    var(--warn) 60deg 90deg, var(--danger) 90deg 120deg,
+    var(--primary-dark) 120deg 150deg, var(--accent-dark) 150deg 180deg,
+    var(--primary) 180deg 210deg, var(--accent) 210deg 240deg,
+    var(--warn) 240deg 270deg, var(--danger) 270deg 300deg,
+    var(--primary-dark) 300deg 330deg, var(--accent-dark) 330deg 360deg);
+  position:relative;
+  box-shadow: 0 12px 40px rgba(20,30,55,.18), inset 0 0 0 8px rgba(255,255,255,.32);
 }
-.draw-pool-title{ display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--muted); font-weight:800; }
-.draw-pool-title strong{ color:var(--text); font-size:16px; }
-.draw-list{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-.draw-student{
-  height:40px; border-radius:8px; border:1px solid var(--line-soft); background:var(--surface-2);
-  display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; color:var(--text-soft);
+.draw-wheel.spin{ animation: wheelSpin 2.6s cubic-bezier(.16,.8,.34,1) forwards; }
+@keyframes wheelSpin{ 0%{ transform: rotate(0deg) } 100%{ transform: rotate(1840deg) } }
+.draw-pointer{
+  position:absolute; left:50%; top:-14px; transform:translateX(-50%);
+  width:0; height:0;
+  border-left: 14px solid transparent; border-right: 14px solid transparent;
+  border-top: 22px solid var(--text);
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,.18));
+  z-index:2;
 }
-.draw-student.active{ background:var(--primary-soft); color:var(--primary-dark); border-color:rgba(34,201,147,.35); box-shadow:0 0 0 3px rgba(34,201,147,.12); }
-.draw-student.dim{ color:var(--muted-2); }
-.draw-status{ font-size:12px; color:var(--muted); font-weight:700; }
+.draw-wheel-c{
+  position:absolute; left:50%; top:50%; transform: translate(-50%, -50%);
+  width:130px; height:130px; border-radius:50%;
+  background: var(--surface); border:5px solid var(--text);
+  display:grid; place-items:center;
+  font-size:14px; font-weight:800; color:var(--text);
+  text-align:center; line-height:1.4;
+}
 .draw-info{ flex:0 1 380px; }
 .draw-info .di-h{ font-size:14px; color:var(--muted); font-weight:600; margin-bottom:6px; }
-.draw-info .di-name{ font-size:64px; font-weight:800; color:var(--primary-dark); margin: 4px 0 16px; line-height:1; }
+.draw-info .di-name{ font-size:64px; font-weight:800; color:var(--accent-dark); margin: 4px 0 16px; line-height:1; }
 .draw-info .di-name.pop{ animation: popIn .5s cubic-bezier(.25,.6,.3,1.4); }
 @keyframes popIn{
   0%{ transform: scale(.4); opacity:0; }
@@ -322,6 +496,23 @@ body{
   font-size:14px; color:var(--text); line-height:1.7; font-weight:500;
 }
 .draw-why strong{ color: var(--accent-dark); }
+
+/* ====== Scene · cloud（词云） ====== */
+.scn-cloud{ position:absolute; inset:0; padding: 56px 40px 70px; display:flex; flex-direction:column; }
+.cloud-q{ font-size:24px; font-weight:800; color:var(--text); text-align:center; margin-bottom: 4px; }
+.cloud-q small{ display:block; font-size:13px; font-weight:500; color:var(--muted); margin-top:4px; }
+.cloud-area{
+  flex:1; position:relative; padding:24px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #f9f5ff 100%);
+  border-radius: 14px; border:1px dashed var(--line);
+  margin-top:12px; overflow:hidden;
+}
+.cloud-w{
+  position:absolute; font-weight:800; opacity:0;
+  transform: translateY(20px) scale(.7);
+  animation: cloudIn .8s ease forwards;
+}
+@keyframes cloudIn{ to{ opacity:1; transform: translateY(0) scale(1); } }
 
 /* ====== Scene · group（小组讨论） ====== */
 .scn-group{ position:absolute; inset:0; padding: 50px 30px 80px; display:flex; flex-direction:column; }
@@ -338,21 +529,13 @@ body{
   font-size:12px; font-weight:800;
 }
 .grp-h .gh-t{ font-size:14px; font-weight:800; }
-.grp-h .gh-t small{ display:block; margin-top:2px; color:var(--muted); font-size:11px; font-weight:700; }
 .grp-h .gh-tag{ margin-left:auto; font-size:10px; padding:2px 8px; border-radius:6px; background:var(--primary-soft); color:var(--primary-dark); font-weight:700; }
 .grp-photo{
-  flex:1; min-height:112px;
-  background:#f8fafc;
-  border:1px solid var(--line-soft);
-  border-radius:10px;
-  overflow:hidden;
-  display:block; font-size:0;
+  flex:1; min-height:80px;
+  background: linear-gradient(135deg, var(--surface-2), var(--line-soft));
+  border-radius:8px;
+  display:grid; place-items:center; font-size:34px;
 }
-.grp-photo svg{ width:100%; height:100%; display:block; }
-.scene-art .paper{ fill:#fff; stroke:#dbe4ef; stroke-width:1.5; }
-.scene-art .label{ fill:#607086; font-size:11px; font-weight:800; }
-.scene-art .thin{ stroke:#94a3b8; stroke-width:2; stroke-linecap:round; }
-.scene-art .bold{ stroke:#0f172a; stroke-width:3; stroke-linecap:round; }
 .grp-tags{ display:flex; flex-wrap:wrap; gap:5px; }
 .grp-tags span{ font-size:11px; padding:3px 8px; border-radius:6px; background: var(--accent-soft); color:var(--accent-dark); font-weight:700; }
 
@@ -402,8 +585,54 @@ body{
 .end-mini-list{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:4px; }
 .end-mini-list span{ background:var(--surface-2); border:1px solid var(--line-soft); border-radius:8px; padding:8px 10px; font-size:12px; font-weight:700; color:var(--text); }
 
+/* ====== 三端联动小图 ====== */
+.link-row{
+  max-width:1240px; margin: 56px auto 28px; padding: 0 20px;
+  display:flex; gap:12px; align-items:center; justify-content:center;
+}
+.link-card{
+  flex:1; max-width:300px;
+  background: var(--surface); border:1px solid var(--line-soft);
+  border-radius:14px; padding:12px; text-align:center;
+  box-shadow: var(--shadow);
+}
+.lc-h{ font-size:13px; font-weight:800; color:var(--text); margin-bottom:8px; }
+.lc-mini{
+  width:100%; height:130px; border-radius:10px;
+  background: var(--surface-2);
+  display:grid; place-items:center;
+  border:1px solid var(--line-soft);
+  position:relative; overflow:hidden;
+  font-size:11.5px; color:var(--muted); font-weight:600;
+  padding:6px;
+}
+.lc-foot{ font-size:11px; color:var(--muted); margin-top:8px; }
+.link-arrow{ font-size:22px; color:var(--accent); font-weight:800; }
+.lc-teacher{ background: linear-gradient(135deg, #fff, #f6f8fa); }
+.lc-board{
+  background:#1a1f2c; color:#fff;
+  font-weight:700; font-size:12px;
+}
+.lc-board::before{
+  content:""; position:absolute; left:8px; right:8px; top:8px; bottom:8px;
+  background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
+  border-radius:6px;
+}
+.lc-board > span{ position:relative; z-index:1; color:var(--text); background: rgba(255,255,255,.85); padding:3px 10px; border-radius:6px; }
+.lc-pads{ background: linear-gradient(135deg, #f5f0ff, #ecf9f3); position:relative; }
+.lc-pads .pad-mini{
+  position:absolute; width:11%; aspect-ratio:.74;
+  background:var(--surface); border:1px solid var(--line); border-radius:3px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+.lc-pads .pad-mini.off{ background: var(--line-soft); border-color:var(--line); }
+.lc-pads .pad-mini.on::after{
+  content:""; position:absolute; inset:1.5px; border-radius:2px;
+  background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
+}
+
 /* ====== Toast / Modal ====== */
-.toast-stack{ position:absolute; right:18px; top:18px; display:flex; flex-direction:column; gap:8px; z-index:80; pointer-events:none; }
+.toast-stack{ position:fixed; right:20px; top:80px; display:flex; flex-direction:column; gap:8px; z-index:1000; pointer-events:none; }
 .toast{
   background: var(--surface); border:1px solid var(--line);
   border-radius:10px; padding:10px 14px; font-size:13px; font-weight:600;
@@ -415,7 +644,7 @@ body{
 .toast.warn{ border-left:4px solid var(--warn); }
 .toast.info{ border-left:4px solid var(--accent); }
 
-.modal-bg{ position:absolute; inset:0; background: rgba(20,30,55,.52); display:none; align-items:center; justify-content:center; z-index:90; padding:18px; }
+.modal-bg{ position:fixed; inset:0; background: rgba(20,30,55,.45); display:none; align-items:center; justify-content:center; z-index:1001; }
 .modal-bg.show{ display:flex; }
 .modal{
   background: var(--surface); border-radius: var(--radius-lg);
@@ -441,65 +670,291 @@ body{
 .m-foot button.pri{ background: var(--primary); color:#fff; border-color: var(--primary); }
 .m-foot button.pri:hover{ background: var(--primary-dark); }
 
-.radial-tools{position:absolute;right:16px;top:50%;z-index:70;width:58px;height:58px}
-.radial-main,.radial-tool{position:absolute;width:54px;height:54px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--text);font-size:12px;font-weight:900;display:grid;place-items:center;box-shadow:0 10px 26px rgba(15,23,42,.16);cursor:pointer;transition:.2s;font-family:inherit}
-.radial-main{right:0;top:0;background:var(--primary);color:#fff;border-color:var(--primary)}
-.radial-tool{right:2px;top:2px;opacity:0;pointer-events:none}
-.radial-tools.open .radial-tool,.radial-tools:hover .radial-tool{opacity:1;pointer-events:auto}
-.radial-tools.open .radial-tool:nth-child(2),.radial-tools:hover .radial-tool:nth-child(2){transform:translate(-72px,-72px)}
-.radial-tools.open .radial-tool:nth-child(3),.radial-tools:hover .radial-tool:nth-child(3){transform:translate(-88px,0)}
-.radial-tools.open .radial-tool:nth-child(4),.radial-tools:hover .radial-tool:nth-child(4){transform:translate(-72px,72px)}
-.radial-tools.open .radial-tool:nth-child(5),.radial-tools:hover .radial-tool:nth-child(5){transform:translate(0,88px)}
-@media (max-width:900px){
-  .lesson-controls{flex-wrap:wrap}
-  .lesson-page-label{order:-1;width:100%}
+.foot-note{ text-align:center; font-size:12px; color:var(--muted); padding:24px 20px 50px; max-width:1240px; margin: 0 auto; }
+
+/* ====== 升级版样式 v2 ====== */
+
+/* live 升级 */
+.opt-mini-bar{ height:5px; background: var(--line-soft); border-radius:99px; margin-top:8px; overflow:hidden; }
+.opt-mini-bar .omb-fill{ height:100%; background: var(--accent); border-radius:99px; transition: width 1.2s cubic-bezier(.25,.6,.3,1); }
+.opt-mini-num{ font-size:11px; color:var(--muted); margin-top:5px; font-weight:700; }
+.live-opt[data-act]{ cursor:pointer; transition:.2s; }
+.live-opt[data-act]:hover{ border-color:var(--accent); transform:translateY(-2px); box-shadow:var(--shadow); }
+.live-actions{ display:flex; gap:10px; justify-content:center; margin-top:6px; flex-wrap:wrap; }
+.la-btn{
+  border:1px solid var(--line); background:var(--surface); color:var(--text);
+  border-radius:8px; padding:8px 14px; font-size:12.5px; font-weight:700;
+  cursor:pointer; transition:.2s; display:inline-flex; gap:5px; align-items:center;
 }
+.la-btn:hover{ border-color:var(--primary); color:var(--primary-dark); transform:translateY(-1px); }
+.la-btn.warn{ background:var(--warn); color:#fff; border-color:var(--warn); }
+.la-btn.warn:hover{ background:#d99020; color:#fff; }
+.la-btn.pri{ background:var(--primary); color:#fff; border-color:var(--primary); }
+.la-btn.pri:hover{ background:var(--primary-dark); color:#fff; }
+
+/* result 升级 */
+.result-vs{ margin-left:auto; font-size:13px; color:var(--muted); font-weight:600; }
+.result-vs strong{ color:var(--warn); font-size:18px; }
+.bar-col[data-act]{ cursor:pointer; }
+.bar-col[data-act]:hover .bar{ filter:brightness(.94); }
+.lab2 .bc-warn{ font-size:9px; padding:2px 5px; border-radius:4px; background:var(--warn-soft); color:#a06800; font-weight:800; margin-left:4px; }
+.result-actions{ display:flex; gap:10px; justify-content:center; margin-top:6px; flex-wrap:wrap; padding-bottom:4px; }
+
+/* draw 升级 */
+.draw-modes{ display:flex; gap:5px; }
+.dm-btn{
+  font-size:11.5px; padding:5px 10px; border-radius:99px;
+  background:var(--surface-2); border:1px solid var(--line);
+  color:var(--muted); font-weight:700; cursor:pointer; transition:.2s;
+}
+.dm-btn:hover{ border-color:var(--accent); color:var(--accent-dark); }
+.dm-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+.scn-draw{ flex-direction:column !important; gap:18px; padding-top:60px !important; }
+.draw-main{ display:flex; align-items:center; justify-content:center; gap:50px; flex:1; min-height:0; }
+.draw-wheel-c{ cursor:pointer; transition:.2s; }
+.draw-wheel-c:hover{ transform:translate(-50%,-50%) scale(1.06); }
+.draw-actions{ display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+.draw-history{
+  background: var(--surface); border:1px solid var(--line-soft); border-radius:12px;
+  padding:10px 16px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+  font-size:12px;
+}
+.dh-l{ font-weight:700; color:var(--muted); }
+.dh-name{ background:var(--accent-soft); color:var(--accent-dark); padding:3px 9px; border-radius:99px; font-weight:700; }
+.dh-tip{ margin-left:auto; color:var(--warn); font-weight:700; font-size:11.5px; }
+
+/* cloud 升级 */
+.scn-cloud .cloud-main{ flex:1; display:grid; grid-template-columns: 200px 1fr; gap:14px; margin-top:10px; min-height:0; }
+.cloud-stream{
+  background: var(--surface); border:1px solid var(--line-soft); border-radius:12px;
+  padding:10px 12px; display:flex; flex-direction:column; gap:6px; overflow:hidden;
+}
+.cs-h{ font-size:11.5px; color:var(--muted); font-weight:800; padding-bottom:6px; border-bottom:1px solid var(--line-soft); }
+.cs-item{
+  background: var(--surface-2); border-radius:8px; padding:7px 10px;
+  font-size:11px; opacity:0; transform:translateY(8px);
+  animation: csIn .55s ease forwards;
+}
+.cs-item:nth-child(2){ animation-delay:.1s }
+.cs-item:nth-child(3){ animation-delay:.3s }
+.cs-item:nth-child(4){ animation-delay:.5s }
+.cs-item:nth-child(5){ animation-delay:.7s }
+@keyframes csIn{ to{ opacity:1; transform:translateY(0);} }
+.cs-name{ color:var(--accent-dark); font-weight:800; }
+.cs-time{ float:right; color:var(--muted); font-size:10px; }
+.cs-text{ font-size:13.5px; font-weight:800; color:var(--text); margin-top:4px; }
+.cl-dot{ width:8px; height:8px; border-radius:50%; display:inline-block; margin: 0 3px 0 6px; vertical-align:middle; }
+.cloud-w{ cursor:pointer; transition:.2s; }
+.cloud-w:hover{ transform: scale(1.12); filter: brightness(.85); }
+
+/* group 升级 */
+.grp-h-bar{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.grp-h-title{ font-size:17px; font-weight:800; color:var(--text); }
+.grp-mem{ display:flex; gap:3px; flex-wrap:wrap; }
+.gm-av{
+  width:22px; height:22px; border-radius:50%;
+  background: var(--accent-soft); color:var(--accent-dark);
+  font-size:11px; font-weight:800; display:grid; place-items:center;
+  border:1.5px solid #fff; box-shadow:0 1px 2px rgba(0,0,0,.05);
+}
+.grp-card[data-act]{ position:relative; cursor:pointer; transition:.2s; }
+.grp-card[data-act]:hover{ transform:translateY(-3px); box-shadow:0 12px 28px rgba(20,30,55,.14); }
+.grp-card.recommended{ border-color:var(--accent); box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow); }
+.grp-badge{ position:absolute; top:6px; right:6px; font-size:10px; padding:3px 8px; border-radius:6px; font-weight:800; }
+.gb-fast{ background:var(--warn-soft); color:#a06800; }
+.gb-creative{ background:var(--accent); color:#fff; }
+
+/* end 升级 */
+.scn-end{ padding:42px 50px 78px !important; gap:12px !important; }
+.end-stats{ display:grid; grid-template-columns: repeat(4,1fr); gap:12px; }
+.es-chip{
+  background: var(--surface); border-radius:12px; padding:12px 16px;
+  border:1px solid var(--line-soft); box-shadow: var(--shadow);
+  text-align:center;
+}
+.es-num{ font-size:26px; font-weight:800; color:var(--primary-dark); line-height:1; font-variant-numeric: tabular-nums; }
+.es-lab{ font-size:11px; color:var(--muted); font-weight:700; margin-top:5px; }
+.end-h{ font-size:24px !important; }
+.ek-anim{ opacity:0; transform:translateY(12px); animation: ekIn .5s ease forwards; }
+@keyframes ekIn{ to{ opacity:1; transform:translateY(0);} }
+.end-card[data-act]{ cursor:pointer; transition:.2s; }
+.end-card[data-act]:hover{ border-color:var(--primary); transform:translateY(-2px); box-shadow:var(--shadow); }
+.end-push{ background: var(--surface); border-radius:12px; padding:12px 16px; border:1px solid var(--line-soft); }
+.ep-h{ font-size:12px; color:var(--muted); font-weight:800; margin-bottom:8px; }
+.ep-list{ display:grid; grid-template-columns: repeat(4,1fr); gap:10px; }
+.ep-card{ display:flex; gap:9px; align-items:center; background: var(--surface-2); padding:7px 10px; border-radius:8px; }
+.ep-av{ width:28px; height:28px; border-radius:50%; background: var(--accent-soft); color: var(--accent-dark); font-size:12px; font-weight:800; display:grid; place-items:center; flex:none; }
+.ep-n{ font-size:12px; font-weight:800; line-height:1.2; }
+.ep-d{ font-size:10.5px; color:var(--muted); margin-top:2px; }
 </style>
 </head>
 <body>
+<!-- ===== Page intro ===== -->
+<div class="page-intro">
+  <h1>步步 · 白板端 / 教室大屏 <span class="sub">第三个端：65 寸智能交互一体机</span></h1>
+  <p>这是一个原型，演示<strong>"白板端是公共屏，全班共同看"</strong>的产品形态。点击下方 8 个按钮切换"上课前 → 讲解 → 答题 → 揭晓 → 抽人 → 词云 → 讨论 → 下课"的完整流程，看每个时刻屏幕上展示什么、AI 给老师什么提示。</p>
+  <div class="intro-cards">
+    <div class="ic">
+      <h3>📺 公共屏 · 不是单点交互</h3>
+      <p>面向全班的"展示 + 协同"。所有字号、对比、动效都按"<strong>最后一排也看得清</strong>"设计：标题 ≥ 28 px，关键数据 ≥ 30 px。</p>
+    </div>
+    <div class="ic">
+      <h3>👨‍🏫 老师主舞台</h3>
+      <p>大屏不替代老师讲。课件、板书、提问、点名都是<strong>老师主动操作</strong>。AI 在屏幕底部紫条里给一句建议，<strong>决定权全在老师</strong>。</p>
+    </div>
+    <div class="ic">
+      <h3>📡 三端联动</h3>
+      <p>老师手里教师端推任务 → 学生平板上接到 → 全班的<strong>实时数据回到大屏</strong>。下方"三端联动小图"演示这条数据流。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Explain bar ===== -->
+<div class="explain-bar">
+  <div class="eb-icon">▶</div>
+  <div class="eb-text">点击下方按钮切换<span class="key">课堂 8 个时刻</span>，看大屏在不同环节给老师/学生提供什么信息。每个时刻都对应右下角紫条里的"AI 给老师的话"。</div>
+</div>
+
+<!-- ===== Scene tabs ===== -->
+<div class="scene-tabs" id="sceneTabs">
+  <div class="tab active" data-scene="welcome">📅 上课前</div>
+  <div class="tab" data-scene="teach">📖 课件讲解</div>
+  <div class="tab" data-scene="live">⏱ 实时答题</div>
+  <div class="tab" data-scene="result">📊 揭晓答案</div>
+  <div class="tab" data-scene="draw">🎯 抽人提问</div>
+  <div class="tab" data-scene="cloud">☁️ 词云</div>
+  <div class="tab" data-scene="group">👥 小组讨论</div>
+  <div class="tab" data-scene="end">🌙 下课总结</div>
+</div>
+
 <!-- ===== Whiteboard device shell ===== -->
 <div class="board-shell">
   <div class="board-frame">
+    <div class="board-camera">📡 步步教学一体机 · WB-A23</div>
     <div class="board-outer">
       <div class="board-screen" id="boardScreen">
         <div class="scene-root" id="sceneRoot"></div>
-        <div class="radial-tools" id="radialTools">
-          <button class="radial-main" id="radialMain">工具</button>
-          <button class="radial-tool" data-board-tool="pen">笔</button>
-          <button class="radial-tool" data-board-tool="eraser">擦</button>
-          <button class="radial-tool" data-board-tool="timer">1分</button>
-          <button class="radial-tool" data-board-tool="feedback">反馈</button>
+        <div class="selection-ghost" id="selectionGhost"></div>
+
+        <div class="floating-ball" id="floatingBall" style="right:22px;bottom:104px">
+          <button class="float-main" id="floatingMain" type="button" aria-label="打开白板悬浮球">
+            <span>✦</span><small>白板</small>
+          </button>
+          <div class="float-menu" aria-label="白板工具菜单">
+            <button class="float-tool" style="--tx:-74px;--ty:-92px" data-board-tool="pushLive" type="button"><strong>练</strong>随堂</button>
+            <button class="float-tool" style="--tx:-132px;--ty:-24px" data-board-tool="draw" type="button"><strong>抽</strong>点名</button>
+            <button class="float-tool" style="--tx:-126px;--ty:54px" data-board-tool="circleAsk" type="button"><strong>圈</strong>提问</button>
+            <button class="float-tool" style="--tx:-54px;--ty:112px" data-board-tool="pen" type="button"><strong>笔</strong>批注</button>
+            <button class="float-tool" style="--tx:30px;--ty:104px" data-board-tool="subjectTool" type="button"><strong>具</strong>学科</button>
+            <button class="float-tool" style="--tx:76px;--ty:26px" data-board-tool="voice" type="button"><strong>语</strong>助手</button>
+            <button class="float-tool" style="--tx:56px;--ty:-58px" data-board-tool="gateway" type="button"><strong>网</strong>状态</button>
+          </div>
         </div>
-        <div class="toast-stack" id="toastStack"></div>
-        <div class="modal-bg" id="modalBg">
-          <div class="modal">
-            <h3 id="modalTitle">标题 <span class="mh-tag" id="modalTag">说明</span></h3>
-            <div class="m-body" id="modalBody"></div>
-            <div class="m-foot">
-              <button data-act="modalClose">关闭</button>
-              <button class="pri" id="modalPri" data-act="modalClose">我知道了</button>
-            </div>
+
+        <div class="voice-strip" id="voiceStrip">
+          <span class="voice-dot"></span>
+          <div class="voice-text">语音助手已就绪：可以说“推一道随堂练”“打开抽人”“显示网关状态”。</div>
+          <button type="button" data-overlay-close="voiceStrip">收起</button>
+        </div>
+
+        <div class="gateway-panel" id="gatewayPanel">
+          <div class="gateway-head">
+            <span>教室网关状态</span>
+            <button type="button" data-overlay-close="gatewayPanel">关闭</button>
+          </div>
+          <div class="gateway-row"><span>学生平板在线</span><strong>26 / 28</strong></div>
+          <div class="gateway-row"><span>平均推送延迟</span><strong>64 ms</strong></div>
+          <div class="gateway-row"><span>白板同步</span><strong>正常</strong></div>
+          <div class="gateway-row"><span>云端资源同步</span><strong>已完成</strong></div>
+          <div class="gateway-health">
+            <div><b>98%</b><span>网络健康</span></div>
+            <div><b>1</b><span>充电中</span></div>
+            <div><b>0</b><span>异常设备</span></div>
+          </div>
+        </div>
+
+        <div class="ai-anchor-card" id="aiAnchorCard">
+          <h4>圈选提问 · AI 解释卡</h4>
+          <p>这块内容适合追问“为什么必须平均分”。建议先让学生口头解释，再点开右侧典型答案，不切走当前课件。</p>
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <button class="la-btn pri" type="button" data-board-action="openAnswer">看典型答案</button>
+            <button class="la-btn" type="button" data-overlay-close="aiAnchorCard">收起</button>
+          </div>
+        </div>
+
+        <div class="answer-drawer" id="answerDrawer">
+          <div class="answer-head">
+            <span>典型答案 · 保留课件视野</span>
+            <button type="button" data-overlay-close="answerDrawer">关闭</button>
+          </div>
+          <div class="answer-sample">
+            <h4>王嘉怡 · 解题过程</h4>
+            <div class="work">1/2 = 4/8<br>5/8 比 4/8 多 1/8，所以 5/8 最接近 1/2。</div>
+          </div>
+          <div class="answer-sample">
+            <h4>张明轩 · 常见误区</h4>
+            <div class="work">4/9 看起来分子小，但 1/2 = 4.5/9，4/9 也接近；需要和 5/8 一起比较距离。</div>
+          </div>
+          <div class="answer-note">右侧抽屉只占 1/3 屏幕，适合老师边保留课件边讲评学生答案。</div>
+        </div>
+
+        <div class="collection-drawer" id="collectionDrawer">
+          <div class="drawer-head">
+            <span>随堂练回收 · 底部抽屉</span>
+            <button type="button" data-overlay-close="collectionDrawer">收起</button>
+          </div>
+          <div class="drawer-grid">
+            <div class="drawer-stat"><div class="big">17 / 28</div><p>已提交。还可等待 30 秒，或立即收题揭晓。</p></div>
+            <div class="drawer-stat"><div class="big">39%</div><p>当前正确率。D 选项集中，适合讲“与 1/2 的距离”。</p></div>
+            <div class="drawer-stat"><div class="big">11</div><p>未答学生。点击“查看慢答”可弹出名单，不在大屏公开个人对错。</p></div>
           </div>
         </div>
       </div>
-      <div class="lesson-controls" id="lessonControls">
-        <button class="lesson-nav-btn" data-act="prevPage" id="prevPage">上一页</button>
-        <div class="lesson-page-label" id="lessonPageLabel">第 1 / 6 页</div>
-        <button class="lesson-nav-btn primary" data-act="nextPage" id="nextPage">下一页</button>
-      </div>
     </div>
     <div class="board-stand"></div>
+    <div class="board-base-text">STEP · STEP · CLASSROOM 65"</div>
+  </div>
+</div>
+
+<!-- ===== 三端联动小图 ===== -->
+<div class="link-row">
+  <div class="link-card">
+    <div class="lc-h">👩‍🏫 老师手里</div>
+    <div class="lc-mini lc-teacher">教师手机端 · 上课遥控</div>
+    <div class="lc-foot">点"推送"→ 大屏切换</div>
+  </div>
+  <div class="link-arrow">⇄</div>
+  <div class="link-card">
+    <div class="lc-h">📺 教室前面</div>
+    <div class="lc-mini lc-board"><span id="miniBoardLabel">本端 · 当前展示</span></div>
+    <div class="lc-foot">白板大屏（本页）</div>
+  </div>
+  <div class="link-arrow">⇄</div>
+  <div class="link-card">
+    <div class="lc-h">📱 28 个学生平板</div>
+    <div class="lc-mini lc-pads" id="miniPads"></div>
+    <div class="lc-foot">学生端 · 平板</div>
+  </div>
+</div>
+
+<div class="foot-note">※ 本原型独立运行，所有交互均在浏览器内完成。三端真实使用时通过教室局域网/云端同步。</div>
+
+<!-- ===== Toast / Modal ===== -->
+<div class="toast-stack" id="toastStack"></div>
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="modalTitle">标题 <span class="mh-tag" id="modalTag">说明</span></h3>
+    <div class="m-body" id="modalBody"></div>
+    <div class="m-foot">
+      <button data-act="modalClose">关闭</button>
+      <button class="pri" id="modalPri" data-act="modalClose">我知道了</button>
+    </div>
   </div>
 </div>
 <script>
 // ============ 全局工具 ============
 const $  = (s, p=document) => p.querySelector(s);
 const $$ = (s, p=document) => Array.from(p.querySelectorAll(s));
-$('#radialMain')?.addEventListener('click',()=>$('#radialTools')?.classList.toggle('open'));
-$$('[data-board-tool]').forEach(btn=>btn.addEventListener('click',()=>{
-  $('#radialTools')?.classList.remove('open');
-  toast('白板工具：' + btn.textContent.trim());
-}));
 
 function toast(msg, type='ok', ms=2200){
   const stack = $('#toastStack'); if(!stack) return;
@@ -522,15 +977,13 @@ function closeModal(){ $('#modalBg').classList.remove('show'); }
 $('#modalBg').addEventListener('click', e=>{ if(e.target===$('#modalBg')) closeModal(); });
 
 const CLASSMATES = ['李小明','陈思雨','张佳怡','王浩然','赵一诺','孙晨','刘安琪','周航','何雨桐','郑嘉豪','钱乐乐','许知远'];
-const LESSON_FLOW = [
-  {scene:'teach', title:'课件讲解 · 分数加减法'},
-  {scene:'live', title:'随堂题 · 学生平板作答'},
-  {scene:'result', title:'答案揭晓 · 全班汇总'},
-  {scene:'draw', title:'抽人追问 · 说清理由'},
-  {scene:'group', title:'小组成果 · 生活中的分数'},
-  {scene:'end', title:'下课总结 · 今日重点'}
+const CLOUD_WORDS = [
+  ['通分',34,44,24,'var(--primary-dark)'], ['分母相同',48,24,20,'var(--accent-dark)'],
+  ['平均分',19,35,28,'var(--primary)'], ['单位 1',64,46,18,'var(--warn)'],
+  ['先找公分母',36,63,22,'var(--danger)'], ['看成同样大小的份',56,66,17,'var(--accent)'],
+  ['披萨',22,63,16,'var(--muted)'], ['1/2 = 2/4',72,32,21,'var(--primary-dark)'],
+  ['画图更清楚',12,50,18,'var(--accent-dark)'], ['不能直接加分母',68,58,18,'var(--danger)']
 ];
-let lessonPageIndex = 0;
 
 function padGridHTML(){
   return Array.from({length:28}, (_,i)=>{
@@ -550,63 +1003,24 @@ function avatarHTML(names=CLASSMATES.slice(0,7)){
 function barAvatars(n){
   return Array.from({length:n}, (_,i)=>`<span class="a">${i+1}</span>`).join('');
 }
-const GROUP_DISCUSSION = [
-  {id:'1', title:'分披萨：3/4 块', status:'食物', art:'pizza', tags:['分成4份','3/4块'], score:84, detail:'把一个披萨平均分成 4 份，先拿 1/2（2 份），再拿 1/4（1 份），合起来是 3/4。'},
-  {id:'2', title:'时间：3/4 小时', status:'时间', art:'time', tags:['45分钟','3/4小时'], score:76, detail:'把 1 小时平均分成 4 段，每段 15 分钟，3 段就是 45 分钟，也就是 3/4 小时。'},
-  {id:'3', title:'用药：1/2 片', status:'医疗', art:'medicine', tags:['半片药','剂量'], score:92, detail:'把一片药平均分成 2 份，每次吃其中 1 份，就是 1/2 片。这里重点是“平均分”和“单位 1”。'},
-  {id:'4', title:'地图：比例尺', status:'出行', art:'map', tags:['1:50000','实际距离'], score:88, detail:'用比例尺把图上距离和实际距离对应起来，说明分数和比例都在描述“部分与整体”的关系。'}
-];
-function groupArtHTML(type){
-  const art = {
-    pizza:`<svg class="scene-art" viewBox="0 0 220 150" role="img" aria-label="披萨分成四份的图示">
-      <rect class="paper" x="17" y="14" width="186" height="122" rx="18"/>
-      <circle cx="110" cy="72" r="46" fill="#fff7ed" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M110 72 L110 26 A46 46 0 0 1 156 72 Z" fill="#fdba74"/>
-      <path d="M110 72 L156 72 A46 46 0 0 1 110 118 Z" fill="#fb923c"/>
-      <path d="M110 72 L110 118 A46 46 0 0 1 64 72 Z" fill="#fed7aa"/>
-      <path d="M110 26 L110 118 M64 72 L156 72" class="thin"/>
-      <circle cx="126" cy="52" r="4" fill="#ef4444"/><circle cx="138" cy="82" r="4" fill="#ef4444"/><circle cx="94" cy="94" r="4" fill="#ef4444"/>
-      <text x="86" y="131" class="label">1/2 + 1/4 = 3/4</text>
-    </svg>`,
-    time:`<svg class="scene-art" viewBox="0 0 220 150" role="img" aria-label="一小时分成四段的时间图示">
-      <rect class="paper" x="17" y="14" width="186" height="122" rx="18"/>
-      <circle cx="72" cy="66" r="34" fill="#eef2ff" stroke="#7d6cf2" stroke-width="2"/>
-      <path d="M72 66 L72 43 M72 66 L90 78" class="bold"/>
-      <circle cx="72" cy="66" r="4" fill="#22c993"/>
-      <path d="M118 93 H184" class="bold"/>
-      <path d="M118 83 V103 M140 83 V103 M162 83 V103 M184 83 V103" class="thin"/>
-      <rect x="118" y="88" width="50" height="10" rx="5" fill="#22c993"/>
-      <text x="116" y="69" class="label">45 分钟</text><text x="137" y="124" class="label">3/4 小时</text>
-    </svg>`,
-    medicine:`<svg class="scene-art" viewBox="0 0 220 150" role="img" aria-label="药片半片剂量图示">
-      <rect class="paper" x="17" y="14" width="186" height="122" rx="18"/>
-      <rect x="66" y="50" width="88" height="38" rx="19" fill="#fee2e2" stroke="#f43f5e" stroke-width="2" transform="rotate(-26 110 69)"/>
-      <path d="M107 49 L123 85" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
-      <circle cx="77" cy="106" r="11" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
-      <circle cx="113" cy="106" r="11" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
-      <circle cx="149" cy="106" r="11" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
-      <text x="88" y="131" class="label">每次 1/2 片</text>
-    </svg>`,
-    map:`<svg class="scene-art" viewBox="0 0 220 150" role="img" aria-label="地图比例尺图示">
-      <rect class="paper" x="17" y="14" width="186" height="122" rx="18"/>
-      <path d="M54 45 L92 34 V105 L54 116 Z" fill="#dbeafe" stroke="#60a5fa" stroke-width="2"/>
-      <path d="M92 34 L130 47 V118 L92 105 Z" fill="#ecfdf5" stroke="#22c993" stroke-width="2"/>
-      <path d="M130 47 L166 36 V107 L130 118 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M66 82 C88 62 104 88 124 70 S150 64 158 82" fill="none" stroke="#7d6cf2" stroke-width="4" stroke-linecap="round"/>
-      <path d="M62 126 H142" class="bold"/><path d="M62 119 V133 M102 119 V133 M142 119 V133" class="thin"/>
-      <text x="151" y="131" class="label">1:50000</text>
-    </svg>`
-  };
-  return art[type] || art.pizza;
+function cloudWordsHTML(){
+  return CLOUD_WORDS.map((w,i)=>`
+    <span class="cloud-w" style="left:${w[1]}%;top:${w[2]}%;font-size:${w[3]}px;color:${w[4]};animation-delay:${i*90}ms">${w[0]}</span>
+  `).join('');
 }
 function groupCardsHTML(){
-  const groups = GROUP_DISCUSSION;
+  const groups = [
+    ['A','画披萨解释 1/2 + 1/4','已拍照','图示清楚','需要补一句结论',84],
+    ['B','用数轴解释等分','待展示','路径完整','例子略少',67],
+    ['C','用长方形面积模型','已提交','步骤清楚','单位 1 明确',92],
+    ['D','错因整理：分母不能直接加','需补充','抓住关键','还缺反例',58]
+  ];
   return groups.map(g=>`
-    <div class="grp-card" data-act="groupDetail" data-group="${g.id}">
-      <div class="grp-h"><span class="gh-k">${g.id}</span><span class="gh-t">第 ${g.id} 组<small>${g.title}</small></span><span class="gh-tag">${g.status}</span></div>
-      <div class="grp-photo">${groupArtHTML(g.art)}</div>
-      <div class="grp-tags"><span>${g.tags[0]}</span><span>${g.tags[1]}</span></div>
-      <div class="group-progress"><span data-w="${g.score}%"></span></div>
+    <div class="grp-card" data-act="groupDetail" data-group="${g[0]}">
+      <div class="grp-h"><span class="gh-k">${g[0]}</span><span class="gh-t">${g[1]}</span><span class="gh-tag">${g[2]}</span></div>
+      <div class="grp-photo">${g[0]==='A'?'🍕':g[0]==='B'?'📏':g[0]==='C'?'▦':'✕'}</div>
+      <div class="grp-tags"><span>${g[3]}</span><span>${g[4]}</span></div>
+      <div class="group-progress"><span data-w="${g[5]}%"></span></div>
     </div>
   `).join('');
 }
@@ -640,7 +1054,7 @@ const SCENES = {
       </div>
     </div>
     <div class="bd-aibar">
-      <div class="ai-text">课件就绪 · 学生平板 <strong>26/28 在线</strong></div>
+      <div class="ai-text">王老师，今天的课件是<strong>上周修改过的版本（v3.2）</strong>，新增了"为什么要通分"那一页。<strong>3 个学生今天有错题待修复</strong>，建议在课中带一下。</div>
     </div>
   `,
   teach: () => `
@@ -672,32 +1086,28 @@ const SCENES = {
         </div>
         <div class="teacher-mark"></div>
       </div>
-      <div class="scene-actions" style="position:absolute;left:40px;bottom:72px;">
-        <button class="scene-btn" data-act="pushLive">推送随堂题</button>
-        <button class="scene-btn secondary" data-act="showTeacherTip">查看 AI 提醒</button>
-      </div>
     </div>
     <div class="bd-aibar">
-      <div class="ai-text">讲解中 · 白板与学生端同步</div>
+      <div class="ai-text">上周班级"通分"概念<strong>有 7 个学生没掌握</strong>。你现在讲到"平均分"，待会引导一下"分母为什么必须一样"会更好衔接。</div>
     </div>
   `,
   live: () => `
     <div class="bd-topbar">
       <div class="left">
-        <span class="chip live">⏱ 答题中</span>
+        <span class="chip live">⏱ 第 1 题 · 答题中</span>
         <span class="chip" style="background:var(--warn-soft);color:#a06800">倒计时 <strong id="liveCD" style="margin-left:4px">02:08</strong></span>
       </div>
       <div class="right">
-        <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">📊 实时统计</span>
+        <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">📊 实时同步</span>
       </div>
     </div>
     <div class="scn-live">
-      <div class="live-q">下面哪个分数最接近 <strong>1/2</strong>？<small>提示：先想想 1/2 等于多少</small></div>
+      <div class="live-q">下面哪个分数最接近 <strong>1/2</strong>？<small>点选项卡可查看实时分布（不揭晓答案）</small></div>
       <div class="live-opts">
-        <div class="live-opt"><div class="k">A</div><div class="v">2/5</div></div>
-        <div class="live-opt"><div class="k">B</div><div class="v">3/7</div></div>
-        <div class="live-opt"><div class="k">C</div><div class="v">4/9</div></div>
-        <div class="live-opt"><div class="k">D</div><div class="v">5/8</div></div>
+        <div class="live-opt" data-act="liveOpt" data-k="A"><div class="k">A</div><div class="v">2/5</div><div class="opt-mini-bar"><div class="omb-fill" data-w="18"></div></div><div class="opt-mini-num">3 人选</div></div>
+        <div class="live-opt" data-act="liveOpt" data-k="B"><div class="k">B</div><div class="v">3/7</div><div class="opt-mini-bar"><div class="omb-fill" data-w="6"></div></div><div class="opt-mini-num">1 人选</div></div>
+        <div class="live-opt" data-act="liveOpt" data-k="C"><div class="k">C</div><div class="v">4/9</div><div class="opt-mini-bar"><div class="omb-fill" data-w="35"></div></div><div class="opt-mini-num">6 人选</div></div>
+        <div class="live-opt" data-act="liveOpt" data-k="D"><div class="k">D</div><div class="v">5/8</div><div class="opt-mini-bar"><div class="omb-fill" data-w="41"></div></div><div class="opt-mini-num">7 人选</div></div>
       </div>
       <div class="live-prog-row">
         <div class="lpr-l">已答 <strong id="liveAns">17</strong> / 28</div>
@@ -708,13 +1118,15 @@ const SCENES = {
         <div class="lf-l">⚡ 最快 5 名</div>
         <div class="lf-list" id="lfList"></div>
       </div>
-      <div class="scene-actions" style="justify-content:center;">
-        <button class="scene-btn" data-act="collectAnswers">收题并揭晓</button>
-        <button class="scene-btn secondary" data-act="showSlowList">查看未答名单</button>
+      <div class="live-actions">
+        <button class="la-btn" data-act="liveAdd30">⏱ + 30 秒</button>
+        <button class="la-btn" data-act="liveSlow">👀 查看慢答 11 人</button>
+        <button class="la-btn" data-act="liveHint">💡 给全班一个提示</button>
+        <button class="la-btn warn" data-act="liveEnd">✅ 结束本题 · 揭晓</button>
       </div>
     </div>
     <div class="bd-aibar">
-      <div class="ai-text">已答 <strong>17/28</strong> · 可收题或继续等待</div>
+      <div class="ai-text">还有 <strong>11 个学生</strong>没作答。<strong>最慢的 3 个：芷雨、明轩、星辰</strong>。<strong>选 C 的人偏多</strong>，建议你揭晓时重点讲为什么不是 C。</div>
     </div>
   `,
   result: () => `
@@ -722,6 +1134,7 @@ const SCENES = {
       <div class="left">
         <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">✅ 答案揭晓</span>
         <span class="chip">第 1 题 · 单选</span>
+        <span class="chip" data-act="resultKnowledge" style="cursor:pointer">📖 考点 · 分数大小比较</span>
       </div>
       <div class="right">
         <span class="chip">⏱ 本题用时 02:30</span>
@@ -730,84 +1143,148 @@ const SCENES = {
     <div class="scn-result">
       <div class="result-h">
         <span class="lab">正确答案：</span>
-        <span class="ans">C · 4/9</span>
-        <span class="stats">全班正确率 <strong>39%</strong> · 11 / 28 答对</span>
-        <span class="result-privacy">🔒 大屏仅显示全班汇总，不公开个人对错</span>
+        <span class="ans">D · 5/8</span>
+        <span class="result-vs">本班 <strong>39%</strong> · 年级平均 52% · <span style="color:var(--warn);font-weight:800">需关注</span></span>
       </div>
       <div class="bars">
-        <div class="bar-col"><div class="bar-wrap"><div class="bar" data-h="32" style="height:6px"><span class="ct">5</span></div></div><div class="lab2"><span class="key">A</span>2/5</div></div>
-        <div class="bar-col"><div class="bar-wrap"><div class="bar" data-h="20" style="height:6px"><span class="ct">3</span></div></div><div class="lab2"><span class="key">B</span>3/7</div></div>
-        <div class="bar-col correct"><div class="bar-wrap"><div class="bar" data-h="72" style="height:6px"><span class="ct">11</span></div></div><div class="lab2"><span class="key">C</span>4/9</div></div>
-        <div class="bar-col"><div class="bar-wrap"><div class="bar" data-h="58" style="height:6px"><span class="ct">9</span></div></div><div class="lab2"><span class="key">D</span>5/8</div></div>
+        <div class="bar-col" data-act="resultBar" data-k="A"><div class="bar-wrap"><div class="bar" data-h="32" style="height:6px"><span class="ct">5</span><div class="bar-avatars" data-c="5"></div></div></div><div class="lab2"><span class="key">A</span>2/5</div></div>
+        <div class="bar-col" data-act="resultBar" data-k="B"><div class="bar-wrap"><div class="bar" data-h="20" style="height:6px"><span class="ct">3</span><div class="bar-avatars" data-c="3"></div></div></div><div class="lab2"><span class="key">B</span>3/7</div></div>
+        <div class="bar-col" data-act="resultBar" data-k="C"><div class="bar-wrap"><div class="bar" data-h="58" style="height:6px"><span class="ct">9</span><div class="bar-avatars" data-c="9"></div></div></div><div class="lab2"><span class="key">C</span>4/9<span class="bc-warn">高频错</span></div></div>
+        <div class="bar-col correct" data-act="resultBar" data-k="D"><div class="bar-wrap"><div class="bar" data-h="72" style="height:6px"><span class="ct">11</span><div class="bar-avatars" data-c="11"></div></div></div><div class="lab2"><span class="key">D</span>5/8</div></div>
       </div>
-      <div class="scene-actions" style="justify-content:center;">
-        <button class="scene-btn purple" data-act="explainWrong">讲评 D 选项错因</button>
-        <button class="scene-btn secondary" data-act="sendRemedial">给错答学生推 1 道同类题</button>
+      <div class="result-actions">
+        <button class="la-btn" data-act="resAddWrong">📝 加入 17 人错题本</button>
+        <button class="la-btn" data-act="resPushSimilar">📨 推 1 道相似题给错答学生</button>
+        <button class="la-btn" data-act="resReplay">🎬 回放慢答过程</button>
+        <button class="la-btn pri" data-act="resNext">➡️ 下一题</button>
       </div>
     </div>
     <div class="bd-aibar">
-      <div class="ai-text">正确率 <strong>39%</strong> · D 选项需讲评</div>
+      <div class="ai-text"><strong>9 个人选了 C（4/9）</strong>——他们可能把"分子小"误解为"接近 1/2"。建议讲解时<strong>先问"1/2 等于多少"</strong>再让他们重判。这是最近 7 天班级<strong>高频错点</strong>。</div>
     </div>
   `,
   draw: () => `
     <div class="bd-topbar">
       <div class="left">
         <span class="chip" style="background:var(--accent-soft);color:var(--accent-dark)">🎯 抽人提问</span>
-        <span class="chip">模式 · 鼓励型</span>
+        <span class="chip">28 名候选</span>
       </div>
       <div class="right">
-        <span class="chip">28 名候选</span>
+        <div class="draw-modes" id="drawModes">
+          <span class="dm-btn active" data-act="drawMode" data-mode="cheer">🌟 鼓励型</span>
+          <span class="dm-btn" data-act="drawMode" data-mode="care">👋 关注型</span>
+          <span class="dm-btn" data-act="drawMode" data-mode="random">🎲 完全随机</span>
+        </div>
       </div>
     </div>
     <div class="scn-draw">
-      <div class="draw-pool">
-        <div class="draw-pool-title"><span>候选名单</span><strong>28 人</strong></div>
-        <div class="draw-list" id="drawList">
-          <div class="draw-student">李小明</div>
-          <div class="draw-student">陈思雨</div>
-          <div class="draw-student">王浩然</div>
-          <div class="draw-student">赵一诺</div>
-          <div class="draw-student active">张嘉怡</div>
-          <div class="draw-student">孙晨</div>
-          <div class="draw-student">刘安琪</div>
-          <div class="draw-student">周航</div>
-          <div class="draw-student dim">其余 20 人</div>
+      <div class="draw-main">
+        <div style="position:relative;">
+          <div class="draw-pointer"></div>
+          <div class="draw-wheel spin" id="drawWheel">
+            <div class="draw-wheel-c" data-act="drawRespin" title="点击重抽">点击<br>重抽</div>
+          </div>
         </div>
-        <div class="draw-status" id="drawStatus">正在抽取…</div>
+        <div class="draw-info">
+          <div class="di-h">恭喜被点到的同学：</div>
+          <div class="di-name" id="drawWaiting" style="font-size:24px;color:var(--muted)">转盘转动中…</div>
+          <div class="di-name pop" id="drawName" style="display:none">嘉怡</div>
+          <div class="draw-why" id="drawWhy" style="display:none">
+            <strong>为什么是嘉怡？</strong>前 3 题答得最快，准确率 100%。<br>
+            最近 1 周抽过 <strong>2 次</strong>，今天还是首次。
+          </div>
+          <div class="draw-actions" id="drawActions" style="display:none">
+            <button class="la-btn pri" data-act="drawAccept">🎤 让她回答</button>
+            <button class="la-btn" data-act="drawSwap">🔁 让别人来</button>
+            <button class="la-btn" data-act="drawRespin">🔄 再抽一次</button>
+          </div>
+        </div>
       </div>
-      <div class="draw-info">
-        <div class="di-h">抽中同学：</div>
-        <div class="di-name" id="drawWaiting" style="font-size:24px;color:var(--muted)">名单抽取中…</div>
-        <div class="di-name pop" id="drawName" style="display:none">张嘉怡</div>
-        <div class="draw-why" id="drawWhy" style="display:none">
-          请回答：5/8 为什么最接近 1/2？
-        </div>
-        <div class="scene-actions">
-          <button class="scene-btn" data-act="rerollDraw">再抽一次</button>
-          <button class="scene-btn secondary" data-act="switchDrawMode">切到关注型</button>
-        </div>
+      <div class="draw-history">
+        <span class="dh-l">📜 最近 5 次：</span>
+        <span class="dh-name">嘉怡</span><span class="dh-name">子涵</span><span class="dh-name">嘉怡</span><span class="dh-name">雨桐</span><span class="dh-name">家豪</span>
+        <span class="dh-tip">💡 30 天没抽到：芷雨、明轩、星辰</span>
       </div>
     </div>
     <div class="bd-aibar">
-      <div class="ai-text">抽人中 · 课堂锁屏 <strong>10 秒</strong></div>
+      <div class="ai-text">当前模式：<strong>🌟 鼓励型</strong>（"答得快 + 答得对"优先）。点击右上角切换<strong>关注型</strong>（举手少+错题多优先）或<strong>完全随机</strong>。<strong>决定权全在你</strong>。</div>
+    </div>
+  `,
+  cloud: () => `
+    <div class="bd-topbar">
+      <div class="left">
+        <span class="chip" style="background:var(--accent-soft);color:var(--accent-dark)">☁️ 开放回答 · 无对错</span>
+        <span class="chip">分类<span class="cl-dot" style="background:var(--primary-dark)"></span>食物<span class="cl-dot" style="background:var(--accent-dark)"></span>时间<span class="cl-dot" style="background:var(--danger)"></span>医疗<span class="cl-dot" style="background:var(--warn)"></span>其它</span>
+      </div>
+      <div class="right">
+        <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">📥 23 / 28 已交</span>
+      </div>
+    </div>
+    <div class="scn-cloud">
+      <div class="cloud-q">分数让你想到生活里什么？<small>点击词云中的词可看是哪些同学提到的</small></div>
+      <div class="cloud-main">
+        <div class="cloud-stream">
+          <div class="cs-h">⚡ 实时收到</div>
+          <div class="cs-item"><span class="cs-time">14:42</span><span class="cs-name">陈雨桐</span><div class="cs-text">地图比例</div></div>
+          <div class="cs-item"><span class="cs-time">14:42</span><span class="cs-name">吴星辰</span><div class="cs-text">医生剂量</div></div>
+          <div class="cs-item"><span class="cs-time">14:41</span><span class="cs-name">李子涵</span><div class="cs-text">半瓶水</div></div>
+          <div class="cs-item"><span class="cs-time">14:41</span><span class="cs-name">张明轩</span><div class="cs-text">分蛋糕</div></div>
+          <div class="cs-item"><span class="cs-time">14:40</span><span class="cs-name">王嘉怡</span><div class="cs-text">披萨</div></div>
+        </div>
+        <div class="cloud-area" id="cloudArea"></div>
+      </div>
+    </div>
+    <div class="bd-aibar">
+      <div class="ai-text">今天有人提到 <strong>"医生剂量"</strong>（吴星辰）和 <strong>"地图比例"</strong>（陈雨桐）——这是<strong>这一周第一次出现</strong>的角度，可以请他们展开说 1 分钟，引申到"分数的实用价值"。</div>
     </div>
   `,
   group: () => `
     <div class="bd-topbar">
       <div class="left">
-        <span class="chip" style="background:var(--accent-soft);color:var(--accent-dark)"><span class="group-mark" aria-hidden="true"></span>小组讨论</span>
+        <span class="chip" style="background:var(--accent-soft);color:var(--accent-dark)">👥 小组讨论</span>
         <span class="chip">主题 · 分数在生活里</span>
       </div>
       <div class="right">
-        <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">✅ 4 / 4 组已交</span>
+        <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">✅ 4 / 4 已交</span>
+        <span class="chip">用时 6:30</span>
       </div>
     </div>
     <div class="scn-group">
-      <div style="font-size:18px;font-weight:800;color:var(--text)">小组成果展示 · 各组找一个生活场景</div>
-      <div class="grp-row">${groupCardsHTML()}</div>
+      <div class="grp-h-bar">
+        <div class="grp-h-title">小组成果 · 点击卡片看完整讨论记录</div>
+        <button class="la-btn pri" data-act="grpShare">🎤 让 AI 推荐 1 组分享</button>
+      </div>
+      <div class="grp-row">
+        <div class="grp-card" data-act="grpDetail" data-g="1">
+          <div class="grp-h"><div class="gh-k">1</div><div class="gh-t">第 1 组</div><div class="gh-tag">食物</div></div>
+          <div class="grp-photo">🍕</div>
+          <div class="grp-tags"><span>分披萨</span><span>1/8</span><span>四等分</span></div>
+          <div class="grp-mem"><div class="gm-av">嘉</div><div class="gm-av">子</div><div class="gm-av">轩</div><div class="gm-av">桐</div></div>
+        </div>
+        <div class="grp-card" data-act="grpDetail" data-g="2">
+          <div class="grp-h"><div class="gh-k">2</div><div class="gh-t">第 2 组</div><div class="gh-tag">时间</div></div>
+          <div class="grp-photo">🕐</div>
+          <div class="grp-tags"><span>钟表</span><span>半小时</span><span>1/4 小时</span></div>
+          <div class="grp-mem"><div class="gm-av">辰</div><div class="gm-av">家</div><div class="gm-av">晓</div><div class="gm-av">芷</div></div>
+          <div class="grp-badge gb-fast">⚡ 最快</div>
+        </div>
+        <div class="grp-card recommended" data-act="grpDetail" data-g="3">
+          <div class="grp-h"><div class="gh-k">3</div><div class="gh-t">第 3 组</div><div class="gh-tag">医疗</div></div>
+          <div class="grp-photo">💊</div>
+          <div class="grp-tags"><span>药剂</span><span>半片药</span><span>1/2 片</span></div>
+          <div class="grp-mem"><div class="gm-av">星</div><div class="gm-av">明</div><div class="gm-av">雨</div><div class="gm-av">涵</div></div>
+          <div class="grp-badge gb-creative">💡 创意</div>
+        </div>
+        <div class="grp-card" data-act="grpDetail" data-g="4">
+          <div class="grp-h"><div class="gh-k">4</div><div class="gh-t">第 4 组</div><div class="gh-tag">出行</div></div>
+          <div class="grp-photo">🗺️</div>
+          <div class="grp-tags"><span>地图</span><span>比例尺</span><span>1:50000</span></div>
+          <div class="grp-mem"><div class="gm-av">桐</div><div class="gm-av">家</div><div class="gm-av">嘉</div><div class="gm-av">子</div></div>
+        </div>
+      </div>
     </div>
     <div class="bd-aibar">
-      <div class="ai-text">第 3 组把“半片药”和“单位 1”讲清楚了，适合先分享；再请第 2 组补充时间换算。</div>
+      <div class="ai-text"><strong>第 3 组（药剂）方向最少见</strong>——全校近 30 个班只有 2 个班想到。<strong>建议让他们分享 1 分钟</strong>。点击卡片可看完整讨论记录。</div>
     </div>
   `,
   end: () => `
@@ -817,19 +1294,25 @@ const SCENES = {
         <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">本节用时 30 分钟</span>
       </div>
       <div class="right">
-        <span class="chip">📊 课后报告已生成</span>
+        <span class="chip" data-act="endReport" style="cursor:pointer">📊 查看完整课后报告</span>
       </div>
     </div>
     <div class="scn-end">
+      <div class="end-stats">
+        <div class="es-chip"><div class="es-num">96<small style="font-size:14px">%</small></div><div class="es-lab">参与率</div></div>
+        <div class="es-chip"><div class="es-num">73<small style="font-size:14px">%</small></div><div class="es-lab">综合正确率</div></div>
+        <div class="es-chip"><div class="es-num">12</div><div class="es-lab">主动举手</div></div>
+        <div class="es-chip"><div class="es-num">17</div><div class="es-lab">入错题本</div></div>
+      </div>
       <div class="end-h">今日重点 · 三句话<small>看完再走 ✋</small></div>
       <div class="end-key">
-        <div class="ek-card"><div class="ek-num">1</div><h4>分数 = 平均分</h4><p>必须把整体<strong>平均</strong>分成若干份。</p></div>
-        <div class="ek-card"><div class="ek-num">2</div><h4>同分母加减</h4><p>分子相加，<strong>分母不变</strong>。</p></div>
-        <div class="ek-card"><div class="ek-num">3</div><h4>异分母先通分</h4><p>找到<strong>公分母</strong>再相加。</p></div>
+        <div class="ek-card ek-anim" style="animation-delay:.0s"><div class="ek-num">1</div><h4>分数 = 平均分</h4><p>必须把整体<strong>平均</strong>分成若干份。</p></div>
+        <div class="ek-card ek-anim" style="animation-delay:.3s"><div class="ek-num">2</div><h4>同分母加减</h4><p>分子相加，<strong>分母不变</strong>。</p></div>
+        <div class="ek-card ek-anim" style="animation-delay:.6s"><div class="ek-num">3</div><h4>异分母先通分</h4><p>找到<strong>公分母</strong>再相加。</p></div>
       </div>
       <div class="end-foot">
-        <div class="end-card">
-          <div class="ec-l">📅 明日预告</div>
+        <div class="end-card" data-act="endTomorrow">
+          <div class="ec-l">📅 明日预告（点击看课件）</div>
           <div class="ec-t">分数应用题 · 单位换算（千克 / 克）</div>
         </div>
         <div class="end-card warm">
@@ -837,19 +1320,18 @@ const SCENES = {
           <div class="ec-t">圈选题正确率 92%！比上周提升 14% 👍</div>
         </div>
       </div>
-      <div class="end-mini-list">
-        <span>课后自动生成：3 份分层练习</span>
-        <span>教师端待办：批阅 4 份订正</span>
-        <span>学生端推送：错题本 + AI 提示</span>
-        <span>校长端沉淀：优秀课堂片段 1 个</span>
-      </div>
-      <div class="scene-actions">
-        <button class="scene-btn" data-act="publishHomework">发布课后练习</button>
-        <button class="scene-btn secondary" data-act="openReport">查看课堂报告</button>
+      <div class="end-push">
+        <div class="ep-h">📨 已自动按薄弱点给 4 位同学推送针对性练习：</div>
+        <div class="ep-list">
+          <div class="ep-card"><div class="ep-av" style="background:#fff4d2;color:#a06800">嘉</div><div><div class="ep-n">嘉怡</div><div class="ep-d">无任务（满分）</div></div></div>
+          <div class="ep-card"><div class="ep-av">涵</div><div><div class="ep-n">子涵</div><div class="ep-d">补 1 题 · 通分</div></div></div>
+          <div class="ep-card"><div class="ep-av">芷</div><div><div class="ep-n">芷雨</div><div class="ep-d">补 2 题 · 分数比较</div></div></div>
+          <div class="ep-card"><div class="ep-av">辰</div><div><div class="ep-n">星辰</div><div class="ep-d">补 1 题 · 异分母</div></div></div>
+        </div>
       </div>
     </div>
     <div class="bd-aibar">
-      <div class="ai-text">课后练习已生成 · 等待发布</div>
+      <div class="ai-text">家长那边收到的只是<strong>"今天完成 / 还有 2 题"</strong>这种简单提示，<strong>不会显示具体分数</strong>——这是产品的隐私底线。</div>
     </div>
   `,
 };
@@ -858,7 +1340,7 @@ let welcomeCDInterval, liveCDInterval, liveAnsInterval;
 function renderScene(scene){
   const fn = SCENES[scene];
   const screen = $('#sceneRoot');
-  if(!fn){ screen.innerHTML = '<div style="padding:80px;text-align:center;color:#999">场景不存在</div>'; return; }
+  if(!fn){ screen.innerHTML = '<div style="padding:80px;text-align:center;color:#999">场景待补</div>'; return; }
   // 清理 interval
   welcomeCDInterval && clearInterval(welcomeCDInterval);
   liveCDInterval && clearInterval(liveCDInterval);
@@ -872,7 +1354,14 @@ function setupSceneEffects(scene){
   // ---- welcome：平板网格 + 距上课倒计时 ----
   if(scene==='welcome'){
     const grid = $('#padGrid');
-    if(grid) grid.innerHTML = padGridHTML();
+    if(grid){
+      let h = '';
+      for(let i=0; i<28; i++){
+        const cls = i===27?'off':i===26?'charge':'';
+        h += `<div class="p ${cls}"></div>`;
+      }
+      grid.innerHTML = h;
+    }
     let s = 4*60+58;
     welcomeCDInterval = setInterval(()=>{
       const el = $('#welcomeCD'); if(!el){ clearInterval(welcomeCDInterval); return; }
@@ -898,7 +1387,8 @@ function setupSceneEffects(scene){
     setTimeout(()=>{
       const fill = $('#liveFill'); if(fill) fill.style.width = '60.7%';
       const pct = $('#livePct'); if(pct) pct.textContent='61%';
-    }, 200);
+      $$('.live-opt .omb-fill').forEach(f=>{ if(f.dataset.w) f.style.width = f.dataset.w + '%'; });
+    }, 250);
     let cd = 2*60+8;
     liveCDInterval = setInterval(()=>{
       const el = $('#liveCD'); if(!el){ clearInterval(liveCDInterval); return; }
@@ -921,27 +1411,49 @@ function setupSceneEffects(scene){
       }
     }, 1500);
   }
-  // ---- result：柱状图增长（只显示汇总，不展示个人） ----
+  // ---- result：柱状图增长 + 头像点阵 ----
   if(scene==='result'){
     setTimeout(()=>{
       $$('.bars .bar').forEach(b=>{ b.style.height = b.dataset.h + '%'; });
+      $$('.bar-avatars').forEach(av=>{
+        const c = +av.dataset.c;
+        let h = '';
+        const ns = '子嘉晓家雨芷明星轩涵彤豪桐';
+        for(let i=0;i<c;i++){ h += `<div class="a">${ns[i%ns.length]}</div>`; }
+        av.innerHTML = h;
+      });
     }, 200);
   }
-  // ---- draw：名单高亮后揭晓 ----
+  // ---- draw：2.7 秒后揭晓 ----
   if(scene==='draw'){
     setTimeout(()=>{
+      const w = $('#drawWheel'); if(w) w.classList.remove('spin');
       const wait = $('#drawWaiting'); if(wait) wait.style.display='none';
       const nm = $('#drawName'); if(nm) nm.style.display='block';
       const why = $('#drawWhy'); if(why) why.style.display='block';
-      const status = $('#drawStatus'); if(status) status.textContent = '已抽中 · 等待回答';
-      toast('🎯 抽中：张嘉怡', 'info', 1800);
-    }, 900);
+      toast('🎯 抽中：嘉怡', 'info', 1800);
+    }, 2700);
   }
-  // ---- group：小组进度条增长 ----
-  if(scene==='group'){
-    setTimeout(()=>{
-      $$('.group-progress span').forEach(p=>{ p.style.width = p.dataset.w || '70%'; });
-    }, 180);
+  // ---- cloud：词云飘入 ----
+  if(scene==='cloud'){
+    const area = $('#cloudArea'); if(!area) return;
+    const words = [
+      {t:'披萨', s:48, x:14, y:24, c:'var(--primary-dark)', d:0},
+      {t:'半小时', s:36, x:54, y:14, c:'var(--accent-dark)', d:.25},
+      {t:'切蛋糕', s:32, x:70, y:46, c:'var(--primary)', d:.45},
+      {t:'打折', s:30, x:30, y:50, c:'var(--warn)', d:.65},
+      {t:'医生剂量', s:34, x:6, y:62, c:'var(--danger)', d:.85},
+      {t:'地图比例', s:28, x:58, y:70, c:'var(--accent)', d:1.05},
+      {t:'温度计', s:24, x:80, y:30, c:'var(--primary-dark)', d:1.25},
+      {t:'半瓶水', s:22, x:42, y:80, c:'var(--accent-dark)', d:1.45},
+      {t:'比赛分数', s:20, x:14, y:84, c:'var(--muted)', d:1.65},
+      {t:'四等分', s:22, x:84, y:78, c:'var(--primary)', d:1.85},
+      {t:'分小组', s:18, x:50, y:90, c:'var(--muted)', d:2.05},
+      {t:'切苹果', s:20, x:24, y:6, c:'var(--warn)', d:2.25},
+    ];
+    area.innerHTML = words.map(w=>`
+      <span class="cloud-w" data-act="cloudWord" data-t="${w.t}" style="font-size:${w.s}px;left:${w.x}%;top:${w.y}%;color:${w.c};animation-delay:${w.d}s">${w.t}</span>
+    `).join('');
   }
 }
 
@@ -951,7 +1463,8 @@ function updateMiniBoard(scene){
     teach:'课件第 3 页 · 老师讲解',
     live:'答题中 · 17/28',
     result:'答案揭晓 · 柱状图',
-    draw:'抽人名单',
+    draw:'抽人转盘',
+    cloud:'词云收集',
     group:'小组成果',
     end:'下课总结'
   };
@@ -973,122 +1486,411 @@ function updateMiniBoard(scene){
   }
 }
 
+function selectScene(scene, silent=false){
+  $$('#sceneTabs .tab').forEach(t => t.classList.toggle('active', t.dataset.scene===scene));
+  renderScene(scene);
+  if(!silent){
+    const tab = $(`#sceneTabs .tab[data-scene="${scene}"]`);
+    toast('已切换：' + (tab ? tab.textContent.trim() : scene), 'info', 1200);
+  }
+}
+
+function renderLessonPage(index){
+  const flow = ['welcome','teach','live','result','draw','cloud','group','end'];
+  const next = Math.max(0, Math.min(flow.length - 1, index));
+  selectScene(flow[next], true);
+  return flow[next];
+}
+
+function showOverlay(id){
+  const el = $('#' + id);
+  if(el) el.classList.add('show');
+}
+
+function hideOverlay(id){
+  const el = $('#' + id);
+  if(el) el.classList.remove('show');
+  if(id === 'aiAnchorCard') $('#selectionGhost')?.classList.remove('show');
+}
+
+function hideBoardOverlays(){
+  ['collectionDrawer','answerDrawer','gatewayPanel','voiceStrip','aiAnchorCard'].forEach(hideOverlay);
+  $('#selectionGhost')?.classList.remove('show');
+}
+
+function showCollectionDrawer(){
+  hideOverlay('answerDrawer');
+  hideOverlay('gatewayPanel');
+  hideOverlay('voiceStrip');
+  showOverlay('collectionDrawer');
+}
+
+function showAnswerDrawer(){
+  hideOverlay('collectionDrawer');
+  showOverlay('answerDrawer');
+}
+
+function showCircleAsk(){
+  $('#selectionGhost')?.classList.add('show');
+  hideOverlay('collectionDrawer');
+  showOverlay('aiAnchorCard');
+}
+
+function showVoiceStrip(){
+  hideOverlay('collectionDrawer');
+  hideOverlay('gatewayPanel');
+  showOverlay('voiceStrip');
+}
+
+function showGatewayPanel(){
+  hideOverlay('collectionDrawer');
+  showOverlay('gatewayPanel');
+}
+
+function snapFloatingBall(){
+  const ball = $('#floatingBall');
+  const screen = $('#boardScreen');
+  if(!ball || !screen) return;
+  const b = ball.getBoundingClientRect();
+  const s = screen.getBoundingClientRect();
+  const left = b.left - s.left;
+  const top = Math.max(16, Math.min(b.top - s.top, s.height - b.height - 16));
+  const snapLeft = left < (s.width - b.width) / 2;
+  ball.style.left = snapLeft ? '18px' : `${s.width - b.width - 18}px`;
+  ball.style.right = 'auto';
+  ball.style.top = `${top}px`;
+  ball.style.bottom = 'auto';
+}
+
+function initFloatingBall(){
+  const ball = $('#floatingBall');
+  const main = $('#floatingMain');
+  const screen = $('#boardScreen');
+  if(!ball || !main || !screen) return;
+  let dragging = false;
+  let moved = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  main.addEventListener('click', e=>{
+    e.stopPropagation();
+    if(moved){ moved = false; return; }
+    ball.classList.toggle('open');
+  });
+
+  ball.addEventListener('pointerdown', e=>{
+    if(e.target.closest('.float-tool')) return;
+    dragging = true;
+    moved = false;
+    ball.classList.add('dragging');
+    const b = ball.getBoundingClientRect();
+    offsetX = e.clientX - b.left;
+    offsetY = e.clientY - b.top;
+    ball.setPointerCapture?.(e.pointerId);
+  });
+
+  ball.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    moved = true;
+    const s = screen.getBoundingClientRect();
+    const x = Math.max(12, Math.min(e.clientX - s.left - offsetX, s.width - ball.offsetWidth - 12));
+    const y = Math.max(12, Math.min(e.clientY - s.top - offsetY, s.height - ball.offsetHeight - 12));
+    ball.style.left = `${x}px`;
+    ball.style.top = `${y}px`;
+    ball.style.right = 'auto';
+    ball.style.bottom = 'auto';
+  });
+
+  ball.addEventListener('pointerup', e=>{
+    if(!dragging) return;
+    dragging = false;
+    ball.classList.remove('dragging');
+    ball.releasePointerCapture?.(e.pointerId);
+    snapFloatingBall();
+  });
+}
+
 // 切换 tab
-// 全局事件
+$$('#sceneTabs .tab').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    selectScene(t.dataset.scene);
+  });
+});
+
+// 抽人重抽（draw 场景共用）
+function reSpinDraw(){
+  const w = $('#drawWheel'); if(!w) return;
+  const wait = $('#drawWaiting');
+  const nm = $('#drawName');
+  const why = $('#drawWhy');
+  const acts = $('#drawActions');
+  if(wait){ wait.style.display='block'; wait.textContent='转盘转动中…'; }
+  if(nm){ nm.style.display='none'; nm.classList.remove('pop'); }
+  if(why) why.style.display='none';
+  if(acts) acts.style.display='none';
+  w.classList.remove('spin');
+  void w.offsetWidth;
+  w.classList.add('spin');
+  setTimeout(()=>{
+    w.classList.remove('spin');
+    if(wait) wait.style.display='none';
+    if(nm){ nm.style.display='block'; nm.classList.add('pop'); }
+    if(why) why.style.display='block';
+    if(acts) acts.style.display='flex';
+    toast('🎯 抽中：嘉怡', 'info', 1600);
+  }, 2700);
+}
+
+// ============ 全局事件 dispatcher ============
 document.addEventListener('click', e=>{
   const a = e.target.closest('[data-act]');
   if(!a) return;
   const act = a.dataset.act;
-  if(act==='modalClose') closeModal();
-  if(act==='prevPage'){
-    renderLessonPage(lessonPageIndex - 1);
+  switch(act){
+    case 'modalClose': closeModal(); break;
+
+    // ===== live =====
+    case 'liveOpt': {
+      const k = a.dataset.k;
+      const data = {
+        A:{c:3, t:'00:42', tag:'少'},
+        B:{c:1, t:'01:08', tag:'极少'},
+        C:{c:6, t:'00:38', tag:'中（偏多）'},
+        D:{c:7, t:'00:51', tag:'主流'}
+      };
+      const d = data[k];
+      showModal('选项 ' + k + ' · 实时统计',
+        `<p>当前已有 <strong>${d.c} 人</strong>选择此选项，平均答题用时 <strong>${d.t}</strong>，分布标签：<strong>${d.tag}</strong>。</p>
+        <div class="note">⚠️ 大屏不会显示<strong>具体哪个学生选了什么</strong>——这是"答题中"阶段的隐私保护。揭晓后才会显示。</div>`,
+        '实时数据');
+      break;
+    }
+    case 'liveAdd30': toast('⏱ 已 +30 秒，倒计时已延长', 'ok', 1800); break;
+    case 'liveSlow': showModal('慢答 11 人',
+      `<p>以下同学还未提交答案（按未答时长排序）：</p>
+      <ul>
+        <li><strong>芷雨</strong> · 已 2:08（最近 3 次都偏慢）</li>
+        <li><strong>明轩</strong> · 已 1:56</li>
+        <li><strong>星辰</strong> · 已 1:45</li>
+        <li>另有 8 人...</li>
+      </ul>
+      <div class="note">建议先看是<strong>设备问题</strong>还是<strong>题目难度</strong>——可以走过去问一句。</div>`, '慢答监控');
+      break;
+    case 'liveHint': toast('💡 已给全班发送提示："想想 1/2 等于多少"', 'info', 2400); break;
+    case 'liveEnd':
+      $$('#sceneTabs .tab').forEach(t => t.classList.toggle('active', t.dataset.scene==='result'));
+      renderScene('result');
+      toast('✅ 本题已结束，自动揭晓', 'ok', 1600);
+      break;
+
+    // ===== result =====
+    case 'resultKnowledge': showModal('考点 · 分数大小比较',
+      `<p>本题考察：</p>
+      <ul>
+        <li><strong>1/2 的本质</strong>：分子是分母的一半</li>
+        <li><strong>判断"接近 1/2"的方法</strong>：比较 (分子 × 2) 与 分母</li>
+        <li>5/8 → 5×2=10，10 与 8 差 2，最接近</li>
+      </ul>
+      <div class="note accent">📈 班级历史：本知识点近 7 天正确率 <strong>从 28% 升到 39%</strong>，仍属薄弱点。</div>`, '知识点');
+      break;
+    case 'resultBar': {
+      const k = a.dataset.k;
+      const data = {
+        A:{c:5, names:'李子涵、王雨桐、陈芷雨、吴星辰、张明轩'},
+        B:{c:3, names:'李轩、刘晓彤、家豪'},
+        C:{c:9, names:'吴星辰、陈嘉怡、王家豪、张明轩、刘晓彤、陈雨桐、李子涵、王嘉怡、芷雨'},
+        D:{c:11, names:'李子涵、王嘉怡、陈雨桐、张明轩、刘晓彤、王家豪、吴星辰、芷雨、明轩、星辰、嘉怡'}
+      };
+      const d = data[k];
+      const ok = k==='D';
+      showModal((ok?'✅ ':'')+'选项 '+k+' · '+d.c+' 人',
+        `<p>选择此项的同学：</p><p>${d.names}</p>
+        ${ok ? '<div class="note accent">这是正确答案。</div>'
+             : (k==='C' ? '<div class="note">⚠️ 9 人选 C 是<strong>本周高频错点</strong>——可能把"分子小"误解为"接近 1/2"。已加入这 9 人的错题本。</div>'
+                        : '<div class="note">已加入这些同学的错题本。</div>')}`,
+        ok?'正确名单':'错答名单');
+      break;
+    }
+    case 'resAddWrong': toast('📝 已加入 17 人错题本', 'ok', 1800); break;
+    case 'resPushSimilar': toast('📨 已推送 1 道相似题给 17 名错答学生', 'ok', 2200); break;
+    case 'resReplay': showModal('🎬 慢答过程回放',
+      `<p>系统记录每位学生的答题时间轴：</p>
+      <ul>
+        <li>00:08 · 嘉怡 选 D（最快）</li>
+        <li>00:15 · 子涵 选 D</li>
+        <li>00:42 · 雨桐 选 C → 改 D（值得表扬）</li>
+        <li>01:08 · 芷雨 选 C（未改）</li>
+        <li>02:08 · 明轩 还在思考...</li>
+      </ul>
+      <div class="note">回放有助于发现学生的<strong>思维路径</strong>——比如雨桐改了答案，可以表扬。</div>`, '回放');
+      break;
+    case 'resNext': toast('➡️ 已切到第 2 题（演示）', 'info', 1500); break;
+
+    // ===== draw =====
+    case 'drawMode': {
+      const m = a.dataset.mode;
+      $$('#drawModes .dm-btn').forEach(b=> b.classList.toggle('active', b===a));
+      const labels = {cheer:'🌟 鼓励型（答得快+答得对优先）', care:'👋 关注型（举手少+错题多优先）', random:'🎲 完全随机'};
+      toast('已切换：' + labels[m], 'info', 2000);
+      break;
+    }
+    case 'drawAccept': toast('🎤 已让嘉怡回答 · 学生平板已亮起，麦克风已开启', 'ok', 2400); break;
+    case 'drawSwap': toast('🔁 跳过嘉怡，重新抽取', 'info', 1400); reSpinDraw(); break;
+    case 'drawRespin': reSpinDraw(); break;
+
+    // ===== cloud =====
+    case 'cloudWord': {
+      const t = a.dataset.t;
+      const map = {
+        '披萨':'王嘉怡 / 李子涵 / 陈雨桐（3 人）',
+        '医生剂量':'吴星辰（独家） — 父母是医生',
+        '地图比例':'陈雨桐（独家） — 喜欢地理',
+        '半小时':'张明轩 / 刘晓彤 / 家豪（3 人）',
+        '切蛋糕':'王嘉怡 / 张明轩 / 子涵',
+        '打折':'陈芷雨 / 雨桐',
+        '温度计':'刘晓彤',
+        '半瓶水':'李子涵',
+        '比赛分数':'明轩',
+        '四等分':'家豪',
+        '分小组':'晓彤',
+        '切苹果':'雨桐'
+      };
+      showModal('提到 "' + t + '" 的同学',
+        `<p>${map[t] || '（暂无同学提到此词）'}</p>
+        <div class="note">可以让对应同学展开说说，把分数从"数学"延伸到"生活"。</div>`, '词云查询');
+      break;
+    }
+
+    // ===== group =====
+    case 'grpDetail': {
+      const g = a.dataset.g;
+      const data = {
+        '1':{title:'第 1 组 · 食物', emoji:'🍕', record:[
+          ['王嘉怡','大家用披萨举例怎么样？'],
+          ['李子涵','好啊，一张披萨切成 4 块，每块就是 1/4'],
+          ['陈雨桐','切 8 块就是 1/8，吃 3 块就是 3/8'],
+          ['张明轩','重点是必须要"平均"分']]},
+        '2':{title:'第 2 组 · 时间', emoji:'🕐', record:[
+          ['吴星辰','钟表 1 圈 60 分钟'],
+          ['王家豪','半小时就是 30/60，也就是 1/2'],
+          ['刘晓彤','15 分钟就是 1/4 小时'],
+          ['芷雨','一节课 40 分钟也是分数...']]},
+        '3':{title:'第 3 组 · 医疗（AI 推荐分享）', emoji:'💊', record:[
+          ['吴星辰','医生开药经常说半片 = 1/2 片'],
+          ['张明轩','我妈说儿童剂量是成人的 1/3'],
+          ['陈雨桐','打疫苗也分剂量'],
+          ['子涵','哇这个角度好新颖']]},
+        '4':{title:'第 4 组 · 出行', emoji:'🗺️', record:[
+          ['陈雨桐','地图上比例尺是 1:50000'],
+          ['王家豪','意思是图上 1cm 等于实际 50000cm'],
+          ['王嘉怡','也就是 500 米'],
+          ['子涵','其实是个比的概念']]}
+      };
+      const d = data[g];
+      const rec = d.record.map(([n,t])=> `<li><strong>${n}</strong>：${t}</li>`).join('');
+      showModal(d.title + ' · 完整讨论记录',
+        `<p style="font-size:36px;text-align:center;margin:0 0 8px">${d.emoji}</p>
+        <ul>${rec}</ul>
+        <div class="note">由学生平板上的"语音转文字 + 手动编辑"自动汇总。可让全班看 1 分钟。</div>`, '讨论原文');
+      break;
+    }
+    case 'grpShare': toast('🎤 AI 推荐：第 3 组（药剂）方向最少见，建议让他们分享 1 分钟', 'info', 2800); break;
+
+    // ===== end =====
+    case 'endTomorrow': showModal('📅 明日课件预览 · 分数应用题',
+      `<p><strong>明天第 3 节 · 11/13（周四）</strong></p>
+      <ul>
+        <li>分数应用题入门（5 道例题）</li>
+        <li>千克与克的单位换算</li>
+        <li>课堂练习 8 道（其中 2 道针对今日错点 C）</li>
+      </ul>
+      <div class="note accent">课件已就绪，可在<strong>教师端备课工作台</strong>打开继续修改。</div>`,
+      '明日预告', '前往备课工作台');
+      break;
+    case 'endReport': showModal('📊 完整课后报告',
+      `<p>本节课关键数据：</p>
+      <ul>
+        <li>参与率：<strong>96%</strong>（28 人 → 27 人参与）</li>
+        <li>综合正确率：<strong>73%</strong>（含 3 道题）</li>
+        <li>主动举手：<strong>12 次</strong>（嘉怡 4 次最高）</li>
+        <li>错题本新增：<strong>17 题次</strong>（涉及 11 名学生）</li>
+        <li>课堂用时：30 分钟（计划 35 分钟，提前 5 分钟）</li>
+      </ul>
+      <div class="note">完整 PDF 报告已发到你的邮箱，也可在<strong>校长端</strong>查看汇总。</div>`,
+      '课后报告');
+      break;
+  }
+});
+
+document.addEventListener('click', e=>{
+  const close = e.target.closest('[data-overlay-close]');
+  if(close){
+    hideOverlay(close.dataset.overlayClose);
     return;
   }
-  if(act==='nextPage'){
-    renderLessonPage(lessonPageIndex + 1);
+  const boardAction = e.target.closest('[data-board-action]');
+  if(boardAction){
+    if(boardAction.dataset.boardAction === 'openAnswer') showAnswerDrawer();
     return;
   }
-  if(act==='pushLive'){
-    toast('已向 28 台学生平板推送随堂题', 'ok', 1800);
-    jumpScene('live');
+  const tool = e.target.closest('[data-board-tool]');
+  if(tool){
+    const ball = $('#floatingBall');
+    const action = tool.dataset.boardTool;
+    ball?.classList.remove('open');
+    $$('.float-tool').forEach(b=> b.classList.toggle('active', b === tool && action === 'pen'));
+    if(action === 'pushLive'){
+      selectScene('live', true);
+      showCollectionDrawer();
+      toast('随堂练已推送，回收抽屉从底部展开', 'ok', 2200);
+    }
+    if(action === 'draw'){
+      selectScene('draw', true);
+      hideBoardOverlays();
+      toast('已打开抽人提问场景', 'info', 1600);
+    }
+    if(action === 'circleAsk'){
+      showCircleAsk();
+      toast('已圈选课件局部，AI 解释卡停在选区旁', 'info', 2200);
+    }
+    if(action === 'pen'){
+      toast('批注笔已开启，可在课件上圈画重点（原型演示）', 'info', 2000);
+    }
+    if(action === 'subjectTool'){
+      showModal('学科工具',
+        `<p>白板端可从悬浮球快速调出工具，不离开当前课件：</p>
+        <ul>
+          <li><strong>数轴</strong>：把 1/2、4/9、5/8 放到同一条线上比较。</li>
+          <li><strong>几何画板</strong>：现场画平均分图形。</li>
+          <li><strong>计时器</strong>：给小组讨论设置 1 分钟倒计时。</li>
+          <li><strong>随机器</strong>：抽题、抽小组、抽学生。</li>
+        </ul>`, '悬浮球');
+    }
+    if(action === 'voice'){
+      showVoiceStrip();
+      toast('语音助手以条带出现，不遮挡课件', 'info', 1800);
+    }
+    if(action === 'gateway'){
+      showGatewayPanel();
+    }
+    return;
   }
-  if(act==='showTeacherTip'){
-    showModal('课中提醒', '<p><strong>可追问：</strong>每份不一样大，还能叫 1/4 吗？</p>', '提醒');
-  }
-  if(act==='collectAnswers'){
-    toast('已收题，准备展示全班分布', 'ok', 1500);
-    jumpScene('result');
-  }
-  if(act==='showSlowList'){
-    showModal('未答名单', '<p><strong>芷雨、明轩、星辰、嘉豪、乐乐、知远、晨晨、雨桐、佳宁、书航、子墨</strong>尚未提交。</p><p>可延长 30 秒后收题。</p>', '课堂状态', '延长 30 秒');
-  }
-  if(act==='explainWrong'){
-    showModal('D 选项错因', '<p>9 名学生选了 <strong>D · 5/8</strong>。</p><p><strong>C · 4/9</strong> 离 1/2 更近。讲评时用数轴比较 4/9、1/2、5/8。</p>', '错因');
-  }
-  if(act==='sendRemedial'){
-    toast('已给错答学生推送 1 道同类题', 'ok', 2200);
-  }
-  if(act==='rerollDraw'){
-    const wait = $('#drawWaiting');
-    const name = $('#drawName');
-    const why = $('#drawWhy');
-    const status = $('#drawStatus');
-    $$('.draw-student').forEach(s=>s.classList.remove('active'));
-    const students = $$('.draw-student');
-    if(students[5]) students[5].classList.add('active');
-    if(status) status.textContent = '正在抽取…';
-    if(wait) wait.style.display='block';
-    if(name){ name.style.display='none'; name.textContent='孙晨'; }
-    if(why){ why.style.display='none'; why.innerHTML='请回答：5/8 为什么最接近 1/2？'; }
-    setTimeout(()=>{
-      if(wait) wait.style.display='none';
-      if(name) name.style.display='block';
-      if(why) why.style.display='block';
-      if(status) status.textContent = '已抽中 · 等待回答';
-      toast('🎯 抽中：孙晨', 'info', 1800);
-    }, 900);
-  }
-  if(act==='switchDrawMode'){
-    showModal('抽人模式已切换', '<p>当前模式：<strong>关注型</strong>。</p><p>系统会优先考虑“举手少、错题多、最近表达机会少”的学生，但仍然由老师决定是否点名。</p>', '课堂公平');
-  }
-  if(act==='groupDetail'){
-    const g = a.dataset.group || 'A';
-    const item = GROUP_DISCUSSION.find(x => x.id === g);
-    const body = item
-      ? `<p><strong>${item.title}</strong></p><p>${item.detail}</p><p><strong>追问：</strong>这里的整体是什么？每一份是不是一样大？</p>`
-      : `<p>${g} 组已提交图片和关键词。</p><p><strong>追问：</strong>整体是什么？每一份一样大吗？</p>`;
-    showModal(`第 ${g} 组成果`, body, '小组');
-  }
-  if(act==='publishHomework'){
-    toast('已发布 3 层课后练习：基础 / 提升 / 挑战', 'ok', 2200);
-  }
-  if(act==='openReport'){
-    showModal('课堂报告', '<div class="metric-row"><div class="metric-card"><div class="m-num">92%</div><div class="m-lab">圈选题正确率</div></div><div class="metric-card"><div class="m-num">9</div><div class="m-lab">通分错因人数</div></div><div class="metric-card"><div class="m-num">3</div><div class="m-lab">需课后跟进</div></div></div><p>报告已同步到教师端，课后批阅页会自动带出本节错因标签。</p>', '课后沉淀');
-  }
+  if(!e.target.closest('#floatingBall')) $('#floatingBall')?.classList.remove('open');
 });
 
 document.addEventListener('keydown', e=>{
-  if($('#modalBg')?.classList.contains('show')) return;
-  if(e.key === 'ArrowRight' || e.key === 'PageDown'){
-    e.preventDefault();
-    renderLessonPage(lessonPageIndex + 1);
-  }
-  if(e.key === 'ArrowLeft' || e.key === 'PageUp'){
-    e.preventDefault();
-    renderLessonPage(lessonPageIndex - 1);
+  if(e.key === 'Escape'){
+    closeModal();
+    hideBoardOverlays();
+    $('#floatingBall')?.classList.remove('open');
   }
 });
 
-function renderLessonPage(index){
-  const max = LESSON_FLOW.length - 1;
-  lessonPageIndex = Math.max(0, Math.min(index, max));
-  const page = LESSON_FLOW[lessonPageIndex];
-  renderScene(page.scene);
-  syncLessonControls();
-}
-
-function jumpScene(scene){
-  const idx = LESSON_FLOW.findIndex(p => p.scene === scene);
-  if(idx >= 0){
-    renderLessonPage(idx);
-    return;
-  }
-  renderScene(scene);
-  syncLessonControls();
-}
-function syncLessonControls(){
-  const page = LESSON_FLOW[lessonPageIndex] || {title:'课件页'};
-  const prev = $('#prevPage');
-  const next = $('#nextPage');
-  const label = $('#lessonPageLabel');
-  if(prev) prev.disabled = lessonPageIndex === 0;
-  if(next) next.disabled = lessonPageIndex === LESSON_FLOW.length - 1;
-  if(label) label.textContent = `第 ${lessonPageIndex + 1} / ${LESSON_FLOW.length} 页 · ${page.title}`;
-}
-
-// 初次渲染
+// 初次渲染（SCENES 字典由后续 edit 注入后才有内容）
 setTimeout(()=>{
-  renderLessonPage(0);
+  initFloatingBall();
+  renderScene('welcome');
+  setTimeout(()=> toast('👋 点击下方 8 个按钮，看大屏在不同时刻展示什么','info', 4200), 600);
 }, 50);
 </script>
 </body>
