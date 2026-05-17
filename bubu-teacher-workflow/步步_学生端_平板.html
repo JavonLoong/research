@@ -1337,6 +1337,36 @@ function chooseRotationOrigin(startRect, targetRect, angleDeg){
   const vy = (a * dy - dx * c) / det;
   return {x:startRect.width / 2 - vx, y:startRect.height / 2 - vy};
 }
+function prepareRotationClone(tablet){
+  const clone = tablet.cloneNode(true);
+  clone.classList.add('rotation-clone');
+  clone.style.margin = '0';
+  clone.style.transform = 'none';
+  clone.style.transformOrigin = 'center center';
+  clone.style.pointerEvents = 'none';
+  const btn = clone.querySelector('.rotate-tablet-btn');
+  if(btn) btn.remove();
+  return clone;
+}
+function mountRotationLayer(clone, rect, origin, opacity=1){
+  const layer = document.createElement('div');
+  layer.className = 'tablet-rotation-layer';
+  Object.assign(layer.style, {
+    position:'fixed',
+    left:`${rect.left}px`,
+    top:`${rect.top}px`,
+    width:`${rect.width}px`,
+    height:`${rect.height}px`,
+    transformOrigin:`${origin.x}px ${origin.y}px`,
+    opacity:String(opacity),
+    pointerEvents:'none',
+    zIndex:'9999',
+    willChange:'transform, opacity'
+  });
+  layer.appendChild(clone);
+  document.body.appendChild(layer);
+  return layer;
+}
 async function rotateStudentTablet(){
   const tablet = $('#col-home .tablet');
   if(!tablet || tabletRotating) return;
@@ -1346,19 +1376,35 @@ async function rotateStudentTablet(){
   const direction = toLandscape ? -1 : 1;
   const spinAngle = direction * 90;
   const spinEase = 'cubic-bezier(0.4, 0.0, 0.2, 1)';
+  const duration = 760;
+  let oldLayer = null;
+  let targetLayer = null;
+  const prevVisibility = tablet.style.visibility;
   try{
     tablet.style.transform = '';
     const startRect = tablet.getBoundingClientRect();
-    const targetRect = measureTabletRectFor(tablet, toLandscape);
-    const origin = chooseRotationOrigin(startRect, targetRect, spinAngle);
-    tablet.style.transformOrigin = `${origin.x}px ${origin.y}px`;
-    const spin = tablet.animate([
-      { transform:'rotate(0deg) scale(1)' },
-      { transform:`rotate(${spinAngle}deg) scale(1)` }
-    ], { duration:760, easing:spinEase, fill:'forwards' });
-    await spin.finished;
-    spin.cancel();
-    setStudentTabletOrientation(toLandscape ? 'landscape' : 'portrait', {syncReader:false});
+    const oldClone = prepareRotationClone(tablet);
+    tablet.style.visibility = 'hidden';
+    setStudentTabletOrientation(toLandscape ? 'landscape' : 'portrait');
+    const targetRect = tablet.getBoundingClientRect();
+    const targetClone = prepareRotationClone(tablet);
+    const oldOrigin = chooseRotationOrigin(startRect, targetRect, spinAngle);
+    const targetOrigin = chooseRotationOrigin(targetRect, startRect, -spinAngle);
+    oldLayer = mountRotationLayer(oldClone, startRect, oldOrigin, 1);
+    targetLayer = mountRotationLayer(targetClone, targetRect, targetOrigin, 0);
+    const oldAnim = oldLayer.animate([
+      { transform:'rotate(0deg)', opacity:1, offset:0 },
+      { transform:`rotate(${spinAngle}deg)`, opacity:.9, offset:.46 },
+      { transform:`rotate(${spinAngle}deg)`, opacity:0, offset:1 }
+    ], { duration, easing:spinEase, fill:'forwards' });
+    const targetAnim = targetLayer.animate([
+      { transform:`rotate(${-spinAngle}deg)`, opacity:0, offset:0 },
+      { transform:`rotate(${-spinAngle}deg)`, opacity:0, offset:.32 },
+      { transform:'rotate(0deg)', opacity:1, offset:1 }
+    ], { duration, easing:spinEase, fill:'forwards' });
+    await Promise.all([oldAnim.finished, targetAnim.finished]);
+    oldAnim.cancel();
+    targetAnim.cancel();
     tablet.style.transform = '';
     tablet.style.transformOrigin = '';
     if(currentArticle) openArticle(currentArticle, 'auto');
@@ -1367,6 +1413,9 @@ async function rotateStudentTablet(){
     tablet.style.transform = '';
     tablet.style.transformOrigin = '';
   }finally{
+    oldLayer?.remove();
+    targetLayer?.remove();
+    tablet.style.visibility = prevVisibility;
     tablet.classList.remove('rotating');
     tabletRotating = false;
   }
