@@ -103,6 +103,71 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .tc-foot .tc-action{color:var(--primary-dark);font-weight:700}
 .tcard.done .tc-action{color:var(--primary-dark)}
 
+/* === Student home + homework center === */
+.priority-card{background:linear-gradient(135deg,#ecfdf5,#fff);border:1px solid var(--primary-soft);border-radius:14px;padding:13px 14px;margin-bottom:12px;box-shadow:var(--shadow-2);cursor:pointer}
+.priority-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-size:10.5px;color:var(--muted);font-weight:700}
+.priority-pill,.hw-status{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:3px 8px;font-size:10px;font-weight:800;white-space:nowrap}
+.priority-pill{background:var(--danger-soft);color:#991b1b}
+.priority-pill.ok{background:var(--primary-soft);color:var(--primary-dark)}
+.priority-card h3{font-size:17px;line-height:1.25;color:var(--text);margin-bottom:6px}
+.priority-card p{font-size:11.5px;line-height:1.55;color:var(--muted);font-weight:500}
+.priority-actions{display:flex;gap:8px;margin-top:10px}
+.mini-btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 10px;font-size:11px;font-weight:800;color:var(--text);cursor:pointer;font-family:inherit}
+.mini-btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.mini-btn:hover{border-color:var(--primary);color:var(--primary-dark)}
+.mini-btn.primary:hover{background:var(--primary-dark);color:#fff}
+.agenda-list{display:flex;flex-direction:column;gap:8px}
+.agenda-item{background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px 11px;display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;cursor:pointer}
+.agenda-item:hover{border-color:var(--primary);box-shadow:var(--shadow-2)}
+.agenda-time{font-size:10.5px;color:var(--muted);font-weight:800;width:42px}
+.agenda-main strong{font-size:12.5px;color:var(--text)}
+.agenda-main p{font-size:10.5px;color:var(--muted);line-height:1.45;margin-top:2px}
+.agenda-action{font-size:10.5px;color:var(--primary-dark);font-weight:800;white-space:nowrap}
+.hw-shell{display:flex;flex-direction:column;gap:10px}
+.hw-summary{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px}
+.hw-summary-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px}
+.hw-summary h4{font-size:14px;font-weight:900;color:var(--text)}
+.hw-summary p{font-size:11px;color:var(--muted);line-height:1.45}
+.hw-filter-block{background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 10px;display:flex;flex-direction:column;gap:8px}
+.filter-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:1px}
+.filter-row::-webkit-scrollbar{display:none}
+.filter-chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;font-size:10.5px;color:var(--muted);font-weight:800;white-space:nowrap;cursor:pointer;font-family:inherit}
+.filter-chip.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.hw-list{display:flex;flex-direction:column;gap:8px}
+.hw-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 11px;cursor:pointer;transition:.15s}
+.hw-card:hover{border-color:var(--primary);box-shadow:var(--shadow-2)}
+.hw-card.hidden{display:none}
+.hw-card.late{border-color:#fecaca;background:#fffafa}
+.hw-card.pending{background:#f8fafc}
+.hw-top{display:flex;align-items:flex-start;gap:9px}
+.subject-mark{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:900;flex-shrink:0}
+.subject-mark.math{background:#10b981}
+.subject-mark.chinese{background:#ef4444}
+.subject-mark.english{background:#6366f1}
+.subject-mark.science{background:#0ea5e9}
+.subject-mark.art{background:#f59e0b}
+.hw-main{min-width:0;flex:1}
+.hw-title-row{display:flex;align-items:center;gap:6px;justify-content:space-between}
+.hw-title{font-size:12.8px;font-weight:900;color:var(--text);line-height:1.35}
+.hw-status.todo{background:var(--warn-soft);color:#92400e}
+.hw-status.doing{background:var(--primary-soft);color:var(--primary-dark)}
+.hw-status.late{background:var(--danger-soft);color:#991b1b}
+.hw-status.pending{background:#e0f2fe;color:#0369a1}
+.hw-status.done{background:#dcfce7;color:#047857}
+.hw-desc{font-size:10.7px;color:var(--muted);line-height:1.45;margin-top:4px}
+.hw-meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.hw-meta span{font-size:9.8px;padding:2px 6px;border-radius:999px;background:var(--surface-3);color:var(--muted);font-weight:700}
+.hw-progress{height:5px;border-radius:4px;background:var(--surface-3);overflow:hidden;margin-top:8px}
+.hw-progress i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--primary),#34d399)}
+.hw-empty{display:none;text-align:center;padding:22px 10px;color:var(--muted);font-size:12px;font-weight:700;background:#fff;border:1px dashed var(--line);border-radius:12px}
+.hw-empty.show{display:block}
+.hw-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.hw-detail-box{border:1px solid var(--line);border-radius:9px;padding:8px;background:#fff}
+.hw-detail-box strong{display:block;font-size:10.5px;color:var(--primary-dark);margin-bottom:4px}
+.hw-detail-box span{font-size:11.5px;color:var(--text);line-height:1.5}
+.submit-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.submit-strip span{font-size:10px;font-weight:800;padding:4px 8px;border-radius:999px;background:var(--primary-soft-2);color:var(--primary-dark);border:1px solid var(--primary-soft)}
+
 /* AI chat (Tab 2) === */
 .chat-wrap{display:flex;flex-direction:column;min-height:520px}
 .chat-meta{padding:10px 12px;background:linear-gradient(135deg,var(--primary-soft-2),var(--accent-soft-2));border-radius:10px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
@@ -286,12 +351,14 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .q-feedback.no{background:var(--danger-soft);border:1px solid #fecaca;color:#991b1b}
 .q-feedback .qf-ico{font-size:16px;line-height:1}
 
-/* 课堂任务切换器 (开发预览用) */
-.cls-switch{padding:8px 14px;background:var(--surface-2);border-top:1px solid var(--line);display:flex;gap:5px;flex-shrink:0;overflow-x:auto}
-.cls-switch::-webkit-scrollbar{display:none}
-.cls-switch .cs-btn{font-size:10.5px;padding:5px 10px;background:#fff;border:1px solid var(--line);border-radius:999px;color:var(--muted);cursor:pointer;font-weight:600;white-space:nowrap;font-family:inherit;flex-shrink:0}
-.cls-switch .cs-btn:hover{border-color:var(--primary);color:var(--primary-dark)}
-.cls-switch .cs-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+/* 课堂状态条：学生只看到老师当前推送 */
+.class-status{padding:9px 14px;background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-shrink:0;cursor:pointer}
+.class-status-text{flex:1;min-width:0}
+.class-status-text strong{display:block;font-size:11.5px;color:var(--text);line-height:1.35}
+.class-status-text span{display:block;font-size:10px;color:var(--muted);font-weight:600;line-height:1.4;margin-top:1px}
+.class-dots{display:flex;gap:4px;align-items:center}
+.class-dots i{width:6px;height:6px;border-radius:50%;background:var(--line);display:block}
+.class-dots i.on{background:var(--primary)}
 
 /* ===== Toast / Modal ===== */
 .toast-stack{position:absolute;top:18px;right:18px;display:flex;flex-direction:column;gap:8px;z-index:90;pointer-events:none}
@@ -350,7 +417,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
             <div class="ab-avatar">嘉</div>
             <div>
               <div class="ab-name">嘉怡，晚上好</div>
-              <div class="ab-sub">连续打卡 <strong style="color:var(--primary-dark)">14</strong> 天 · 今天还差 2 题</div>
+              <div class="ab-sub">今日 <strong style="color:var(--primary-dark)">4</strong> 项 · 补交 1 · 课堂推送 1</div>
             </div>
           </div>
           <div class="ab-tools">
@@ -361,8 +428,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
         <div class="live-bar" id="liveBar">
           <span class="pulse"></span>
-          <span class="grow">王老师已离线 · 你在自习模式下，AI 学伴随时可问</span>
-          <button class="lb-btn" data-act="liveBarSwitch">体验"老师推送"</button>
+          <span class="grow">先补交语文听写订正，再完成数学剩余 2 题</span>
+          <button class="lb-btn" data-tab-go="homework" data-hw-filter="late">查看</button>
         </div>
 
         <div class="scroll-area" id="homeScroll">
@@ -370,41 +437,154 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
           <!-- ===== Tab 1: 今日 ===== -->
           <div class="s-panel active" data-pane="today">
             <div class="stat-row">
-              <div class="stat-card"><div class="sc-v">3/5</div><div class="sc-l">基础题</div></div>
-              <div class="stat-card accent"><div class="sc-v">0/3</div><div class="sc-l">拓展题</div></div>
-              <div class="stat-card warn"><div class="sc-v">8</div><div class="sc-l">本周对话</div></div>
+              <div class="stat-card"><div class="sc-v">4</div><div class="sc-l">今日待办</div></div>
+              <div class="stat-card accent"><div class="sc-v">1</div><div class="sc-l">需补交</div></div>
+              <div class="stat-card warn"><div class="sc-v">22:00</div><div class="sc-l">最近截止</div></div>
             </div>
 
-            <div class="sec-h"><h4>📋 今日作业</h4><span class="sec-meta">截止 今晚 22:00</span></div>
-            <div class="task-list" id="taskList">
-              <div class="tcard" data-task="t1">
-                <div class="tc-top"><div class="tc-title">分数加减法 · 基础 5 题 <span class="tc-lvl">基础</span></div><span class="tc-due">22:00</span></div>
-                <div class="tc-info">围绕"同分母分数加减"，每题约 1.5 分钟。错了 AI 会立即讲解。</div>
-                <div class="tc-bar"><i style="width:60%"></i></div>
-                <div class="tc-foot"><span>已答 3 / 5</span><span class="tc-action">继续做 →</span></div>
+            <div class="priority-card" data-hw="chn_makeup">
+              <div class="priority-meta"><span class="priority-pill">需补交</span><span>语文 · 昨天 21:00 退回</span></div>
+              <h3>第 12 课生字听写订正</h3>
+              <p>刘老师退回：少拍第 2 页。补拍上传后，这项会从“需补交”移到“待老师复核”。</p>
+              <div class="priority-actions">
+                <button class="mini-btn primary" data-hw="chn_makeup">去补拍上传</button>
+                <button class="mini-btn" data-tab-go="homework" data-hw-filter="late">看全部补交</button>
               </div>
-              <div class="tcard lv-extend" data-task="t2">
-                <div class="tc-top"><div class="tc-title">小华买水果 · 应用题 3 题 <span class="tc-lvl lv-extend">拓展</span></div><span class="tc-due">22:00</span></div>
-                <div class="tc-info">综合运用分数加减，需要看图列式。<strong style="color:var(--accent-dark)">第 2 题是上次错题的同类题</strong>。</div>
-                <div class="tc-bar"><i style="width:0%"></i></div>
-                <div class="tc-foot"><span>未开始</span><span class="tc-action">开始做 →</span></div>
+            </div>
+
+            <div class="sec-h"><h4>今日顺序</h4><span class="sec-meta">按截止和老师退回排序</span></div>
+            <div class="agenda-list">
+              <div class="agenda-item" data-hw="chn_makeup">
+                <div class="agenda-time">现在</div>
+                <div class="agenda-main"><strong>语文听写订正</strong><p>补交 · 少拍一页，先处理</p></div>
+                <div class="agenda-action">补交</div>
               </div>
-              <div class="tcard lv-opt" data-task="t3">
-                <div class="tc-top"><div class="tc-title">数学小报 · 我的分数表达 <span class="tc-lvl lv-opt">选修</span></div><span class="tc-due">周日</span></div>
-                <div class="tc-info">把这周学的分数知识做成一张数学小报，自由发挥。可以选择 AI 帮你想思路。</div>
-                <div class="tc-bar"><i style="width:0%"></i></div>
-                <div class="tc-foot"><span>选做 · 不计分</span><span class="tc-action">看示例 →</span></div>
+              <div class="agenda-item" data-hw="math_basic">
+                <div class="agenda-time">22:00</div>
+                <div class="agenda-main"><strong>数学分数加减基础 5 题</strong><p>已做 3/5，剩 2 题</p></div>
+                <div class="agenda-action">继续</div>
               </div>
-              <div class="tcard done" data-task="t0">
-                <div class="tc-top"><div class="tc-title">课堂表现 · 老师写给你的 <span class="tc-lvl">已完成</span></div><span class="tc-due">已查看</span></div>
-                <div class="tc-info">"今天圈选题答得很准，应用题再练 2 道就稳了。" — 王老师 17:42</div>
-                <div class="tc-bar"><i style="width:100%"></i></div>
-                <div class="tc-foot"><span>来自课堂</span><span class="tc-action">回信 →</span></div>
+              <div class="agenda-item" data-hw="eng_read">
+                <div class="agenda-time">明早</div>
+                <div class="agenda-main"><strong>英语 Unit 4 跟读录音</strong><p>可先录草稿，明早 8:00 前提交</p></div>
+                <div class="agenda-action">录音</div>
+              </div>
+              <div class="agenda-item" data-hw="sci_photo">
+                <div class="agenda-time">待批</div>
+                <div class="agenda-main"><strong>科学观察记录照片</strong><p>已提交，等陈老师批改</p></div>
+                <div class="agenda-action">查看</div>
               </div>
             </div>
           </div>
 
-          <!-- ===== Tab 2: AI 学伴 ===== -->
+          <!-- ===== Tab 2: 作业中心 ===== -->
+          <div class="s-panel" data-pane="homework">
+            <div class="hw-shell">
+              <div class="hw-summary">
+                <div class="hw-summary-top">
+                  <h4>作业中心</h4>
+                  <span class="priority-pill ok">5 科 · 7 项</span>
+                </div>
+                <p>按科目和状态看任务：补交、待完成、待批改、已完成分开处理。</p>
+              </div>
+
+              <div class="hw-filter-block">
+                <div class="filter-row" data-filter-kind="subject">
+                  <button class="filter-chip active" data-hw-subject="all">全部科目</button>
+                  <button class="filter-chip" data-hw-subject="math">数学</button>
+                  <button class="filter-chip" data-hw-subject="chinese">语文</button>
+                  <button class="filter-chip" data-hw-subject="english">英语</button>
+                  <button class="filter-chip" data-hw-subject="science">科学</button>
+                  <button class="filter-chip" data-hw-subject="art">美术</button>
+                </div>
+                <div class="filter-row" data-filter-kind="status">
+                  <button class="filter-chip active" data-hw-status="all">全部状态</button>
+                  <button class="filter-chip" data-hw-status="late">需补交</button>
+                  <button class="filter-chip" data-hw-status="todo">待完成</button>
+                  <button class="filter-chip" data-hw-status="doing">进行中</button>
+                  <button class="filter-chip" data-hw-status="pending">待批改</button>
+                  <button class="filter-chip" data-hw-status="done">已完成</button>
+                </div>
+              </div>
+
+              <div class="hw-list" id="homeworkList">
+                <div class="hw-card late" data-hw="chn_makeup" data-subject="chinese" data-status="late">
+                  <div class="hw-top">
+                    <div class="subject-mark chinese">语</div>
+                    <div class="hw-main">
+                      <div class="hw-title-row"><div class="hw-title">第 12 课生字听写订正</div><span class="hw-status late">需补交</span></div>
+                      <div class="hw-desc">刘老师退回：少拍第 2 页。补拍上传后进入复核。</div>
+                      <div class="hw-meta"><span>昨天 21:00</span><span>拍照补交</span><span>刘老师</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hw-card" data-hw="math_basic" data-subject="math" data-status="doing">
+                  <div class="hw-top">
+                    <div class="subject-mark math">数</div>
+                    <div class="hw-main">
+                      <div class="hw-title-row"><div class="hw-title">分数加减法 · 基础 5 题</div><span class="hw-status doing">进行中</span></div>
+                      <div class="hw-desc">已答 3/5，剩 2 题；错题会自动进入错题本。</div>
+                      <div class="hw-progress"><i style="width:60%"></i></div>
+                      <div class="hw-meta"><span>今晚 22:00</span><span>在线作答</span><span>王老师</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hw-card" data-hw="math_word" data-subject="math" data-status="todo">
+                  <div class="hw-top">
+                    <div class="subject-mark math">数</div>
+                    <div class="hw-main">
+                      <div class="hw-title-row"><div class="hw-title">小华买水果 · 应用题 3 题</div><span class="hw-status todo">待完成</span></div>
+                      <div class="hw-desc">第 2 题关联上周错题，AI 只给读题和思路。</div>
+                      <div class="hw-meta"><span>今晚 22:00</span><span>同类错题</span><span>约 8 分钟</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hw-card" data-hw="eng_read" data-subject="english" data-status="todo">
+                  <div class="hw-top">
+                    <div class="subject-mark english">英</div>
+                    <div class="hw-main">
+                      <div class="hw-title-row"><div class="hw-title">Unit 4 跟读录音</div><span class="hw-status todo">待完成</span></div>
+                      <div class="hw-desc">录 2 句对话，可保存草稿；提交前可重录。</div>
+                      <div class="hw-meta"><span>明早 8:00</span><span>录音提交</span><span>林老师</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hw-card pending" data-hw="sci_photo" data-subject="science" data-status="pending">
+                  <div class="hw-top">
+                    <div class="subject-mark science">科</div>
+                    <div class="hw-main">
+                      <div class="hw-title-row"><div class="hw-title">植物观察记录照片</div><span class="hw-status pending">待批改</span></div>
+                      <div class="hw-desc">已上传 3 张照片和一段说明，等待陈老师批改。</div>
+                      <div class="hw-meta"><span>今天 18:40 提交</span><span>照片 + 文字</span><span>陈老师</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hw-card" data-hw="art_poster" data-subject="art" data-status="todo">
+                  <div class="hw-top">
+                    <div class="subject-mark art">美</div>
+                    <div class="hw-main">
+                      <div class="hw-title-row"><div class="hw-title">分数生活小报</div><span class="hw-status todo">待完成</span></div>
+                      <div class="hw-desc">开放作业，不计分；可从课堂里保存的例子继续做。</div>
+                      <div class="hw-meta"><span>周日 20:00</span><span>图片 / 手写</span><span>选做</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hw-card" data-hw="chn_recite_done" data-subject="chinese" data-status="done">
+                  <div class="hw-top">
+                    <div class="subject-mark chinese">语</div>
+                    <div class="hw-main">
+                      <div class="hw-title-row"><div class="hw-title">古诗背诵《暮江吟》</div><span class="hw-status done">已完成</span></div>
+                      <div class="hw-desc">老师已评：停顿自然，第二句再练一次更稳。</div>
+                      <div class="hw-meta"><span>昨天完成</span><span>语音</span><span>已批</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="hw-empty" id="homeworkEmpty">这个筛选下暂时没有作业。</div>
+            </div>
+          </div>
+
+          <!-- ===== Tab 3: AI 学伴 ===== -->
           <div class="s-panel" data-pane="ai">
             <div class="chat-meta">
               <div class="cm-ava">🤖</div>
@@ -553,11 +733,11 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
         <!-- 底部 Tab Bar -->
         <div class="tabbar" id="tabbar">
-          <div class="tb active" data-tab="today"><i>🏠</i>今日</div>
-          <div class="tb" data-tab="ai"><i>🤖</i>AI 学伴</div>
-          <div class="tb has-dot" data-tab="wb"><i>📕</i>错题本</div>
-          <div class="tb" data-tab="rev"><i>🎯</i>复习</div>
-          <div class="tb" data-tab="me"><i>👤</i>我的</div>
+          <div class="tb active" data-tab="today"><i>⌂</i>今日</div>
+          <div class="tb has-dot" data-tab="homework"><i>▤</i>作业</div>
+          <div class="tb" data-tab="ai"><i>◎</i>学伴</div>
+          <div class="tb" data-tab="wb"><i>✎</i>错题</div>
+          <div class="tb" data-tab="me"><i>☻</i>我的</div>
         </div>
 
       </div><!-- /tablet-screen -->
@@ -596,17 +776,12 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
             </div>
           </div>
 
-          <!-- 切换器（开发预览） -->
-          <div class="cls-switch">
-            <button class="cs-btn active" data-class-scene="handwrite">手写题</button>
-            <button class="cs-btn" data-class-scene="mcq">📋 单选</button>
-            <button class="cs-btn" data-class-scene="dict">🎧 听写</button>
-            <button class="cs-btn" data-class-scene="circle">⭕ 圈选</button>
-            <button class="cs-btn" data-class-scene="vote">📊 投票</button>
-            <button class="cs-btn" data-class-scene="draw">🎲 抽到你</button>
-            <button class="cs-btn" data-class-scene="read">🗣️ 朗读</button>
-            <button class="cs-btn" data-class-scene="fill">✍️ 填空</button>
-            <button class="cs-btn" data-class-scene="done">✅ 已提交</button>
+          <div class="class-status" id="classStatusBar" title="演示用：模拟老师端推送下一题">
+            <div class="class-status-text">
+              <strong id="classStep">第 1 / 4 次推送 · 手写题</strong>
+              <span id="classStatusSub">课堂接管中，提交后等待老师推送</span>
+            </div>
+            <div class="class-dots" id="classDots"><i class="on"></i><i></i><i></i><i></i></div>
           </div>
 
         </div><!-- /class-cover -->
@@ -672,13 +847,14 @@ function closeModal(){ $('#modalBg').classList.remove('show'); }
 $('#modalBg').addEventListener('click', e => { if(e.target===$('#modalBg')) closeModal(); });
 
 // ============ 课后模式：Tab 切换 ============
+function switchStudentTab(k){
+  $$('#tabbar .tb').forEach(x => x.classList.toggle('active', x.dataset.tab===k));
+  $$('.s-panel').forEach(p => p.classList.toggle('active', p.dataset.pane===k));
+  const sc = $('#homeScroll');
+  if(sc) sc.scrollTop = 0;
+}
 $$('#tabbar .tb').forEach(t=>{
-  t.addEventListener('click', ()=>{
-    const k = t.dataset.tab;
-    $$('#tabbar .tb').forEach(x => x.classList.toggle('active', x===t));
-    $$('.s-panel').forEach(p => p.classList.toggle('active', p.dataset.pane===k));
-    $('#homeScroll').scrollTop = 0;
-  });
+  t.addEventListener('click', ()=> switchStudentTab(t.dataset.tab));
 });
 
 // ============ 课堂：单选题逻辑 ============
@@ -819,6 +995,24 @@ const SCENES = {
   }
 };
 
+const classQueue = ['handwrite','mcq','dict','done'];
+const classLabels = {
+  handwrite:'手写题',
+  mcq:'随堂练',
+  dict:'听写',
+  done:'已提交'
+};
+let classIndex = 0;
+
+function updateClassStatus(scene){
+  const idx = Math.max(0, classQueue.indexOf(scene));
+  const step = $('#classStep');
+  const sub = $('#classStatusSub');
+  if(step) step.textContent = `第 ${idx + 1} / ${classQueue.length} 次推送 · ${classLabels[scene] || '课堂任务'}`;
+  if(sub) sub.textContent = scene === 'done' ? '已提交，等待老师讲评或继续推送' : '课堂接管中，提交后等待老师推送';
+  $$('#classDots i').forEach((dot, i)=> dot.classList.toggle('on', i <= idx));
+}
+
 function renderClassScene(scene){
   const s = SCENES[scene] || SCENES.handwrite;
   mcqDone = false;
@@ -826,6 +1020,7 @@ function renderClassScene(scene){
   $('#classTimer').textContent = s.timer;
   $('#classStage').innerHTML = s.html;
   if(s.bind) s.bind();
+  updateClassStatus(scene);
 }
 
 function bindMCQ(){
@@ -953,13 +1148,146 @@ function bindHandwrite(){
   });
 }
 
-$$('.cls-switch .cs-btn').forEach(b=>{
-  b.addEventListener('click', ()=>{
-    $$('.cls-switch .cs-btn').forEach(x => x.classList.toggle('active', x===b));
-    renderClassScene(b.dataset.classScene);
-  });
+$('#classStatusBar')?.addEventListener('click', ()=>{
+  classIndex = (classIndex + 1) % classQueue.length;
+  renderClassScene(classQueue[classIndex]);
+  toast('老师推送了下一题','info',1300,$('#classStatusBar'));
 });
-renderClassScene('handwrite');
+renderClassScene(classQueue[classIndex]);
+
+// ============ 作业中心：科目 / 状态 / 补交流程 ============
+const hwState = { subject:'all', status:'all' };
+const HOMEWORKS = {
+  chn_makeup: {
+    tag:'语文 · 需补交',
+    title:'第 12 课生字听写订正',
+    subject:'语文',
+    status:'需补交',
+    due:'已逾期 · 昨天 21:00',
+    teacher:'刘老师',
+    method:'补拍上传',
+    primary:'补拍上传',
+    toast:'已进入补拍上传。补交后会变为“待刘老师复核”。',
+    note:'刘老师退回：第 2 页没有拍到，前 8 个词已经通过，只需要补拍缺页。',
+    steps:['拍第 2 页订正本','确认图片清楚','提交后等待老师复核']
+  },
+  math_basic: {
+    tag:'数学 · 进行中',
+    title:'分数加减法 · 基础 5 题',
+    subject:'数学',
+    status:'已答 3 / 5',
+    due:'今晚 22:00 截止',
+    teacher:'王老师',
+    method:'在线作答',
+    primary:'继续第 4 题',
+    toast:'已进入数学在线作答，第 4 题会从上次进度继续。',
+    note:'系统保留前 3 题过程，第 4 题仍是同分母分数加减。错题会进入错题本，不会直接给答案。',
+    steps:['第 4 题：同分母加减','第 5 题：口算巩固','提交后生成错题记录']
+  },
+  math_word: {
+    tag:'数学 · 待完成',
+    title:'小华买水果 · 应用题 3 题',
+    subject:'数学',
+    status:'未开始',
+    due:'今晚 22:00 截止',
+    teacher:'王老师',
+    method:'在线作答',
+    primary:'开始做题',
+    toast:'已打开应用题。AI 只会帮你读题和提示单位，不会直接给答案。',
+    note:'第 2 题和上周“千克/克”错题同类，进入后会先提醒圈出单位。',
+    steps:['读题并圈单位','先换算再列式','错了进入同类重练']
+  },
+  eng_read: {
+    tag:'英语 · 待完成',
+    title:'Unit 4 跟读录音',
+    subject:'英语',
+    status:'待录音',
+    due:'明早 8:00 截止',
+    teacher:'林老师',
+    method:'录音提交',
+    primary:'开始录音',
+    toast:'录音草稿已开启，可以先录一版，提交前可重录。',
+    note:'本次只收 2 句对话。录完会自动检查音量和漏读，不直接打分公开。',
+    steps:['录第 1 句','录第 2 句','听一遍后提交']
+  },
+  sci_photo: {
+    tag:'科学 · 待批改',
+    title:'植物观察记录照片',
+    subject:'科学',
+    status:'已提交待批改',
+    due:'今天 18:40 已提交',
+    teacher:'陈老师',
+    method:'照片 + 文字',
+    primary:'查看提交记录',
+    toast:'已打开科学提交记录，目前等待陈老师批改。',
+    note:'你提交了 3 张照片和 38 字观察说明。老师批改前不用重复提交。',
+    steps:['照片 3 张已上传','说明已保存','等待老师批改']
+  },
+  art_poster: {
+    tag:'美术 · 待完成',
+    title:'分数生活小报',
+    subject:'美术',
+    status:'草稿未提交',
+    due:'周日 20:00 截止',
+    teacher:'秦老师',
+    method:'图片 / 手写',
+    primary:'继续草稿',
+    toast:'已打开小报草稿，可以从课堂保存的例子继续做。',
+    note:'开放作业不计分，但会进入个人作品夹；可用照片、手写或平板绘图提交。',
+    steps:['选一个生活分数例子','写一句解释','拍照或绘图提交']
+  },
+  chn_recite_done: {
+    tag:'语文 · 已完成',
+    title:'古诗背诵《暮江吟》',
+    subject:'语文',
+    status:'已批改',
+    due:'昨天完成',
+    teacher:'刘老师',
+    method:'语音提交',
+    primary:'查看评语',
+    toast:'已打开刘老师评语。',
+    note:'刘老师评语：停顿自然，第二句“半江瑟瑟半江红”再练一次更稳。',
+    steps:['语音已提交','老师已批改','可选再练一遍']
+  }
+};
+
+function setHomeworkFilter(kind, value){
+  hwState[kind] = value || 'all';
+  const attr = kind === 'subject' ? 'data-hw-subject' : 'data-hw-status';
+  $$(`.filter-row [${attr}]`).forEach(btn => btn.classList.toggle('active', btn.getAttribute(attr) === hwState[kind]));
+  filterHomeworkCards();
+}
+
+function filterHomeworkCards(){
+  const cards = $$('#homeworkList .hw-card');
+  let shown = 0;
+  cards.forEach(card=>{
+    const subjectOK = hwState.subject === 'all' || card.dataset.subject === hwState.subject;
+    const statusOK = hwState.status === 'all' || card.dataset.status === hwState.status;
+    const visible = subjectOK && statusOK;
+    card.classList.toggle('hidden', !visible);
+    if(visible) shown++;
+  });
+  const empty = $('#homeworkEmpty');
+  if(empty) empty.classList.toggle('show', shown === 0);
+}
+
+function openHomework(id, anchor=null){
+  const hw = HOMEWORKS[id];
+  if(!hw){ toast('这项作业还没有详情','warn',1600,anchor); return; }
+  const steps = hw.steps.map(s=>`<li>${s}</li>`).join('');
+  showModal(hw.title, `
+    <div class="hw-detail-grid">
+      <div class="hw-detail-box"><strong>科目</strong><span>${hw.subject}</span></div>
+      <div class="hw-detail-box"><strong>状态</strong><span>${hw.status}</span></div>
+      <div class="hw-detail-box"><strong>截止 / 时间</strong><span>${hw.due}</span></div>
+      <div class="hw-detail-box"><strong>提交方式</strong><span>${hw.method}</span></div>
+    </div>
+    <div class="note">${hw.note}</div>
+    <ul>${steps}</ul>
+    <div class="submit-strip"><span>${hw.teacher}</span><span>${hw.method}</span><span>${hw.status}</span></div>
+  `, hw.tag, hw.primary, ()=>toast(hw.toast,'ok',2200,anchor), anchor);
+}
 
 // ============ 课后侧 demo 字典 ============
 const DEMOS = {
@@ -1112,15 +1440,37 @@ document.addEventListener('click', e=>{
     setTimeout(()=> aiReply(t), 500);
     return;
   }
-  // 3. 任务卡
+  // 3. 作业中心筛选 / 跳转 / 详情
+  const subjectFilter = e.target.closest('[data-hw-subject]');
+  if(subjectFilter){
+    setHomeworkFilter('subject', subjectFilter.dataset.hwSubject);
+    return;
+  }
+  const statusFilter = e.target.closest('[data-hw-status]');
+  if(statusFilter){
+    setHomeworkFilter('status', statusFilter.dataset.hwStatus);
+    return;
+  }
+  const jump = e.target.closest('[data-tab-go]');
+  if(jump){
+    switchStudentTab(jump.dataset.tabGo);
+    if(jump.dataset.hwFilter){
+      setHomeworkFilter('subject', 'all');
+      setHomeworkFilter('status', jump.dataset.hwFilter);
+    }
+    return;
+  }
+  const hw = e.target.closest('[data-hw]');
+  if(hw){ openHomework(hw.dataset.hw, hw); return; }
+  // 4. 任务卡
   const tk = e.target.closest('[data-task]');
   if(tk){ showDemo(tk.dataset.task, tk); return; }
-  // 4. 复习卡
+  // 5. 复习卡
   const rv = e.target.closest('[data-rev]');
   if(rv){ showDemo(rv.dataset.rev, rv); return; }
-  // 5. 抽人按钮（动态生成）
+  // 6. 抽人按钮（动态生成）
   if(e.target && e.target.id==='drawAccept'){ showDemo('drawAccept', e.target); return; }
-  // 6. 通用 data-act
+  // 7. 通用 data-act
   const a = e.target.closest('[data-act]');
   if(!a) return;
   const act = a.dataset.act;
