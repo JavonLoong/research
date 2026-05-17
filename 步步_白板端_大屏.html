@@ -68,160 +68,92 @@ body{
   position:relative; overflow:hidden;
 }
 .scene-root{ position:absolute; inset:0; overflow:hidden; }
+.board-canvas{
+  position:absolute; inset:0; width:100%; height:100%; z-index:58;
+  pointer-events:none; cursor:crosshair;
+}
+.board-canvas.active{ pointer-events:auto; }
+.page-controls{
+  position:absolute; left:50%; bottom:14px; transform:translateX(-50%);
+  z-index:66; display:flex; gap:12px; align-items:center;
+  background:rgba(15,23,42,.78); color:#fff; border:1px solid rgba(255,255,255,.14);
+  border-radius:14px; padding:8px 10px; box-shadow:0 12px 28px rgba(15,23,42,.20);
+}
+.page-controls button{
+  min-width:72px; height:38px; border:0; border-radius:10px;
+  background:#fff; color:#111827; font-weight:900; cursor:pointer;
+}
+.page-controls .primary{ background:var(--primary); color:#fff; }
+.page-controls button:disabled{ opacity:.35; cursor:not-allowed; }
+.page-label{ min-width:160px; text-align:center; font-size:13px; font-weight:900; color:#dbeafe; }
 .floating-ball{
   position:absolute; right:22px; bottom:104px; z-index:80;
-  width:76px; height:76px; border-radius:50%;
+  width:64px; height:64px; border-radius:50%;
   touch-action:none; user-select:none;
 }
 .floating-ball.dragging{ transition:none; }
 .float-main{
-  width:76px; height:76px; border-radius:50%;
+  width:64px; height:64px; border-radius:50%;
   border:1px solid rgba(255,255,255,.56);
   background:linear-gradient(135deg,#152033,#263f69);
   color:#fff; box-shadow:0 18px 44px rgba(15,23,42,.32);
   display:grid; place-items:center; cursor:pointer;
-  font-weight:900; font-size:15px; letter-spacing:0;
+  font-weight:900; font-size:13px; letter-spacing:0;
 }
-.float-main span{ display:block; font-size:24px; line-height:1; margin-bottom:2px; }
+.float-main span{ display:block; font-size:20px; line-height:1; margin-bottom:2px; }
 .float-main small{ display:block; font-size:10px; color:#cbd5e1; font-weight:800; }
 .floating-ball.open .float-main{ background:linear-gradient(135deg,var(--primary),#119f73); }
 .floating-panel{
-  position:absolute; z-index:79; width:430px; max-width:calc(100% - 36px);
+  position:absolute; z-index:79; width:312px; max-width:calc(100% - 36px);
   background:rgba(15,23,42,.94); color:#fff;
-  border:1px solid rgba(255,255,255,.16); border-radius:18px;
-  box-shadow:0 24px 60px rgba(15,23,42,.34);
-  padding:16px; opacity:0; transform:translateY(10px) scale(.98);
+  border:1px solid rgba(255,255,255,.16); border-radius:14px;
+  box-shadow:0 20px 48px rgba(15,23,42,.32);
+  padding:12px; opacity:0; transform:translateY(10px) scale(.98);
   pointer-events:none; transition:opacity .16s ease, transform .16s ease;
 }
 .floating-panel.show{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
-.float-panel-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
-.float-panel-title{ font-size:17px; font-weight:900; }
+.float-panel-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+.float-panel-title{ font-size:15px; font-weight:900; }
 .float-panel-sub{ font-size:12px; color:#cbd5e1; margin-top:2px; }
 .float-panel-close{
-  width:34px; height:34px; border-radius:8px; border:1px solid rgba(255,255,255,.18);
+  width:30px; height:30px; border-radius:8px; border:1px solid rgba(255,255,255,.18);
   background:rgba(255,255,255,.10); color:#fff; font-weight:900; cursor:pointer;
 }
-.float-tool-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.pen-palette{ display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:8px; }
+.pen-card{
+  border:1px solid rgba(34,201,147,.34); border-radius:12px;
+  background:rgba(34,201,147,.12); padding:10px;
+}
+.pen-card h4{ margin:0 0 8px; font-size:13px; }
+.pen-row{ display:flex; flex-wrap:wrap; gap:7px; align-items:center; }
+.pen-chip{
+  height:30px; min-width:38px; border-radius:8px; border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.10); color:#fff; font-size:12px; font-weight:900; cursor:pointer;
+}
+.pen-chip.active{ outline:2px solid #fff; background:rgba(34,201,147,.36); }
+.pen-color{ width:30px; min-width:30px; border-radius:50%; color:transparent; }
+.pen-color[data-color="#111827"]{ background:#111827; }
+.pen-color[data-color="#e11d48"]{ background:#e11d48; }
+.pen-color[data-color="#2563eb"]{ background:#2563eb; }
+.float-tool-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
 .float-tool{
-  min-height:86px; border-radius:12px; border:1px solid rgba(255,255,255,.14);
+  min-height:54px; border-radius:10px; border:1px solid rgba(255,255,255,.14);
   background:rgba(255,255,255,.08); color:#fff; cursor:pointer;
-  padding:10px; display:flex; flex-direction:column; align-items:flex-start; justify-content:space-between;
+  padding:9px; display:flex; align-items:center; gap:8px; justify-content:flex-start;
   text-align:left; font:inherit; transition:.16s ease;
 }
 .float-tool:hover,.float-tool.active{ background:rgba(34,201,147,.22); border-color:rgba(34,201,147,.78); transform:translateY(-1px); }
-.float-tool .ico{ width:30px; height:30px; border-radius:9px; display:grid; place-items:center; background:rgba(255,255,255,.14); font-weight:900; }
-.float-tool strong{ font-size:14px; line-height:1.2; margin-top:6px; }
-.float-tool span{ font-size:11px; line-height:1.35; color:#cbd5e1; }
+.float-tool .ico{ width:28px; height:28px; border-radius:8px; display:grid; place-items:center; background:rgba(255,255,255,.14); font-weight:900; flex:none; }
+.float-tool strong{ font-size:13px; line-height:1.2; }
+.float-tool span{ font-size:11px; line-height:1.35; color:#cbd5e1; display:none; }
 .float-panel-foot{
-  margin-top:12px; display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin-top:10px; display:flex; align-items:center; justify-content:space-between; gap:10px;
   color:#cbd5e1; font-size:12px; border-top:1px solid rgba(255,255,255,.10); padding-top:11px;
 }
 .float-panel-foot button{
   border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.10); color:#fff;
   border-radius:8px; padding:7px 10px; cursor:pointer; font-weight:800;
 }
-.collection-drawer,
-.answer-drawer,
-.gateway-panel,
-.voice-strip,
-.ai-anchor-card{ position:absolute; z-index:72; }
-.collection-drawer{
-  left:22px; right:22px; bottom:18px;
-  padding:16px 18px;
-  background:rgba(15,23,42,.93); color:#fff;
-  border:1px solid rgba(255,255,255,.16); border-radius:14px;
-  box-shadow:0 18px 42px rgba(15,23,42,.30);
-  transform:translateY(calc(100% + 30px)); opacity:0; pointer-events:none;
-  transition:.22s ease;
-}
-.collection-drawer.show{ transform:translateY(0); opacity:1; pointer-events:auto; }
-.drawer-head,.answer-head,.gateway-head{
-  display:flex; align-items:center; justify-content:space-between; gap:14px;
-  font-weight:900; margin-bottom:12px;
-}
-.drawer-head button,.answer-head button,.gateway-head button,.voice-strip button{
-  border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.12);
-  color:inherit; border-radius:8px; padding:7px 10px; cursor:pointer; font-weight:800;
-}
-.drawer-grid{ display:grid; grid-template-columns:1.15fr 1fr 1fr; gap:12px; }
-.drawer-stat{
-  background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.12);
-  border-radius:10px; padding:12px;
-}
-.drawer-stat .big{ font-size:31px; line-height:1; font-weight:900; color:#8ef0ca; }
-.drawer-stat p{ margin:8px 0 0; color:#dbeafe; font-size:13px; }
-.answer-drawer{
-  top:22px; right:0; width:33%;
-  min-width:320px; height:calc(100% - 44px);
-  background:rgba(255,255,255,.96); color:var(--text);
-  border-left:1px solid var(--line); border-radius:14px 0 0 14px;
-  box-shadow:-18px 0 42px rgba(15,23,42,.18);
-  padding:16px; transform:translateX(105%); opacity:0; pointer-events:none;
-  transition:.22s ease;
-}
-.answer-drawer.show{ transform:translateX(0); opacity:1; pointer-events:auto; }
-.answer-sample{
-  background:linear-gradient(180deg,#fff,#f8fafc); border:1px solid var(--line);
-  border-radius:10px; padding:14px; margin-bottom:12px;
-}
-.answer-sample h4{ margin:0 0 8px; font-size:15px; }
-.answer-sample .work{ font-family:"Times New Roman",serif; font-size:20px; line-height:1.45; }
-.answer-note{
-  background:var(--warn-soft); color:#8a5b00; border:1px solid #fde3ac;
-  border-radius:10px; padding:12px; font-size:13px; line-height:1.6;
-}
-.ai-anchor-card{
-  left:36%; top:31%; width:300px;
-  background:#111827; color:#fff; border:1px solid rgba(255,255,255,.16);
-  border-radius:12px; padding:14px; box-shadow:0 18px 46px rgba(15,23,42,.32);
-  opacity:0; transform:translateY(10px); pointer-events:none; transition:.18s ease;
-}
-.ai-anchor-card.show{ opacity:1; transform:translateY(0); pointer-events:auto; }
-.ai-anchor-card::before{
-  content:""; position:absolute; left:20px; top:-10px; width:18px; height:18px;
-  background:#111827; transform:rotate(45deg);
-}
-.ai-anchor-card h4{ margin:0 0 8px; font-size:15px; }
-.ai-anchor-card p{ margin:0; color:#dbeafe; line-height:1.55; font-size:13px; }
-.selection-ghost{
-  position:absolute; left:22%; top:30%; width:23%; height:22%;
-  border:3px dashed var(--primary); border-radius:14px;
-  background:rgba(34,201,147,.10); box-shadow:0 0 0 999px rgba(15,23,42,.06);
-  display:none; z-index:65; pointer-events:none;
-}
-.selection-ghost.show{ display:block; }
-.voice-strip{
-  left:50%; top:18px; transform:translate(-50%,-130%);
-  min-width:520px; max-width:78%;
-  background:rgba(15,23,42,.92); color:#fff;
-  border:1px solid rgba(255,255,255,.16); border-radius:999px;
-  padding:10px 14px 10px 18px; display:flex; align-items:center; gap:12px;
-  box-shadow:0 14px 34px rgba(15,23,42,.25);
-  opacity:0; pointer-events:none; transition:.22s ease;
-}
-.voice-strip.show{ transform:translate(-50%,0); opacity:1; pointer-events:auto; }
-.voice-dot{
-  width:10px; height:10px; border-radius:50%; background:#f43f5e;
-  box-shadow:0 0 0 0 rgba(244,63,94,.7); animation:pulseRed 1.2s infinite;
-}
-@keyframes pulseRed{ 70%{ box-shadow:0 0 0 12px rgba(244,63,94,0); } 100%{ box-shadow:0 0 0 0 rgba(244,63,94,0); } }
-.voice-text{ flex:1; font-size:14px; font-weight:800; }
-.gateway-panel{
-  left:22px; top:22px; width:310px;
-  background:rgba(255,255,255,.96); color:var(--text);
-  border:1px solid var(--line); border-radius:14px; padding:15px;
-  box-shadow:0 18px 40px rgba(15,23,42,.18);
-  transform:translateX(-110%); opacity:0; pointer-events:none; transition:.22s ease;
-}
-.gateway-panel.show{ transform:translateX(0); opacity:1; pointer-events:auto; }
-.gateway-row{ display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-top:1px solid var(--line-soft); font-size:13px; }
-.gateway-row strong{ color:var(--primary-dark); }
-.gateway-health{
-  display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px;
-}
-.gateway-health div{ background:var(--surface-2); border-radius:8px; padding:9px; text-align:center; }
-.gateway-health b{ display:block; font-size:18px; color:var(--text); }
-.gateway-health span{ font-size:11px; color:var(--muted); }
 .board-stand{
   position:absolute; left:50%; bottom:-32px; transform:translateX(-50%);
   width:280px; height:14px;
@@ -264,32 +196,15 @@ body{
 }
 @keyframes livePulse{ 0%,100%{ opacity:.5; transform:scale(1) } 50%{ opacity:1; transform:scale(1.4) } }
 
-.bd-aibar{
-  position:absolute; left:18px; right:18px; bottom:14px;
-  background: rgba(125,108,242,.94); color:#fff;
-  padding:10px 14px; border-radius:10px;
-  font-size:12.5px; font-weight:600;
-  display:flex; gap:10px; align-items:center;
-  box-shadow: 0 6px 18px rgba(125,108,242,.32);
-  z-index:5;
-}
-.bd-aibar::before{
-  content:"AI"; flex:none;
-  font-weight:800; font-size:10px; letter-spacing:.5px;
-  background: rgba(255,255,255,.22); padding:3px 7px; border-radius:5px;
-}
-.bd-aibar .ai-text{ flex:1; line-height:1.55; }
-.bd-aibar .ai-text strong{ color:#fff7e0; }
-
 /* ====== Scene · welcome ====== */
 .scn-welcome{
-  position:absolute; inset:0; padding: 56px 40px 72px;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  background: linear-gradient(135deg, #f0f5ff 0%, #e6f9f3 100%);
+  position:absolute; inset:0; padding: 58px 56px 92px;
+  display:flex; flex-direction:column; align-items:flex-start; justify-content:center;
+  background: linear-gradient(135deg, #f8fbff 0%, #e9f8f3 100%);
 }
-.w-eyebrow{ font-size:14px; color:var(--primary-dark); font-weight:700; letter-spacing:1px; margin-bottom:8px; }
-.w-title{ font-size:48px; font-weight:800; color:var(--text); margin:6px 0 8px; line-height:1.15; }
-.w-sub{ font-size:16px; color:var(--muted); font-weight:500; margin-bottom:22px; }
+.w-eyebrow{ font-size:15px; color:var(--primary-dark); font-weight:800; letter-spacing:.4px; margin-bottom:10px; }
+.w-title{ max-width:760px; font-size:46px; font-weight:900; color:var(--text); margin:6px 0 14px; line-height:1.15; }
+.w-sub{ max-width:760px; font-size:22px; color:#334155; font-weight:700; line-height:1.55; margin-bottom:26px; }
 .w-cd{
   display:inline-flex; gap:12px; align-items:baseline;
   background: var(--surface); padding:12px 22px; border-radius:14px;
@@ -308,15 +223,40 @@ body{
 .pad-stat .p1::before{ background:var(--primary); }
 .pad-stat .p2::before{ background:var(--warn); }
 .pad-stat .p3::before{ background:var(--line); }
+.preclass-actions{
+  position:absolute; right:48px; bottom:92px; z-index:8;
+  display:flex; gap:10px; align-items:center;
+}
+.preclass-note-editor{
+  margin-top:8px; display:flex; align-items:stretch; gap:10px;
+  width:min(760px, 100%);
+}
+.preclass-note-editor textarea{
+  flex:1; resize:none; border:1px solid var(--line);
+  border-radius:10px; padding:10px 12px;
+  font:600 14px/1.55 -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  color:var(--text); background:rgba(255,255,255,.86);
+  box-shadow:0 6px 18px rgba(20,30,55,.06);
+}
+.preclass-note-editor button{ flex:none; align-self:center; }
 
 /* ====== Scene · teach ====== */
-.scn-teach{ position:absolute; inset:0; padding: 50px 40px 70px; }
+.scn-teach{ position:absolute; inset:0; padding: 64px 48px 88px; }
 .teach-page{
-  height: 100%; background: var(--surface); border-radius:12px;
-  border: 1px solid var(--line-soft); box-shadow: var(--shadow);
-  padding: 28px 36px; display:flex; flex-direction:column; gap:14px;
+  height: 100%; background: rgba(255,255,255,.66); border-radius:8px;
+  border: 1px solid rgba(148,163,184,.20);
+  padding: 30px 36px; display:flex; flex-direction:column; gap:14px;
   position:relative;
 }
+.teach-page::before{
+  content:""; position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(148,163,184,.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148,163,184,.16) 1px, transparent 1px);
+  background-size:36px 36px;
+  pointer-events:none;
+}
+.teach-page > *{ position:relative; z-index:1; }
 .teach-page h2{ margin:0; font-size:28px; font-weight:800; }
 .teach-page .lead{ font-size:15px; color:var(--muted); font-weight:500; line-height:1.7; max-width:75%; }
 .teach-page .lead strong{ color: var(--primary-dark); }
@@ -353,6 +293,12 @@ body{
   white-space:nowrap;
 }
 @keyframes markIn{ from{ opacity:0; transform: rotate(-8deg) scale(.6); } to{ opacity:1; transform: rotate(-8deg) scale(1); } }
+.whiteboard-prompt{
+  position:absolute; left:36px; top:30px; right:36px;
+  display:flex; align-items:center; justify-content:space-between; gap:18px;
+  color:#475569; font-size:15px; font-weight:800;
+}
+.whiteboard-prompt strong{ color:#0f172a; font-size:24px; }
 .teach-pageinfo{
   position:absolute; right:18px; top:14px;
   font-size:12px; color:var(--muted); font-weight:600;
@@ -495,25 +441,6 @@ body{
 }
 .draw-why strong{ color: var(--accent-dark); }
 
-/* ====== Scene · cloud（词云） ====== */
-.scn-cloud{ position:absolute; inset:0; padding: 56px 40px 70px; display:flex; flex-direction:column; }
-.cloud-q{ font-size:24px; font-weight:800; color:var(--text); text-align:center; margin-bottom: 4px; }
-.cloud-q small{ display:block; font-size:13px; font-weight:500; color:var(--muted); margin-top:4px; }
-.cloud-area{
-  flex:1; position:relative; padding:24px;
-  background: linear-gradient(135deg, #f0f9ff 0%, #f9f5ff 100%);
-  border-radius: 14px; border:1px dashed var(--line);
-  margin-top:12px; overflow:hidden;
-}
-.cloud-w{
-  position:absolute; font-weight:800; opacity:0;
-  transform: translateY(20px) scale(.7);
-  animation: cloudIn .8s ease forwards;
-}
-@keyframes cloudIn{ to{ opacity:1; transform: translateY(0) scale(1); } }
-
-/* ====== Scene · group（小组讨论） ====== */
-.scn-group{ position:absolute; inset:0; padding: 50px 30px 80px; display:flex; flex-direction:column; }
 .grp-row{ flex:1; display:grid; grid-template-columns: repeat(4,1fr); gap:14px; margin-top:12px; }
 .grp-card{
   background: var(--surface); border:1px solid var(--line-soft); border-radius:14px;
@@ -578,56 +505,8 @@ body{
 }
 .metric-card .m-num{ font-size:28px; line-height:1; font-weight:800; color:var(--primary-dark); }
 .metric-card .m-lab{ margin-top:5px; font-size:12px; color:var(--muted); font-weight:700; }
-.group-progress{ height:8px; background:var(--line-soft); border-radius:99px; overflow:hidden; }
-.group-progress span{ display:block; height:100%; width:0; background:linear-gradient(90deg,var(--primary),var(--accent)); border-radius:99px; transition:width 1s cubic-bezier(.25,.6,.3,1); }
 .end-mini-list{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:4px; }
 .end-mini-list span{ background:var(--surface-2); border:1px solid var(--line-soft); border-radius:8px; padding:8px 10px; font-size:12px; font-weight:700; color:var(--text); }
-
-/* ====== 三端联动小图 ====== */
-.link-row{
-  max-width:1240px; margin: 56px auto 28px; padding: 0 20px;
-  display:flex; gap:12px; align-items:center; justify-content:center;
-}
-.link-card{
-  flex:1; max-width:300px;
-  background: var(--surface); border:1px solid var(--line-soft);
-  border-radius:14px; padding:12px; text-align:center;
-  box-shadow: var(--shadow);
-}
-.lc-h{ font-size:13px; font-weight:800; color:var(--text); margin-bottom:8px; }
-.lc-mini{
-  width:100%; height:130px; border-radius:10px;
-  background: var(--surface-2);
-  display:grid; place-items:center;
-  border:1px solid var(--line-soft);
-  position:relative; overflow:hidden;
-  font-size:11.5px; color:var(--muted); font-weight:600;
-  padding:6px;
-}
-.lc-foot{ font-size:11px; color:var(--muted); margin-top:8px; }
-.link-arrow{ font-size:22px; color:var(--accent); font-weight:800; }
-.lc-teacher{ background: linear-gradient(135deg, #fff, #f6f8fa); }
-.lc-board{
-  background:#1a1f2c; color:#fff;
-  font-weight:700; font-size:12px;
-}
-.lc-board::before{
-  content:""; position:absolute; left:8px; right:8px; top:8px; bottom:8px;
-  background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
-  border-radius:6px;
-}
-.lc-board > span{ position:relative; z-index:1; color:var(--text); background: rgba(255,255,255,.85); padding:3px 10px; border-radius:6px; }
-.lc-pads{ background: linear-gradient(135deg, #f5f0ff, #ecf9f3); position:relative; }
-.lc-pads .pad-mini{
-  position:absolute; width:11%; aspect-ratio:.74;
-  background:var(--surface); border:1px solid var(--line); border-radius:3px;
-  box-shadow: 0 1px 2px rgba(0,0,0,.05);
-}
-.lc-pads .pad-mini.off{ background: var(--line-soft); border-color:var(--line); }
-.lc-pads .pad-mini.on::after{
-  content:""; position:absolute; inset:1.5px; border-radius:2px;
-  background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
-}
 
 /* ====== Toast / Modal ====== */
 .toast-stack{ position:fixed; right:20px; top:80px; display:flex; flex-direction:column; gap:8px; z-index:1000; pointer-events:none; }
@@ -721,31 +600,6 @@ body{
 .dh-name{ background:var(--accent-soft); color:var(--accent-dark); padding:3px 9px; border-radius:99px; font-weight:700; }
 .dh-tip{ margin-left:auto; color:var(--warn); font-weight:700; font-size:11.5px; }
 
-/* cloud 升级 */
-.scn-cloud .cloud-main{ flex:1; display:grid; grid-template-columns: 200px 1fr; gap:14px; margin-top:10px; min-height:0; }
-.cloud-stream{
-  background: var(--surface); border:1px solid var(--line-soft); border-radius:12px;
-  padding:10px 12px; display:flex; flex-direction:column; gap:6px; overflow:hidden;
-}
-.cs-h{ font-size:11.5px; color:var(--muted); font-weight:800; padding-bottom:6px; border-bottom:1px solid var(--line-soft); }
-.cs-item{
-  background: var(--surface-2); border-radius:8px; padding:7px 10px;
-  font-size:11px; opacity:0; transform:translateY(8px);
-  animation: csIn .55s ease forwards;
-}
-.cs-item:nth-child(2){ animation-delay:.1s }
-.cs-item:nth-child(3){ animation-delay:.3s }
-.cs-item:nth-child(4){ animation-delay:.5s }
-.cs-item:nth-child(5){ animation-delay:.7s }
-@keyframes csIn{ to{ opacity:1; transform:translateY(0);} }
-.cs-name{ color:var(--accent-dark); font-weight:800; }
-.cs-time{ float:right; color:var(--muted); font-size:10px; }
-.cs-text{ font-size:13.5px; font-weight:800; color:var(--text); margin-top:4px; }
-.cl-dot{ width:8px; height:8px; border-radius:50%; display:inline-block; margin: 0 3px 0 6px; vertical-align:middle; }
-.cloud-w{ cursor:pointer; transition:.2s; }
-.cloud-w:hover{ transform: scale(1.12); filter: brightness(.85); }
-
-/* group 升级 */
 .grp-h-bar{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
 .grp-h-title{ font-size:17px; font-weight:800; color:var(--text); }
 .grp-mem{ display:flex; gap:3px; flex-wrap:wrap; }
@@ -787,18 +641,6 @@ body{
 </style>
 </head>
 <body>
-<!-- ===== Scene tabs ===== -->
-<div class="scene-tabs" id="sceneTabs">
-  <div class="tab active" data-scene="welcome">📅 上课前</div>
-  <div class="tab" data-scene="teach">📖 课件讲解</div>
-  <div class="tab" data-scene="live">⏱ 实时答题</div>
-  <div class="tab" data-scene="result">📊 揭晓答案</div>
-  <div class="tab" data-scene="draw">🎯 抽人提问</div>
-  <div class="tab" data-scene="cloud">☁️ 词云</div>
-  <div class="tab" data-scene="group">👥 小组讨论</div>
-  <div class="tab" data-scene="end">🌙 下课总结</div>
-</div>
-
 <!-- ===== Whiteboard device shell ===== -->
 <div class="board-shell">
   <div class="board-frame">
@@ -806,6 +648,7 @@ body{
     <div class="board-outer">
       <div class="board-screen" id="boardScreen">
         <div class="scene-root" id="sceneRoot"></div>
+        <canvas class="board-canvas" id="boardCanvas" data-canvas="annotationCanvas"></canvas>
         <div class="selection-ghost" id="selectionGhost"></div>
 
         <div class="floating-ball" id="floatingBall" style="right:22px;bottom:104px">
@@ -818,117 +661,53 @@ body{
           <div class="float-panel-head">
             <div>
               <div class="float-panel-title">白板功能台</div>
-              <div class="float-panel-sub">拖动圆球可放到任意位置，点这里直接调课堂功能</div>
+              <div class="float-panel-sub">拖动圆球放任意位置；这里只放白板笔</div>
             </div>
             <button class="float-panel-close" type="button" data-board-action="closeFloatingPanel">×</button>
           </div>
+          <div class="pen-palette" id="penPalette">
+            <div class="pen-card">
+              <h4>白板笔</h4>
+              <div class="pen-row">
+                <button class="pen-chip pen-color active" data-pen-color="#111827" data-color="#111827" type="button">黑</button>
+                <button class="pen-chip pen-color" data-pen-color="#e11d48" data-color="#e11d48" type="button">红</button>
+                <button class="pen-chip pen-color" data-pen-color="#2563eb" data-color="#2563eb" type="button">蓝</button>
+                <button class="pen-chip active" data-pen-size="4" type="button">细</button>
+                <button class="pen-chip" data-pen-size="8" type="button">粗</button>
+                <button class="pen-chip active" data-pen-mode="curve" type="button">曲线</button>
+                <button class="pen-chip" data-pen-mode="line" type="button">直线</button>
+              </div>
+            </div>
+          </div>
           <div class="float-tool-grid">
-            <button class="float-tool" data-board-tool="pushLive" type="button"><span class="ico">练</span><strong>推随堂练</strong><span>发题、收题、底部回收抽屉</span></button>
-            <button class="float-tool" data-board-tool="draw" type="button"><span class="ico">抽</span><strong>抽人提问</strong><span>鼓励型/关注型/随机点名</span></button>
-            <button class="float-tool" data-board-tool="circleAsk" type="button"><span class="ico">圈</span><strong>圈选追问</strong><span>选区旁出现 AI 解释卡</span></button>
-            <button class="float-tool" data-board-tool="pen" type="button"><span class="ico">笔</span><strong>批注白板</strong><span>开启画笔与重点圈画状态</span></button>
-            <button class="float-tool" data-board-tool="subjectTool" type="button"><span class="ico">具</span><strong>学科工具</strong><span>数轴、几何、计时、随机器</span></button>
-            <button class="float-tool" data-board-tool="voice" type="button"><span class="ico">语</span><strong>语音助手</strong><span>条带响应，不遮挡课件</span></button>
-            <button class="float-tool" data-board-tool="answerDrawer" type="button"><span class="ico">答</span><strong>典型答案</strong><span>右侧 1/3 抽屉讲评</span></button>
-            <button class="float-tool" data-board-tool="timer" type="button"><span class="ico">时</span><strong>课堂计时</strong><span>1 分钟讨论/答题倒计时</span></button>
-            <button class="float-tool" data-board-tool="lockPads" type="button"><span class="ico">锁</span><strong>锁定平板</strong><span>课堂任务全屏接管</span></button>
+            <button class="float-tool" data-board-tool="pen" type="button"><span class="ico">笔</span><strong>白板笔</strong><span>红/蓝/黑、粗细、直线/曲线</span></button>
             <button class="float-tool" data-board-tool="clearBoard" type="button"><span class="ico">清</span><strong>清空批注</strong><span>撤掉当前圈画与浮层</span></button>
-            <button class="float-tool" data-board-tool="gateway" type="button"><span class="ico">网</span><strong>网关状态</strong><span>在线数、延迟、设备健康</span></button>
-            <button class="float-tool" data-board-tool="syncAll" type="button"><span class="ico">同</span><strong>三端同步</strong><span>教师端/白板/学生平板状态</span></button>
           </div>
           <div class="float-panel-foot">
-            <span>所有操作都留在当前白板舞台上，不切走课件。</span>
+            <span>批注跟随当前页；翻页后画面重新清爽。</span>
             <button type="button" data-board-action="closeFloatingPanel">收起</button>
           </div>
         </div>
 
-        <div class="voice-strip" id="voiceStrip">
-          <span class="voice-dot"></span>
-          <div class="voice-text">语音助手已就绪：可以说“推一道随堂练”“打开抽人”“显示网关状态”。</div>
-          <button type="button" data-overlay-close="voiceStrip">收起</button>
+        <div class="page-controls" id="pageControls">
+          <button type="button" data-act="prevPage">上一页</button>
+          <div class="page-label" id="pageLabel">第 1 / 6 页 · 上课前</div>
+          <button class="primary" type="button" data-act="nextPage">下一页</button>
         </div>
-
-        <div class="gateway-panel" id="gatewayPanel">
-          <div class="gateway-head">
-            <span>教室网关状态</span>
-            <button type="button" data-overlay-close="gatewayPanel">关闭</button>
-          </div>
-          <div class="gateway-row"><span>学生平板在线</span><strong>26 / 28</strong></div>
-          <div class="gateway-row"><span>平均推送延迟</span><strong>64 ms</strong></div>
-          <div class="gateway-row"><span>白板同步</span><strong>正常</strong></div>
-          <div class="gateway-row"><span>云端资源同步</span><strong>已完成</strong></div>
-          <div class="gateway-health">
-            <div><b>98%</b><span>网络健康</span></div>
-            <div><b>1</b><span>充电中</span></div>
-            <div><b>0</b><span>异常设备</span></div>
-          </div>
-        </div>
-
-        <div class="ai-anchor-card" id="aiAnchorCard">
-          <h4>圈选提问 · AI 解释卡</h4>
-          <p>这块内容适合追问“为什么必须平均分”。建议先让学生口头解释，再点开右侧典型答案，不切走当前课件。</p>
-          <div style="margin-top:10px;display:flex;gap:8px">
-            <button class="la-btn pri" type="button" data-board-action="openAnswer">看典型答案</button>
-            <button class="la-btn" type="button" data-overlay-close="aiAnchorCard">收起</button>
-          </div>
-        </div>
-
-        <div class="answer-drawer" id="answerDrawer">
-          <div class="answer-head">
-            <span>典型答案 · 保留课件视野</span>
-            <button type="button" data-overlay-close="answerDrawer">关闭</button>
-          </div>
-          <div class="answer-sample">
-            <h4>王嘉怡 · 解题过程</h4>
-            <div class="work">1/2 = 4/8<br>5/8 比 4/8 多 1/8，所以 5/8 最接近 1/2。</div>
-          </div>
-          <div class="answer-sample">
-            <h4>张明轩 · 常见误区</h4>
-            <div class="work">4/9 看起来分子小，但 1/2 = 4.5/9，4/9 也接近；需要和 5/8 一起比较距离。</div>
-          </div>
-          <div class="answer-note">右侧抽屉只占 1/3 屏幕，适合老师边保留课件边讲评学生答案。</div>
-        </div>
-
-        <div class="collection-drawer" id="collectionDrawer">
-          <div class="drawer-head">
-            <span>随堂练回收 · 底部抽屉</span>
-            <button type="button" data-overlay-close="collectionDrawer">收起</button>
-          </div>
-          <div class="drawer-grid">
-            <div class="drawer-stat"><div class="big">17 / 28</div><p>已提交。还可等待 30 秒，或立即收题揭晓。</p></div>
-            <div class="drawer-stat"><div class="big">39%</div><p>当前正确率。D 选项集中，适合讲“与 1/2 的距离”。</p></div>
-            <div class="drawer-stat"><div class="big">11</div><p>未答学生。点击“查看慢答”可弹出名单，不在大屏公开个人对错。</p></div>
-          </div>
-        </div>
+      </div>
+      <div class="scene-tabs board-tabs" id="sceneTabs">
+        <div class="tab active" data-scene="welcome">上课前</div>
+        <div class="tab" data-scene="teach">白板讲解</div>
+        <div class="tab" data-scene="live">随堂答题</div>
+        <div class="tab" data-scene="result">讲评揭晓</div>
+        <div class="tab" data-scene="draw">抽人提问</div>
+        <div class="tab" data-scene="end">下课总结</div>
       </div>
     </div>
     <div class="board-stand"></div>
     <div class="board-base-text">STEP · STEP · CLASSROOM 65"</div>
   </div>
 </div>
-
-<!-- ===== 三端联动小图 ===== -->
-<div class="link-row">
-  <div class="link-card">
-    <div class="lc-h">👩‍🏫 老师手里</div>
-    <div class="lc-mini lc-teacher">教师手机端 · 上课遥控</div>
-    <div class="lc-foot">点"推送"→ 大屏切换</div>
-  </div>
-  <div class="link-arrow">⇄</div>
-  <div class="link-card">
-    <div class="lc-h">📺 教室前面</div>
-    <div class="lc-mini lc-board"><span id="miniBoardLabel">本端 · 当前展示</span></div>
-    <div class="lc-foot">白板大屏（本页）</div>
-  </div>
-  <div class="link-arrow">⇄</div>
-  <div class="link-card">
-    <div class="lc-h">📱 28 个学生平板</div>
-    <div class="lc-mini lc-pads" id="miniPads"></div>
-    <div class="lc-foot">学生端 · 平板</div>
-  </div>
-</div>
-
-<div class="foot-note">※ 本原型独立运行，所有交互均在浏览器内完成。三端真实使用时通过教室局域网/云端同步。</div>
 
 <!-- ===== Toast / Modal ===== -->
 <div class="toast-stack" id="toastStack"></div>
@@ -968,21 +747,6 @@ function closeModal(){ $('#modalBg').classList.remove('show'); }
 $('#modalBg').addEventListener('click', e=>{ if(e.target===$('#modalBg')) closeModal(); });
 
 const CLASSMATES = ['李小明','陈思雨','张佳怡','王浩然','赵一诺','孙晨','刘安琪','周航','何雨桐','郑嘉豪','钱乐乐','许知远'];
-const CLOUD_WORDS = [
-  ['通分',34,44,24,'var(--primary-dark)'], ['分母相同',48,24,20,'var(--accent-dark)'],
-  ['平均分',19,35,28,'var(--primary)'], ['单位 1',64,46,18,'var(--warn)'],
-  ['先找公分母',36,63,22,'var(--danger)'], ['看成同样大小的份',56,66,17,'var(--accent)'],
-  ['披萨',22,63,16,'var(--muted)'], ['1/2 = 2/4',72,32,21,'var(--primary-dark)'],
-  ['画图更清楚',12,50,18,'var(--accent-dark)'], ['不能直接加分母',68,58,18,'var(--danger)']
-];
-
-function padGridHTML(){
-  return Array.from({length:28}, (_,i)=>{
-    const cls = i===11 ? 'charge' : i===27 ? 'off' : '';
-    const label = cls==='off' ? '未到' : cls==='charge' ? '充电' : '在线';
-    return `<div class="p ${cls}" title="${i+1}号平板 ${label}"></div>`;
-  }).join('');
-}
 function avatarHTML(names=CLASSMATES.slice(0,7)){
   return names.map((n,i)=>`
     <div class="live-avatar ${i===0?'gold':''}">
@@ -994,93 +758,52 @@ function avatarHTML(names=CLASSMATES.slice(0,7)){
 function barAvatars(n){
   return Array.from({length:n}, (_,i)=>`<span class="a">${i+1}</span>`).join('');
 }
-function cloudWordsHTML(){
-  return CLOUD_WORDS.map((w,i)=>`
-    <span class="cloud-w" style="left:${w[1]}%;top:${w[2]}%;font-size:${w[3]}px;color:${w[4]};animation-delay:${i*90}ms">${w[0]}</span>
-  `).join('');
-}
-function groupCardsHTML(){
-  const groups = [
-    ['A','画披萨解释 1/2 + 1/4','已拍照','图示清楚','需要补一句结论',84],
-    ['B','用数轴解释等分','待展示','路径完整','例子略少',67],
-    ['C','用长方形面积模型','已提交','步骤清楚','单位 1 明确',92],
-    ['D','错因整理：分母不能直接加','需补充','抓住关键','还缺反例',58]
-  ];
-  return groups.map(g=>`
-    <div class="grp-card" data-act="groupDetail" data-group="${g[0]}">
-      <div class="grp-h"><span class="gh-k">${g[0]}</span><span class="gh-t">${g[1]}</span><span class="gh-tag">${g[2]}</span></div>
-      <div class="grp-photo">${g[0]==='A'?'🍕':g[0]==='B'?'📏':g[0]==='C'?'▦':'✕'}</div>
-      <div class="grp-tags"><span>${g[3]}</span><span>${g[4]}</span></div>
-      <div class="group-progress"><span data-w="${g[5]}%"></span></div>
-    </div>
-  `).join('');
-}
 
-// ============ 8 个场景的 HTML 渲染 ============
+// ============ 6 个场景的 HTML 渲染 ============
 const SCENES = {
   welcome: () => `
     <div class="bd-topbar">
       <div class="left">
-        <span class="chip">📅 周三 11/12</span>
-        <span class="chip">⏰ 14:25</span>
+        <span class="chip">⏰ 16:55</span>
+        <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">17:00 开始上课</span>
       </div>
       <div class="right">
-        <span class="chip">📡 已联网</span>
-        <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">📱 26 / 28 在线</span>
+        <span class="chip">课前白板</span>
       </div>
     </div>
     <div class="scn-welcome">
-      <div class="w-eyebrow">五年级（3）班 · 第 3 节</div>
-      <div class="w-title">数学 · 分数加减法</div>
-      <div class="w-sub">王老师 · 课件版本 v3.2 · 准备就绪</div>
+      <div class="w-eyebrow">老师课前提示</div>
+      <div class="w-title" id="preClassMessage">同学们，进教室后先安静入座，把要用的材料放在桌角。5 点准时开始。</div>
+      <div class="w-sub">老师可以在课间把一段话直接发到这块白板上，全班进门第一眼就能看到。</div>
       <div class="w-cd">
         <span class="lab">距上课</span>
         <span class="num" id="welcomeCD">04:58</span>
       </div>
-      <div class="pad-grid" id="padGrid"></div>
-      <div class="pad-stat">
-        <span class="p1">已上线 26</span>
-        <span class="p2">充电中 1</span>
-        <span class="p3">未到 1</span>
+      <div class="preclass-note-editor">
+        <textarea id="preClassNoteInput" rows="2">把水杯放到桌脚，黑板左侧留给今天的随手板书。</textarea>
+        <button class="scene-btn pri" data-act="publishPreClassNote">发布到白板</button>
       </div>
     </div>
-    <div class="bd-aibar">
-      <div class="ai-text">王老师，今天的课件是<strong>上周修改过的版本（v3.2）</strong>，新增了"为什么要通分"那一页。<strong>3 个学生今天有错题待修复</strong>，建议在课中带一下。</div>
-    </div>
+    <div class="preclass-actions"><button class="scene-btn pri" data-act="startClass">开始上课</button></div>
   `,
   teach: () => `
     <div class="bd-topbar">
       <div class="left">
-        <span class="chip">📖 第 5 章 · 分数加减法</span>
-        <span class="chip live">直播中</span>
+        <span class="chip">白板讲解</span>
       </div>
       <div class="right">
-        <span class="chip">🖊 老师手写笔已连</span>
+        <span class="chip">白板笔可直接书写</span>
       </div>
     </div>
     <div class="scn-teach">
       <div class="teach-page">
-        <div class="teach-pageinfo">第 3 / 12 页</div>
-        <h2>什么是分数？</h2>
-        <p class="lead">把一个整体<strong>平均分成若干份</strong>，其中的一份或几份就是分数。比如把一张披萨平均分成 4 块，<strong>其中 1 块就是 1/4 个披萨</strong>。</p>
-        <div class="teach-vis">
-          <div>
-            <div class="pizza"></div>
-            <div class="pizza-cap">把披萨平均分成 4 块</div>
-          </div>
-          <ul class="bullet-list">
-            <li><strong>1 整张</strong> = 4 / 4 = 1</li>
-            <li><strong>1 块</strong> = 1 / 4</li>
-            <li><strong>2 块</strong> = 2 / 4 = 1 / 2</li>
-            <li><strong>关键：</strong>必须是<strong>平均分</strong></li>
-          </ul>
+        <div class="whiteboard-prompt">
+          <strong>空白讲解页</strong>
+          <span>点悬浮球打开白板笔，或直接点“开始讲解”进入书写。</span>
         </div>
-        <div class="teacher-mark"></div>
       </div>
     </div>
-    <div class="bd-aibar">
-      <div class="ai-text">上周班级"通分"概念<strong>有 7 个学生没掌握</strong>。你现在讲到"平均分"，待会引导一下"分母为什么必须一样"会更好衔接。</div>
-    </div>
+    <div class="scene-actions" style="position:absolute;left:40px;bottom:84px"><button class="scene-btn pri" data-act="startTeach">开始讲解</button></div>
   `,
   live: () => `
     <div class="bd-topbar">
@@ -1116,9 +839,6 @@ const SCENES = {
         <button class="la-btn warn" data-act="liveEnd">✅ 结束本题 · 揭晓</button>
       </div>
     </div>
-    <div class="bd-aibar">
-      <div class="ai-text">还有 <strong>11 个学生</strong>没作答。<strong>最慢的 3 个：芷雨、明轩、星辰</strong>。<strong>选 C 的人偏多</strong>，建议你揭晓时重点讲为什么不是 C。</div>
-    </div>
   `,
   result: () => `
     <div class="bd-topbar">
@@ -1149,9 +869,6 @@ const SCENES = {
         <button class="la-btn" data-act="resReplay">🎬 回放慢答过程</button>
         <button class="la-btn pri" data-act="resNext">➡️ 下一题</button>
       </div>
-    </div>
-    <div class="bd-aibar">
-      <div class="ai-text"><strong>9 个人选了 C（4/9）</strong>——他们可能把"分子小"误解为"接近 1/2"。建议讲解时<strong>先问"1/2 等于多少"</strong>再让他们重判。这是最近 7 天班级<strong>高频错点</strong>。</div>
     </div>
   `,
   draw: () => `
@@ -1197,86 +914,6 @@ const SCENES = {
         <span class="dh-tip">💡 30 天没抽到：芷雨、明轩、星辰</span>
       </div>
     </div>
-    <div class="bd-aibar">
-      <div class="ai-text">当前模式：<strong>🌟 鼓励型</strong>（"答得快 + 答得对"优先）。点击右上角切换<strong>关注型</strong>（举手少+错题多优先）或<strong>完全随机</strong>。<strong>决定权全在你</strong>。</div>
-    </div>
-  `,
-  cloud: () => `
-    <div class="bd-topbar">
-      <div class="left">
-        <span class="chip" style="background:var(--accent-soft);color:var(--accent-dark)">☁️ 开放回答 · 无对错</span>
-        <span class="chip">分类<span class="cl-dot" style="background:var(--primary-dark)"></span>食物<span class="cl-dot" style="background:var(--accent-dark)"></span>时间<span class="cl-dot" style="background:var(--danger)"></span>医疗<span class="cl-dot" style="background:var(--warn)"></span>其它</span>
-      </div>
-      <div class="right">
-        <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">📥 23 / 28 已交</span>
-      </div>
-    </div>
-    <div class="scn-cloud">
-      <div class="cloud-q">分数让你想到生活里什么？<small>点击词云中的词可看是哪些同学提到的</small></div>
-      <div class="cloud-main">
-        <div class="cloud-stream">
-          <div class="cs-h">⚡ 实时收到</div>
-          <div class="cs-item"><span class="cs-time">14:42</span><span class="cs-name">陈雨桐</span><div class="cs-text">地图比例</div></div>
-          <div class="cs-item"><span class="cs-time">14:42</span><span class="cs-name">吴星辰</span><div class="cs-text">医生剂量</div></div>
-          <div class="cs-item"><span class="cs-time">14:41</span><span class="cs-name">李子涵</span><div class="cs-text">半瓶水</div></div>
-          <div class="cs-item"><span class="cs-time">14:41</span><span class="cs-name">张明轩</span><div class="cs-text">分蛋糕</div></div>
-          <div class="cs-item"><span class="cs-time">14:40</span><span class="cs-name">王嘉怡</span><div class="cs-text">披萨</div></div>
-        </div>
-        <div class="cloud-area" id="cloudArea"></div>
-      </div>
-    </div>
-    <div class="bd-aibar">
-      <div class="ai-text">今天有人提到 <strong>"医生剂量"</strong>（吴星辰）和 <strong>"地图比例"</strong>（陈雨桐）——这是<strong>这一周第一次出现</strong>的角度，可以请他们展开说 1 分钟，引申到"分数的实用价值"。</div>
-    </div>
-  `,
-  group: () => `
-    <div class="bd-topbar">
-      <div class="left">
-        <span class="chip" style="background:var(--accent-soft);color:var(--accent-dark)">👥 小组讨论</span>
-        <span class="chip">主题 · 分数在生活里</span>
-      </div>
-      <div class="right">
-        <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">✅ 4 / 4 已交</span>
-        <span class="chip">用时 6:30</span>
-      </div>
-    </div>
-    <div class="scn-group">
-      <div class="grp-h-bar">
-        <div class="grp-h-title">小组成果 · 点击卡片看完整讨论记录</div>
-        <button class="la-btn pri" data-act="grpShare">🎤 让 AI 推荐 1 组分享</button>
-      </div>
-      <div class="grp-row">
-        <div class="grp-card" data-act="grpDetail" data-g="1">
-          <div class="grp-h"><div class="gh-k">1</div><div class="gh-t">第 1 组</div><div class="gh-tag">食物</div></div>
-          <div class="grp-photo">🍕</div>
-          <div class="grp-tags"><span>分披萨</span><span>1/8</span><span>四等分</span></div>
-          <div class="grp-mem"><div class="gm-av">嘉</div><div class="gm-av">子</div><div class="gm-av">轩</div><div class="gm-av">桐</div></div>
-        </div>
-        <div class="grp-card" data-act="grpDetail" data-g="2">
-          <div class="grp-h"><div class="gh-k">2</div><div class="gh-t">第 2 组</div><div class="gh-tag">时间</div></div>
-          <div class="grp-photo">🕐</div>
-          <div class="grp-tags"><span>钟表</span><span>半小时</span><span>1/4 小时</span></div>
-          <div class="grp-mem"><div class="gm-av">辰</div><div class="gm-av">家</div><div class="gm-av">晓</div><div class="gm-av">芷</div></div>
-          <div class="grp-badge gb-fast">⚡ 最快</div>
-        </div>
-        <div class="grp-card recommended" data-act="grpDetail" data-g="3">
-          <div class="grp-h"><div class="gh-k">3</div><div class="gh-t">第 3 组</div><div class="gh-tag">医疗</div></div>
-          <div class="grp-photo">💊</div>
-          <div class="grp-tags"><span>药剂</span><span>半片药</span><span>1/2 片</span></div>
-          <div class="grp-mem"><div class="gm-av">星</div><div class="gm-av">明</div><div class="gm-av">雨</div><div class="gm-av">涵</div></div>
-          <div class="grp-badge gb-creative">💡 创意</div>
-        </div>
-        <div class="grp-card" data-act="grpDetail" data-g="4">
-          <div class="grp-h"><div class="gh-k">4</div><div class="gh-t">第 4 组</div><div class="gh-tag">出行</div></div>
-          <div class="grp-photo">🗺️</div>
-          <div class="grp-tags"><span>地图</span><span>比例尺</span><span>1:50000</span></div>
-          <div class="grp-mem"><div class="gm-av">桐</div><div class="gm-av">家</div><div class="gm-av">嘉</div><div class="gm-av">子</div></div>
-        </div>
-      </div>
-    </div>
-    <div class="bd-aibar">
-      <div class="ai-text"><strong>第 3 组（药剂）方向最少见</strong>——全校近 30 个班只有 2 个班想到。<strong>建议让他们分享 1 分钟</strong>。点击卡片可看完整讨论记录。</div>
-    </div>
   `,
   end: () => `
     <div class="bd-topbar">
@@ -1321,12 +958,29 @@ const SCENES = {
         </div>
       </div>
     </div>
-    <div class="bd-aibar">
-      <div class="ai-text">家长那边收到的只是<strong>"今天完成 / 还有 2 题"</strong>这种简单提示，<strong>不会显示具体分数</strong>——这是产品的隐私底线。</div>
-    </div>
   `,
 };
 let welcomeCDInterval, liveCDInterval, liveAnsInterval;
+const LESSON_FLOW = [
+  {scene:'welcome', title:'上课前'},
+  {scene:'teach', title:'白板讲解'},
+  {scene:'live', title:'随堂答题'},
+  {scene:'result', title:'讲评揭晓'},
+  {scene:'draw', title:'抽人提问'},
+  {scene:'end', title:'下课总结'}
+];
+let currentScene = 'welcome';
+let lessonPageIndex = 0;
+let penColor = '#111827';
+let penSize = 4;
+let penMode = 'curve';
+let penActive = false;
+let inkDrawing = false;
+let inkStart = null;
+let inkSnapshot = null;
+const annotationsByPage = new Map();
+window.penColor = penColor;
+window.penSize = penSize;
 
 function renderScene(scene){
   const fn = SCENES[scene];
@@ -1339,6 +993,7 @@ function renderScene(scene){
   screen.innerHTML = fn();
   setupSceneEffects(scene);
   updateMiniBoard(scene);
+  updatePageControls();
 }
 
 function setupSceneEffects(scene){
@@ -1425,61 +1080,29 @@ function setupSceneEffects(scene){
       toast('🎯 抽中：嘉怡', 'info', 1800);
     }, 2700);
   }
-  // ---- cloud：词云飘入 ----
-  if(scene==='cloud'){
-    const area = $('#cloudArea'); if(!area) return;
-    const words = [
-      {t:'披萨', s:48, x:14, y:24, c:'var(--primary-dark)', d:0},
-      {t:'半小时', s:36, x:54, y:14, c:'var(--accent-dark)', d:.25},
-      {t:'切蛋糕', s:32, x:70, y:46, c:'var(--primary)', d:.45},
-      {t:'打折', s:30, x:30, y:50, c:'var(--warn)', d:.65},
-      {t:'医生剂量', s:34, x:6, y:62, c:'var(--danger)', d:.85},
-      {t:'地图比例', s:28, x:58, y:70, c:'var(--accent)', d:1.05},
-      {t:'温度计', s:24, x:80, y:30, c:'var(--primary-dark)', d:1.25},
-      {t:'半瓶水', s:22, x:42, y:80, c:'var(--accent-dark)', d:1.45},
-      {t:'比赛分数', s:20, x:14, y:84, c:'var(--muted)', d:1.65},
-      {t:'四等分', s:22, x:84, y:78, c:'var(--primary)', d:1.85},
-      {t:'分小组', s:18, x:50, y:90, c:'var(--muted)', d:2.05},
-      {t:'切苹果', s:20, x:24, y:6, c:'var(--warn)', d:2.25},
-    ];
-    area.innerHTML = words.map(w=>`
-      <span class="cloud-w" data-act="cloudWord" data-t="${w.t}" style="font-size:${w.s}px;left:${w.x}%;top:${w.y}%;color:${w.c};animation-delay:${w.d}s">${w.t}</span>
-    `).join('');
-  }
 }
 
-function updateMiniBoard(scene){
-  const map = {
-    welcome:'上课前 · 28 平板状态',
-    teach:'课件第 3 页 · 老师讲解',
-    live:'答题中 · 17/28',
-    result:'答案揭晓 · 柱状图',
-    draw:'抽人转盘',
-    cloud:'词云收集',
-    group:'小组成果',
-    end:'下课总结'
-  };
-  const lab = $('#miniBoardLabel'); if(lab) lab.textContent = map[scene] || '本端';
-  // mini pads
-  const pads = $('#miniPads');
-  if(pads){
-    let h = '';
-    const cols = 7, rows = 4;
-    for(let r=0; r<rows; r++){
-      for(let c=0; c<cols; c++){
-        const i = r*cols + c;
-        if(i>=28) continue;
-        const cls = i===27?'off':'on';
-        h += `<div class="pad-mini ${cls}" style="left:${4+c*13}%;top:${10+r*22}%"></div>`;
-      }
-    }
-    pads.innerHTML = h;
-  }
+function updateMiniBoard(scene){}
+
+function updatePageControls(){
+  const item = LESSON_FLOW[lessonPageIndex];
+  const label = $('#pageLabel');
+  if(label) label.textContent = `第 ${lessonPageIndex + 1} / ${LESSON_FLOW.length} 页 · ${item?.title || ''}`;
+  const prev = $('[data-act="prevPage"]');
+  const next = $('[data-act="nextPage"]');
+  if(prev) prev.disabled = lessonPageIndex === 0;
+  if(next) next.disabled = lessonPageIndex === LESSON_FLOW.length - 1;
 }
 
 function selectScene(scene, silent=false){
+  savePageInk();
+  const idx = LESSON_FLOW.findIndex(item => item.scene === scene);
+  if(idx >= 0) lessonPageIndex = idx;
+  currentScene = scene;
   $$('#sceneTabs .tab').forEach(t => t.classList.toggle('active', t.dataset.scene===scene));
   renderScene(scene);
+  resizeInkCanvas(false);
+  restorePageInk();
   if(!silent){
     const tab = $(`#sceneTabs .tab[data-scene="${scene}"]`);
     toast('已切换：' + (tab ? tab.textContent.trim() : scene), 'info', 1200);
@@ -1487,10 +1110,180 @@ function selectScene(scene, silent=false){
 }
 
 function renderLessonPage(index){
-  const flow = ['welcome','teach','live','result','draw','cloud','group','end'];
-  const next = Math.max(0, Math.min(flow.length - 1, index));
-  selectScene(flow[next], true);
-  return flow[next];
+  const next = Math.max(0, Math.min(LESSON_FLOW.length - 1, index));
+  lessonPageIndex = next;
+  const scene = LESSON_FLOW[next].scene;
+  selectScene(scene, true);
+  return scene;
+}
+
+function resizeInkCanvas(preserve=true){
+  const canvas = $('#boardCanvas');
+  const screen = $('#boardScreen');
+  if(!canvas || !screen) return;
+  const existing = preserve ? canvas.toDataURL?.() : '';
+  const rect = screen.getBoundingClientRect();
+  const ratio = window.devicePixelRatio || 1;
+  canvas.width = Math.max(1, Math.round(rect.width * ratio));
+  canvas.height = Math.max(1, Math.round(rect.height * ratio));
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = rect.height + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  if(existing && existing.length > 100){
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0, rect.width, rect.height);
+    img.src = existing;
+  }
+}
+
+function getInkPoint(e){
+  const canvas = $('#boardCanvas');
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches?.[0] || e.changedTouches?.[0];
+  const clientX = touch ? touch.clientX : e.clientX;
+  const clientY = touch ? touch.clientY : e.clientY;
+  return {x: clientX - rect.left, y: clientY - rect.top};
+}
+
+function setPenActive(active=true){
+  penActive = active;
+  const canvas = $('#boardCanvas');
+  canvas?.classList.toggle('active', penActive);
+  $('[data-board-tool="pen"]')?.classList.toggle('active', penActive);
+  toast(penActive ? '白板笔已开启：可以直接在屏幕上书写' : '白板笔已关闭', 'info', 1600);
+}
+
+function clearInk(){
+  const canvas = $('#boardCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  annotationsByPage.delete(currentScene);
+}
+window.clearInk = clearInk;
+function clearAnnotations(){ clearInk(); }
+window.clearAnnotations = clearAnnotations;
+
+function savePageInk(){
+  const canvas = $('#boardCanvas');
+  if(!canvas) return;
+  annotationsByPage.set(currentScene, canvas.toDataURL());
+}
+
+function restorePageInk(){
+  const canvas = $('#boardCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const data = annotationsByPage.get(currentScene);
+  if(!data) return;
+  const rect = canvas.getBoundingClientRect();
+  const img = new Image();
+  img.onload = () => ctx.drawImage(img, 0, 0, rect.width, rect.height);
+  img.src = data;
+}
+
+function startInk(e){
+  if(!penActive) return;
+  if(e.button !== undefined && e.button !== 0) return;
+  e.preventDefault();
+  resizeInkCanvas();
+  const canvas = $('#boardCanvas');
+  const ctx = canvas.getContext('2d');
+  inkDrawing = true;
+  inkStart = getInkPoint(e);
+  inkSnapshot = penMode === 'line' ? ctx.getImageData(0, 0, canvas.width, canvas.height) : null;
+  ctx.strokeStyle = penColor;
+  ctx.lineWidth = penSize;
+  ctx.beginPath();
+  ctx.moveTo(inkStart.x, inkStart.y);
+}
+
+function moveInk(e){
+  if(!inkDrawing || !penActive) return;
+  e.preventDefault();
+  const canvas = $('#boardCanvas');
+  const ctx = canvas.getContext('2d');
+  const point = getInkPoint(e);
+  ctx.strokeStyle = penColor;
+  ctx.lineWidth = penSize;
+  if(penMode === 'line' && inkSnapshot){
+    ctx.putImageData(inkSnapshot, 0, 0);
+    ctx.beginPath();
+    ctx.moveTo(inkStart.x, inkStart.y);
+    ctx.lineTo(point.x, point.y);
+    ctx.stroke();
+  }else{
+    ctx.lineTo(point.x, point.y);
+    ctx.stroke();
+  }
+}
+
+function endInk(e){
+  if(!inkDrawing) return;
+  moveInk(e);
+  inkDrawing = false;
+  inkSnapshot = null;
+  savePageInk();
+}
+
+function initBoardInk(){
+  resizeInkCanvas();
+  const canvas = $('#boardCanvas');
+  if(!canvas) return;
+  window.annotationCanvas = canvas;
+  canvas.addEventListener('pointerdown', startInk);
+  canvas.addEventListener('pointermove', moveInk);
+  canvas.addEventListener('pointerup', endInk);
+  canvas.addEventListener('pointerleave', endInk);
+  canvas.addEventListener('mousedown', startInk);
+  canvas.addEventListener('mousemove', moveInk);
+  document.addEventListener('mouseup', endInk);
+  canvas.addEventListener('touchstart', startInk, {passive:false});
+  canvas.addEventListener('touchmove', moveInk, {passive:false});
+  canvas.addEventListener('touchend', endInk, {passive:false});
+  window.addEventListener('resize', resizeInkCanvas);
+}
+
+function updatePenChoice(choiceSelector, activeButton){
+  $$(choiceSelector).forEach(btn => btn.classList.toggle('active', btn === activeButton));
+}
+
+function handleBoardSwipe(dx, dy){
+  if(Math.abs(dx) < 80) return false;
+  if(Math.abs(dx) < Math.abs(dy) * 1.5) return false;
+  renderLessonPage(lessonPageIndex + (dx < 0 ? 1 : -1));
+  return true;
+}
+window.handleBoardSwipe = handleBoardSwipe;
+
+function initBoardSwipe(){
+  const screen = $('#boardScreen');
+  if(!screen) return;
+  let start = null;
+  const interactive = '.floating-ball,.floating-panel,.page-controls,.board-tabs,.modal,.toast-stack,button,[data-act],[data-board-tool],[data-pen-color],[data-pen-size],[data-pen-mode]';
+  const begin = e=>{
+    if(penActive) return;
+    if(e.button !== undefined && e.button !== 0) return;
+    if(e.target.closest(interactive)) return;
+    const touch = e.touches?.[0];
+    start = {x: touch ? touch.clientX : e.clientX, y: touch ? touch.clientY : e.clientY};
+  };
+  const finish = e=>{
+    if(!start) return;
+    const touch = e.changedTouches?.[0];
+    const x = touch ? touch.clientX : e.clientX;
+    const y = touch ? touch.clientY : e.clientY;
+    handleBoardSwipe(x - start.x, y - start.y);
+    start = null;
+  };
+  screen.addEventListener('mousedown', begin);
+  screen.addEventListener('mouseup', finish);
+  screen.addEventListener('touchstart', begin, {passive:true});
+  screen.addEventListener('touchend', finish, {passive:true});
 }
 
 function showOverlay(id){
@@ -1501,41 +1294,10 @@ function showOverlay(id){
 function hideOverlay(id){
   const el = $('#' + id);
   if(el) el.classList.remove('show');
-  if(id === 'aiAnchorCard') $('#selectionGhost')?.classList.remove('show');
 }
 
 function hideBoardOverlays(){
-  ['collectionDrawer','answerDrawer','gatewayPanel','voiceStrip','aiAnchorCard'].forEach(hideOverlay);
   $('#selectionGhost')?.classList.remove('show');
-}
-
-function showCollectionDrawer(){
-  hideOverlay('answerDrawer');
-  hideOverlay('gatewayPanel');
-  hideOverlay('voiceStrip');
-  showOverlay('collectionDrawer');
-}
-
-function showAnswerDrawer(){
-  hideOverlay('collectionDrawer');
-  showOverlay('answerDrawer');
-}
-
-function showCircleAsk(){
-  $('#selectionGhost')?.classList.add('show');
-  hideOverlay('collectionDrawer');
-  showOverlay('aiAnchorCard');
-}
-
-function showVoiceStrip(){
-  hideOverlay('collectionDrawer');
-  hideOverlay('gatewayPanel');
-  showOverlay('voiceStrip');
-}
-
-function showGatewayPanel(){
-  hideOverlay('collectionDrawer');
-  showOverlay('gatewayPanel');
 }
 
 function placeFloatingPanel(){
@@ -1545,8 +1307,8 @@ function placeFloatingPanel(){
   if(!ball || !panel || !screen) return;
   const b = ball.getBoundingClientRect();
   const s = screen.getBoundingClientRect();
-  const panelW = Math.min(430, s.width - 36);
-  const panelH = Math.min(panel.offsetHeight || 420, s.height - 36);
+  const panelW = Math.min(312, s.width - 36);
+  const panelH = Math.min(panel.offsetHeight || 320, s.height - 36);
   let x = (b.left - s.left) - panelW - 14;
   if(x < 18) x = (b.left - s.left) + b.width + 14;
   x = Math.max(18, Math.min(x, s.width - panelW - 18));
@@ -1670,6 +1432,30 @@ document.addEventListener('click', e=>{
   const act = a.dataset.act;
   switch(act){
     case 'modalClose': closeModal(); break;
+    case 'publishPreClassNote': {
+      const input = $('#preClassNoteInput');
+      const target = $('#preClassMessage');
+      const text = input?.value?.trim();
+      if(text && target){
+        target.textContent = text;
+        toast('课前提示已发布到白板', 'ok', 1600);
+      }
+      break;
+    }
+    case 'startClass':
+      selectScene('teach');
+      break;
+    case 'startTeach':
+      setPenActive(true);
+      toggleFloatingPanel(true);
+      toast('白板笔已打开，可以直接写', 'ok', 1600);
+      break;
+    case 'prevPage':
+      renderLessonPage(lessonPageIndex - 1);
+      break;
+    case 'nextPage':
+      renderLessonPage(lessonPageIndex + 1);
+      break;
 
     // ===== live =====
     case 'liveOpt': {
@@ -1700,8 +1486,7 @@ document.addEventListener('click', e=>{
       break;
     case 'liveHint': toast('💡 已给全班发送提示："想想 1/2 等于多少"', 'info', 2400); break;
     case 'liveEnd':
-      $$('#sceneTabs .tab').forEach(t => t.classList.toggle('active', t.dataset.scene==='result'));
-      renderScene('result');
+      selectScene('result', true);
       toast('✅ 本题已结束，自动揭晓', 'ok', 1600);
       break;
 
@@ -1746,7 +1531,9 @@ document.addEventListener('click', e=>{
       </ul>
       <div class="note">回放有助于发现学生的<strong>思维路径</strong>——比如雨桐改了答案，可以表扬。</div>`, '回放');
       break;
-    case 'resNext': toast('➡️ 已切到第 2 题（演示）', 'info', 1500); break;
+    case 'resNext':
+      renderLessonPage(lessonPageIndex + 1);
+      break;
 
     // ===== draw =====
     case 'drawMode': {
@@ -1756,67 +1543,9 @@ document.addEventListener('click', e=>{
       toast('已切换：' + labels[m], 'info', 2000);
       break;
     }
-    case 'drawAccept': toast('🎤 已让嘉怡回答 · 学生平板已亮起，麦克风已开启', 'ok', 2400); break;
+    case 'drawAccept': toast('🎤 已点名嘉怡，可以开始回答', 'ok', 2000); break;
     case 'drawSwap': toast('🔁 跳过嘉怡，重新抽取', 'info', 1400); reSpinDraw(); break;
     case 'drawRespin': reSpinDraw(); break;
-
-    // ===== cloud =====
-    case 'cloudWord': {
-      const t = a.dataset.t;
-      const map = {
-        '披萨':'王嘉怡 / 李子涵 / 陈雨桐（3 人）',
-        '医生剂量':'吴星辰（独家） — 父母是医生',
-        '地图比例':'陈雨桐（独家） — 喜欢地理',
-        '半小时':'张明轩 / 刘晓彤 / 家豪（3 人）',
-        '切蛋糕':'王嘉怡 / 张明轩 / 子涵',
-        '打折':'陈芷雨 / 雨桐',
-        '温度计':'刘晓彤',
-        '半瓶水':'李子涵',
-        '比赛分数':'明轩',
-        '四等分':'家豪',
-        '分小组':'晓彤',
-        '切苹果':'雨桐'
-      };
-      showModal('提到 "' + t + '" 的同学',
-        `<p>${map[t] || '（暂无同学提到此词）'}</p>
-        <div class="note">可以让对应同学展开说说，把分数从"数学"延伸到"生活"。</div>`, '词云查询');
-      break;
-    }
-
-    // ===== group =====
-    case 'grpDetail': {
-      const g = a.dataset.g;
-      const data = {
-        '1':{title:'第 1 组 · 食物', emoji:'🍕', record:[
-          ['王嘉怡','大家用披萨举例怎么样？'],
-          ['李子涵','好啊，一张披萨切成 4 块，每块就是 1/4'],
-          ['陈雨桐','切 8 块就是 1/8，吃 3 块就是 3/8'],
-          ['张明轩','重点是必须要"平均"分']]},
-        '2':{title:'第 2 组 · 时间', emoji:'🕐', record:[
-          ['吴星辰','钟表 1 圈 60 分钟'],
-          ['王家豪','半小时就是 30/60，也就是 1/2'],
-          ['刘晓彤','15 分钟就是 1/4 小时'],
-          ['芷雨','一节课 40 分钟也是分数...']]},
-        '3':{title:'第 3 组 · 医疗（AI 推荐分享）', emoji:'💊', record:[
-          ['吴星辰','医生开药经常说半片 = 1/2 片'],
-          ['张明轩','我妈说儿童剂量是成人的 1/3'],
-          ['陈雨桐','打疫苗也分剂量'],
-          ['子涵','哇这个角度好新颖']]},
-        '4':{title:'第 4 组 · 出行', emoji:'🗺️', record:[
-          ['陈雨桐','地图上比例尺是 1:50000'],
-          ['王家豪','意思是图上 1cm 等于实际 50000cm'],
-          ['王嘉怡','也就是 500 米'],
-          ['子涵','其实是个比的概念']]}
-      };
-      const d = data[g];
-      const rec = d.record.map(([n,t])=> `<li><strong>${n}</strong>：${t}</li>`).join('');
-      showModal(d.title + ' · 完整讨论记录',
-        `<p style="font-size:36px;text-align:center;margin:0 0 8px">${d.emoji}</p>
-        <ul>${rec}</ul>
-        <div class="note">由学生平板上的"语音转文字 + 手动编辑"自动汇总。可让全班看 1 分钟。</div>`, '讨论原文');
-      break;
-    }
-    case 'grpShare': toast('🎤 AI 推荐：第 3 组（药剂）方向最少见，建议让他们分享 1 分钟', 'info', 2800); break;
 
     // ===== end =====
     case 'endTomorrow': showModal('📅 明日课件预览 · 分数应用题',
@@ -1852,76 +1581,43 @@ document.addEventListener('click', e=>{
   }
   const boardAction = e.target.closest('[data-board-action]');
   if(boardAction){
-    if(boardAction.dataset.boardAction === 'openAnswer') showAnswerDrawer();
     if(boardAction.dataset.boardAction === 'closeFloatingPanel') toggleFloatingPanel(false);
+    return;
+  }
+  const colorButton = e.target.closest('[data-pen-color]');
+  if(colorButton){
+    penColor = colorButton.dataset.penColor;
+    window.penColor = penColor;
+    updatePenChoice('[data-pen-color]', colorButton);
+    setPenActive(true);
+    return;
+  }
+  const sizeButton = e.target.closest('[data-pen-size]');
+  if(sizeButton){
+    penSize = Number(sizeButton.dataset.penSize) || 4;
+    window.penSize = penSize;
+    updatePenChoice('[data-pen-size]', sizeButton);
+    setPenActive(true);
+    return;
+  }
+  const modeButton = e.target.closest('[data-pen-mode]');
+  if(modeButton){
+    penMode = modeButton.dataset.penMode || 'curve';
+    updatePenChoice('[data-pen-mode]', modeButton);
+    setPenActive(true);
     return;
   }
   const tool = e.target.closest('[data-board-tool]');
   if(tool){
     const action = tool.dataset.boardTool;
     $$('.float-tool').forEach(b=> b.classList.toggle('active', b === tool && action === 'pen'));
-    if(action === 'pushLive'){
-      selectScene('live', true);
-      showCollectionDrawer();
-      toast('随堂练已推送，回收抽屉从底部展开', 'ok', 2200);
-    }
-    if(action === 'draw'){
-      selectScene('draw', true);
-      hideBoardOverlays();
-      toast('已打开抽人提问场景', 'info', 1600);
-    }
-    if(action === 'circleAsk'){
-      showCircleAsk();
-      toast('已圈选课件局部，AI 解释卡停在选区旁', 'info', 2200);
-    }
     if(action === 'pen'){
-      toast('批注笔已开启，可在课件上圈画重点（原型演示）', 'info', 2000);
-    }
-    if(action === 'subjectTool'){
-      showModal('学科工具',
-        `<p>白板端可从悬浮球快速调出工具，不离开当前课件：</p>
-        <ul>
-          <li><strong>数轴</strong>：把 1/2、4/9、5/8 放到同一条线上比较。</li>
-          <li><strong>几何画板</strong>：现场画平均分图形。</li>
-          <li><strong>计时器</strong>：给小组讨论设置 1 分钟倒计时。</li>
-          <li><strong>随机器</strong>：抽题、抽小组、抽学生。</li>
-        </ul>`, '悬浮球');
-    }
-    if(action === 'voice'){
-      showVoiceStrip();
-      toast('语音助手以条带出现，不遮挡课件', 'info', 1800);
-    }
-    if(action === 'answerDrawer'){
-      showAnswerDrawer();
-    }
-    if(action === 'timer'){
-      showModal('课堂计时器',
-        `<p><strong>1 分钟讨论</strong>已准备好。</p>
-        <div class="note accent">白板端实际使用时会在大屏右上角显示倒计时，同时同步到学生平板顶部状态条。</div>
-        <ul>
-          <li>30 秒：快速抢答</li>
-          <li>1 分钟：小组讨论</li>
-          <li>3 分钟：完整任务</li>
-        </ul>`, '白板工具', '开始 1 分钟');
-    }
-    if(action === 'lockPads'){
-      toast('学生平板已进入课堂锁定模式，只显示当前任务', 'ok', 2400);
+      setPenActive(!penActive);
     }
     if(action === 'clearBoard'){
+      clearInk();
       hideBoardOverlays();
-      toast('已清空白板批注、圈选和浮层', 'ok', 1800);
-    }
-    if(action === 'gateway'){
-      showGatewayPanel();
-    }
-    if(action === 'syncAll'){
-      showModal('三端同步状态',
-        `<ul>
-          <li><strong>教师端</strong>：王老师正在授课模式</li>
-          <li><strong>白板端</strong>：当前大屏已同步第 3 页课件</li>
-          <li><strong>学生端</strong>：26 / 28 在线，17 人已提交随堂练</li>
-        </ul>
-        <div class="note accent">所有状态会沉淀到课后报告，不需要老师课后手工整理。</div>`, '同步');
+      toast('已清空当前页批注', 'ok', 1600);
     }
     return;
   }
@@ -1941,8 +1637,10 @@ document.addEventListener('keydown', e=>{
 // 初次渲染（SCENES 字典由后续 edit 注入后才有内容）
 setTimeout(()=>{
   initFloatingBall();
+  initBoardInk();
+  initBoardSwipe();
   renderScene('welcome');
-  setTimeout(()=> toast('👋 点击下方 8 个按钮，看大屏在不同时刻展示什么','info', 4200), 600);
+  setTimeout(()=> toast('点击悬浮球打开白板笔，或左右滑动翻页','info', 3200), 600);
 }, 50);
 </script>
 </body>
