@@ -28,30 +28,9 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 
-/* page intro */
-.page-intro{ max-width:1240px; margin:24px auto 0; padding:0 20px; }
-.page-intro h1{ margin:0 0 6px; font-size:22px; font-weight:800; color:var(--text); }
-.page-intro h1 .sub{ font-size:13px; font-weight:600; color:var(--muted); margin-left:8px; }
-.page-intro > p{ margin:0 0 14px; font-size:13.5px; color:var(--muted); line-height:1.6; }
-.page-intro > p strong{ color:var(--text); }
-.intro-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px; }
-.ic{ background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius-lg); padding:14px 16px; box-shadow:var(--shadow); }
-.ic h3{ margin:0 0 6px; font-size:14px; font-weight:800; }
-.ic p{ margin:0; font-size:12.5px; color:var(--muted); line-height:1.65; }
-.ic strong{ color:var(--text); }
-
-.explain-bar{
-  max-width:1240px; margin:0 auto 18px; padding:10px 18px;
-  display:flex; gap:12px; align-items:center;
-  background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius-lg);
-}
-.eb-icon{ width:30px; height:30px; flex:none; background:var(--primary-soft); color:var(--primary-dark); border-radius:50%; display:grid; place-items:center; font-size:13px; }
-.eb-text{ font-size:13px; color:var(--text); line-height:1.55; }
-.eb-text .key{ color:var(--primary-dark); font-weight:700; }
-
 /* scene tabs */
 .scene-tabs{
-  max-width:1240px; margin:0 auto 18px; padding:0 20px;
+  max-width:1240px; margin:24px auto 18px; padding:0 20px;
   display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
 }
 .scene-tabs .tab{
@@ -789,32 +768,6 @@ body{
 </style>
 </head>
 <body>
-<!-- ===== Page intro ===== -->
-<div class="page-intro">
-  <h1>步步 · 白板端 / 教室大屏 <span class="sub">第三个端：65 寸智能交互一体机</span></h1>
-  <p>这是一个原型，演示<strong>"白板端是公共屏，全班共同看"</strong>的产品形态。点击下方 8 个按钮切换"上课前 → 讲解 → 答题 → 揭晓 → 抽人 → 词云 → 讨论 → 下课"的完整流程，看每个时刻屏幕上展示什么、AI 给老师什么提示。</p>
-  <div class="intro-cards">
-    <div class="ic">
-      <h3>📺 公共屏 · 不是单点交互</h3>
-      <p>面向全班的"展示 + 协同"。所有字号、对比、动效都按"<strong>最后一排也看得清</strong>"设计：标题 ≥ 28 px，关键数据 ≥ 30 px。</p>
-    </div>
-    <div class="ic">
-      <h3>👨‍🏫 老师主舞台</h3>
-      <p>大屏不替代老师讲。课件、板书、提问、点名都是<strong>老师主动操作</strong>。AI 在屏幕底部紫条里给一句建议，<strong>决定权全在老师</strong>。</p>
-    </div>
-    <div class="ic">
-      <h3>📡 三端联动</h3>
-      <p>老师手里教师端推任务 → 学生平板上接到 → 全班的<strong>实时数据回到大屏</strong>。下方"三端联动小图"演示这条数据流。</p>
-    </div>
-  </div>
-</div>
-
-<!-- ===== Explain bar ===== -->
-<div class="explain-bar">
-  <div class="eb-icon">▶</div>
-  <div class="eb-text">点击下方按钮切换<span class="key">课堂 8 个时刻</span>，看大屏在不同环节给老师/学生提供什么信息。每个时刻都对应右下角紫条里的"AI 给老师的话"。</div>
-</div>
-
 <!-- ===== Scene tabs ===== -->
 <div class="scene-tabs" id="sceneTabs">
   <div class="tab active" data-scene="welcome">📅 上课前</div>
