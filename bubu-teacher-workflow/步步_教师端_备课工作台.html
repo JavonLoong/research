@@ -19,16 +19,19 @@
   --shadow-2:0 2px 8px rgba(15,23,42,.06);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;padding:16px 0 28px;overflow-x:auto}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;padding:16px 0 40px;overflow:auto}
 
 /* App frame */
-.device{width:min(1280px,calc(100vw - 32px));min-width:1180px;margin:0 auto;background:transparent;padding:0;border-radius:12px;position:relative}
-.device::before,.device::after{display:none}
-.screen{background:var(--bg);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;height:780px;min-height:0;position:relative;box-shadow:0 18px 48px rgba(15,23,42,.10)}
-.desktop-stand{display:none}
+.device{width:min(1360px,calc(100vw - 48px));min-width:1120px;margin:0 auto;background:#111827;padding:12px 12px 14px;border-radius:24px;position:relative;box-shadow:0 26px 72px rgba(15,23,42,.18)}
+.device::before{content:"";position:absolute;left:50%;top:4px;transform:translateX(-50%);width:78px;height:4px;border-radius:999px;background:#0f172a}
+.device::after{content:"";position:absolute;inset:0;border:1px solid rgba(255,255,255,.08);border-radius:24px;pointer-events:none}
+.screen{background:var(--bg);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;width:100%;height:auto;aspect-ratio:16/9;min-height:0;position:relative}
+.desktop-stand{display:block;position:relative;width:228px;height:58px;margin:-2px auto 0}
+.desktop-stand::before{content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);width:88px;height:42px;border-radius:0 0 18px 18px;background:linear-gradient(180deg,#374151,#111827)}
+.desktop-stand::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:228px;height:14px;border-radius:999px;background:#111827;box-shadow:0 10px 28px rgba(15,23,42,.18)}
 
 /* Top app bar (替代深色 sidebar) */
-.appbar{background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 14px;height:54px;gap:10px}
+.appbar{background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 14px;height:54px;gap:10px;flex-shrink:0}
 .brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;letter-spacing:1px;color:var(--text);margin-left:6px}
 .brand-dot{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#10b981,#0d9488);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px}
 .nav{display:flex;gap:1px;margin-left:8px;flex:1;min-width:0;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
@@ -47,7 +50,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .user-pill .un{font-size:12px;color:var(--text);font-weight:600}
 
 /* Sub-topbar */
-.subtop{background:#fff;border-bottom:1px solid var(--line);padding:10px 18px;display:flex;align-items:center;gap:12px}
+.subtop{background:#fff;border-bottom:1px solid var(--line);padding:10px 18px;display:flex;align-items:center;gap:12px;flex-shrink:0}
 .subtop .spacer{flex:1}
 .btn{padding:6px 12px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:600;cursor:pointer;transition:.15s;border:1px solid var(--line);background:#fff;color:var(--text);font-family:inherit;display:inline-flex;align-items:center;gap:5px}
 .btn:hover{border-color:var(--primary);color:var(--primary-dark)}
@@ -248,7 +251,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .rr-star{color:var(--warn);font-size:11px}
 
 /* === 三端同步底栏 === */
-.bottombar{background:#fff;border-top:1px solid var(--line);padding:8px 16px;display:flex;align-items:center;gap:14px;font-size:11px;color:var(--muted)}
+.bottombar{background:#fff;border-top:1px solid var(--line);padding:8px 16px;display:flex;align-items:center;gap:14px;font-size:11px;color:var(--muted);flex-shrink:0}
 .three-end{display:flex;align-items:center;gap:14px}
 .te-item{display:flex;align-items:center;gap:6px;padding:4px 10px;background:var(--surface-2);border-radius:5px;border:1px solid var(--line)}
 .te-icon{font-size:12px}
@@ -260,7 +263,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .bottombar .right-meta{display:flex;align-items:center;gap:14px;font-size:11px;color:var(--muted)}
 
 /* === 其他 panel === */
-.pad{padding:20px 24px;overflow-y:auto;flex:1}
+.pad{padding:20px 24px;overflow-y:auto;flex:1;min-height:0}
 .section-h{font-size:16px;font-weight:800;margin-bottom:3px;color:var(--text)}
 .section-sub{font-size:12.5px;color:var(--muted);margin-bottom:16px;line-height:1.6}
 .section-sub strong{color:var(--primary-dark)}
