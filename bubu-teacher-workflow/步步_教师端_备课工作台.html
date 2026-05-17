@@ -492,7 +492,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .mini-table th,.mini-table td{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:middle}
 .mini-table th{color:var(--muted);font-weight:800;background:var(--surface-2)}
 .mini-table td strong{color:var(--text)}
-.method-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .method-card{border:1px solid var(--line);background:#fff;border-radius:8px;padding:10px;cursor:pointer;transition:.15s}
 .method-card.selected,.method-card:hover{border-color:var(--primary);background:var(--primary-soft-2)}
 .method-card b{display:block;font-size:12.5px;color:var(--text);margin-bottom:3px}
@@ -1032,27 +1032,26 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <div class="panel" id="panel-homework">
         <div class="pad">
           <div class="section-h">📮 作业布置</div>
-          <div class="section-sub">从题库、错因、课堂互动里直接生成作业。提交方式、截止时间、分层比例和目标提升都能在这里配置，并可一键加入课件。</div>
+          <div class="section-sub">先把作业内容做出来：写文字说明、放图片材料、从题库挑题。班级、截止和订正放在右侧发布设置里。</div>
           <div class="dash-grid">
             <div class="dash-stack">
               <div class="dash-card">
-                <h3>提交方式</h3>
+                <h3>先布置内容</h3>
                 <div class="method-grid">
-                  <div class="method-card selected"><b>普通作业</b><span>选择 / 填空 / 简答</span></div>
-                  <div class="method-card"><b>手写提交</b><span>平板大面积书写</span></div>
-                  <div class="method-card"><b>拍照提交</b><span>纸笔过程拍照上传</span></div>
-                  <div class="method-card"><b>视频提交</b><span>口述思路或实验过程</span></div>
+                  <div class="method-card selected"><b>写文字说明</b><span>作业要求、完成提示、订正口径。</span></div>
+                  <div class="method-card"><b>放图片材料</b><span>插入板书截图、教材页或学生作品。</span></div>
+                  <div class="method-card" data-jump="qbank"><b>从题库找题</b><span>按知识点、难度和错因筛题。</span></div>
                 </div>
               </div>
               <div class="dash-card">
-                <h3>智能分层</h3>
-                <div class="slider-line"><span>目标提升</span><input type="range" min="5" max="30" value="15" id="improveRange"><strong id="improveValue">15%</strong></div>
+                <h3>已选作业内容</h3>
+                <div class="slider-line"><span>题量控制</span><input type="range" min="3" max="12" value="5" id="improveRange"><strong id="improveValue">5 题</strong></div>
                 <table class="mini-table" style="margin-top:10px">
-                  <thead><tr><th>层级</th><th>人数</th><th>内容</th><th>加入</th></tr></thead>
+                  <thead><tr><th>类型</th><th>内容</th><th>来源</th><th>操作</th></tr></thead>
                   <tbody>
-                    <tr><td><span class="level-pill">基础</span></td><td>8 人</td><td>单位换算 5 分钟短练</td><td><button class="btn btn-sm" data-homework-act="basic">加入课件</button></td></tr>
-                    <tr><td><span class="level-pill warn">提升</span></td><td>22 人</td><td>读写 + 应用混合题</td><td><button class="btn btn-sm" data-homework-act="mixed">加入课件</button></td></tr>
-                    <tr><td><span class="level-pill danger">拓展</span></td><td>5 人</td><td>生活小数项目任务</td><td><button class="btn btn-sm" data-homework-act="project">加入课件</button></td></tr>
+                    <tr><td><span class="level-pill">文字</span></td><td>完成 P58 第 1-3 题，写清单位换算过程</td><td>教师输入</td><td><button class="btn btn-sm" data-homework-act="text">加入作业页</button></td></tr>
+                    <tr><td><span class="level-pill warn">图片</span></td><td>第 6 页板书截图：0.8 米 = 80 厘米</td><td>当前课件</td><td><button class="btn btn-sm" data-homework-act="image">加入作业页</button></td></tr>
+                    <tr><td><span class="level-pill danger">题库</span></td><td>单位换算 5 题 + 1 道应用题</td><td>智能题库</td><td><button class="btn btn-sm" data-homework-act="qbank">加入作业页</button></td></tr>
                   </tbody>
                 </table>
               </div>
@@ -1061,14 +1060,14 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
               <div class="dash-card">
                 <h3>发布设置</h3>
                 <div class="live-log">
+                  <div><strong>内容</strong>：文字说明 1 条 · 图片 1 张 · 题库 6 题</div>
                   <div><strong>班级</strong>：四年级2班 · 35 人</div>
                   <div><strong>截止</strong>：明天 20:00</div>
                   <div><strong>订正</strong>：错题自动回流错题本</div>
-                  <div><strong>家长端</strong>：只显示“今日完成 / 还有几题”</div>
                 </div>
                 <div style="margin-top:10px;display:flex;gap:8px">
-                  <button class="btn btn-primary btn-sm" data-homework-act="publish">发布并加入课件</button>
-                  <button class="btn btn-sm" data-homework-act="recommend">推荐试题</button>
+                  <button class="btn btn-primary btn-sm" data-homework-act="publish">发布作业</button>
+                  <button class="btn btn-sm" data-jump="qbank">继续选题</button>
                 </div>
               </div>
               <div class="dash-card">
@@ -1755,12 +1754,12 @@ document.querySelectorAll('.method-card').forEach(card=>{
   card.addEventListener('click',()=>{
     document.querySelectorAll('.method-card').forEach(x=>x.classList.remove('selected'));
     card.classList.add('selected');
-    showToast('✓ 已选择提交方式：' + card.querySelector('b').textContent.trim());
+    showToast('✓ 已选择布置内容：' + card.querySelector('b').textContent.trim());
   });
 });
 const improveRange=document.getElementById('improveRange');
 if(improveRange){
-  improveRange.addEventListener('input',()=>document.getElementById('improveValue').textContent=improveRange.value+'%');
+  improveRange.addEventListener('input',()=>document.getElementById('improveValue').textContent=improveRange.value+' 题');
 }
 
 document.querySelectorAll('.atab').forEach(t=>{
@@ -1808,22 +1807,25 @@ function addQuizPackSlide(){
 }
 function addHomeworkSlide(mode='publish'){
   const modeMap = {
-    basic:['基础补练','单位换算 5 分钟短练 · 手写过程回收'],
-    mixed:['混合练习','读写 + 单位换算 + 应用题 · 普通提交'],
-    project:['项目任务','记录生活里的 5 个小数 · 拍照或视频提交'],
+    text:['文字说明','完成 P58 第 1-3 题，写清单位换算过程'],
+    image:['图片材料','加入第 6 页板书截图，提醒学生对照例题步骤'],
+    qbank:['题库练习','从题库加入单位换算 5 题 + 1 道应用题'],
+    basic:['基础补练','单位换算 5 分钟短练 · 5 道题'],
+    mixed:['混合练习','读写 + 单位换算 + 应用题'],
+    project:['项目任务','记录生活里的 5 个小数，可配图片说明'],
     recommend:['推荐试题','按知识点和学情自动推荐 6 题'],
-    publish:['分层作业','普通、手写、拍照、视频四种提交方式']
+    publish:['作业内容','文字说明 + 图片材料 + 题库练习']
   };
   const picked = modeMap[mode] || modeMap.publish;
   insertCoursewarePage({
     name:'课后作业发布', time:"2'", body:'作业布置',
-    caption:'<strong>已加入课件：</strong>课后作业页已创建，支持普通、手写、拍照、视频四种提交方式。',
+    caption:'<strong>已加入课件：</strong>课后作业页已创建，包含文字说明、图片材料和题库练习。',
     render:`<div class="slide-content"><span class="slide-tag">课后作业</span>
       <div class="slide-title">小数初步 · ${escapeHTML(picked[0])}</div>
       <div class="rule-board">
-        <div class="rule-card"><b>基础</b><span>P58 第 1-3 题 · 普通提交</span></div>
-        <div class="rule-card"><b>订正</b><span>错题拍照 + 手写过程</span></div>
-        <div class="rule-card"><b>拓展</b><span>生活小数记录，可拍照或视频</span></div>
+        <div class="rule-card"><b>文字说明</b><span>P58 第 1-3 题，写清换算过程</span></div>
+        <div class="rule-card"><b>图片材料</b><span>对照第 6 页板书截图完成</span></div>
+        <div class="rule-card"><b>题库题目</b><span>单位换算 5 题 + 应用题 1 题</span></div>
       </div>
       <div class="formula-box">${escapeHTML(picked[1])}</div></div>`
   }, {toastText:`${picked[0]}已新建为课件页`});
