@@ -1308,6 +1308,35 @@ function setStudentTabletOrientation(mode, opts={}){
   if(opts.syncReader !== false && currentArticle) openArticle(currentArticle, 'auto');
 }
 let tabletRotating = false;
+function measureTabletRectFor(tablet, landscape){
+  const wasLandscape = tablet.classList.contains('landscape');
+  const prevTransform = tablet.style.transform;
+  const prevOrigin = tablet.style.transformOrigin;
+  tablet.style.transform = '';
+  tablet.style.transformOrigin = '';
+  tablet.classList.toggle('landscape', landscape);
+  const rect = tablet.getBoundingClientRect();
+  tablet.classList.toggle('landscape', wasLandscape);
+  tablet.style.transform = prevTransform;
+  tablet.style.transformOrigin = prevOrigin;
+  return rect;
+}
+function chooseRotationOrigin(startRect, targetRect, angleDeg){
+  const dx = (targetRect.left + targetRect.width / 2) - (startRect.left + startRect.width / 2);
+  const dy = (targetRect.top + targetRect.height / 2) - (startRect.top + startRect.height / 2);
+  const theta = angleDeg * Math.PI / 180;
+  const cos = Math.cos(theta);
+  const sin = Math.sin(theta);
+  const a = cos - 1;
+  const b = -sin;
+  const c = sin;
+  const d = cos - 1;
+  const det = a * d - b * c;
+  if(Math.abs(det) < 0.0001) return {x:startRect.width / 2, y:startRect.height / 2};
+  const vx = (dx * d - b * dy) / det;
+  const vy = (a * dy - dx * c) / det;
+  return {x:startRect.width / 2 - vx, y:startRect.height / 2 - vy};
+}
 async function rotateStudentTablet(){
   const tablet = $('#col-home .tablet');
   if(!tablet || tabletRotating) return;
@@ -1315,40 +1344,28 @@ async function rotateStudentTablet(){
   tablet.classList.add('rotating');
   const toLandscape = !isTabletLandscape();
   const direction = toLandscape ? -1 : 1;
-  const firstAngle = direction * 89.2;
-  const settleAngle = direction * -0.8;
+  const spinAngle = direction * 90;
   const spinEase = 'cubic-bezier(0.4, 0.0, 0.2, 1)';
-  const settleEase = 'cubic-bezier(0.0, 0.0, 0.2, 1)';
   try{
     tablet.style.transform = '';
-    const first = tablet.animate([
+    const startRect = tablet.getBoundingClientRect();
+    const targetRect = measureTabletRectFor(tablet, toLandscape);
+    const origin = chooseRotationOrigin(startRect, targetRect, spinAngle);
+    tablet.style.transformOrigin = `${origin.x}px ${origin.y}px`;
+    const spin = tablet.animate([
       { transform:'rotate(0deg) scale(1)' },
-      { transform:`rotate(${firstAngle}deg) scale(.998)` }
-    ], { duration:560, easing:spinEase, fill:'forwards' });
-    await first.finished;
-    const before = tablet.getBoundingClientRect();
-    first.cancel();
-
+      { transform:`rotate(${spinAngle}deg) scale(1)` }
+    ], { duration:760, easing:spinEase, fill:'forwards' });
+    await spin.finished;
+    spin.cancel();
     setStudentTabletOrientation(toLandscape ? 'landscape' : 'portrait', {syncReader:false});
-    tablet.style.transform = `rotate(${settleAngle}deg) scale(.998)`;
-    const after = tablet.getBoundingClientRect();
-    const dx = (before.left + before.width / 2) - (after.left + after.width / 2);
-    const dy = (before.top + before.height / 2) - (after.top + after.height / 2);
-    const from = `translate(${dx}px, ${dy}px) rotate(${settleAngle}deg) scale(.998)`;
-    tablet.style.transform = from;
-    tablet.getBoundingClientRect();
-
-    const second = tablet.animate([
-      { transform:from },
-      { transform:'translate(0,0) rotate(0deg) scale(1)' }
-    ], { duration:240, easing:settleEase, fill:'forwards' });
-    await second.finished;
-    second.cancel();
     tablet.style.transform = '';
+    tablet.style.transformOrigin = '';
     if(currentArticle) openArticle(currentArticle, 'auto');
     toast(isTabletLandscape() ? '已旋转为横屏双页' : '已旋转为竖屏一页', 'ok', 1200, $('#rotateTabletText'));
   }catch(err){
     tablet.style.transform = '';
+    tablet.style.transformOrigin = '';
   }finally{
     tablet.classList.remove('rotating');
     tabletRotating = false;
