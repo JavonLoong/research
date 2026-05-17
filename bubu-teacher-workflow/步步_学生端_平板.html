@@ -32,6 +32,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 /* ===== Tablet shell ===== */
 .tablet{--tablet-long:1000px;--tablet-short:700px;background:#0f172a;border-radius:38px;padding:13px;box-shadow:0 30px 60px rgba(15,23,42,.18),0 1px 0 rgba(255,255,255,.04) inset;position:relative;width:var(--tablet-short);height:var(--tablet-long);margin:0 auto;transform-origin:center center;will-change:transform;transition:box-shadow .2s ease}
 .tablet.rotating{z-index:30;pointer-events:none;box-shadow:0 42px 80px rgba(15,23,42,.22)}
+.tablet.screen-content-clone{background:transparent!important;box-shadow:none!important}
+.tablet.screen-content-clone::before,.tablet.screen-content-clone::after{opacity:0!important}
 .tablet::before{content:"";position:absolute;left:50%;top:18px;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:#1e293b}
 .tablet::after{content:"";position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:60px;height:4px;border-radius:2px;background:#1e293b}
 .tablet-screen{background:#fff;border-radius:26px;overflow:hidden;width:100%;height:100%;display:flex;flex-direction:column;position:relative;min-height:0}
@@ -1339,7 +1341,6 @@ function chooseRotationOrigin(startRect, targetRect, angleDeg){
 }
 function prepareRotationClone(tablet){
   const clone = tablet.cloneNode(true);
-  clone.classList.add('rotation-clone');
   clone.style.margin = '0';
   clone.style.transform = 'none';
   clone.style.transformOrigin = 'center center';
@@ -1348,7 +1349,19 @@ function prepareRotationClone(tablet){
   if(btn) btn.remove();
   return clone;
 }
-function mountRotationLayer(clone, rect, origin, opacity=1){
+function prepareFrameClone(tablet){
+  const clone = prepareRotationClone(tablet);
+  clone.classList.add('frame-clone');
+  const screen = clone.querySelector('.tablet-screen');
+  if(screen) screen.innerHTML = '';
+  return clone;
+}
+function prepareScreenContentClone(tablet){
+  const clone = prepareRotationClone(tablet);
+  clone.classList.add('screen-content-clone');
+  return clone;
+}
+function mountRotationLayer(clone, rect, origin, opacity=1, zIndex=9999){
   const layer = document.createElement('div');
   layer.className = 'tablet-rotation-layer';
   Object.assign(layer.style, {
@@ -1360,7 +1373,7 @@ function mountRotationLayer(clone, rect, origin, opacity=1){
     transformOrigin:`${origin.x}px ${origin.y}px`,
     opacity:String(opacity),
     pointerEvents:'none',
-    zIndex:'9999',
+    zIndex:String(zIndex),
     willChange:'transform, opacity'
   });
   layer.appendChild(clone);
@@ -1377,24 +1390,31 @@ async function rotateStudentTablet(){
   const spinAngle = direction * 90;
   const spinEase = 'cubic-bezier(0.4, 0.0, 0.2, 1)';
   const duration = 760;
+  let frameLayer = null;
   let oldLayer = null;
   let targetLayer = null;
   const prevVisibility = tablet.style.visibility;
   try{
     tablet.style.transform = '';
     const startRect = tablet.getBoundingClientRect();
-    const oldClone = prepareRotationClone(tablet);
+    const frameClone = prepareFrameClone(tablet);
+    const oldClone = prepareScreenContentClone(tablet);
     tablet.style.visibility = 'hidden';
     setStudentTabletOrientation(toLandscape ? 'landscape' : 'portrait');
     const targetRect = tablet.getBoundingClientRect();
-    const targetClone = prepareRotationClone(tablet);
+    const targetClone = prepareScreenContentClone(tablet);
     const oldOrigin = chooseRotationOrigin(startRect, targetRect, spinAngle);
     const targetOrigin = chooseRotationOrigin(targetRect, startRect, -spinAngle);
-    oldLayer = mountRotationLayer(oldClone, startRect, oldOrigin, 1);
-    targetLayer = mountRotationLayer(targetClone, targetRect, targetOrigin, 0);
+    frameLayer = mountRotationLayer(frameClone, startRect, oldOrigin, 1, 9999);
+    oldLayer = mountRotationLayer(oldClone, startRect, oldOrigin, 1, 10000);
+    targetLayer = mountRotationLayer(targetClone, targetRect, targetOrigin, 0, 10001);
+    const frameAnim = frameLayer.animate([
+      { transform:'rotate(0deg)' },
+      { transform:`rotate(${spinAngle}deg)` }
+    ], { duration, easing:spinEase, fill:'forwards' });
     const oldAnim = oldLayer.animate([
       { transform:'rotate(0deg)', opacity:1, offset:0 },
-      { transform:`rotate(${spinAngle}deg)`, opacity:.9, offset:.46 },
+      { transform:`rotate(${spinAngle}deg)`, opacity:1, offset:.46 },
       { transform:`rotate(${spinAngle}deg)`, opacity:0, offset:1 }
     ], { duration, easing:spinEase, fill:'forwards' });
     const targetAnim = targetLayer.animate([
@@ -1402,7 +1422,8 @@ async function rotateStudentTablet(){
       { transform:`rotate(${-spinAngle}deg)`, opacity:0, offset:.32 },
       { transform:'rotate(0deg)', opacity:1, offset:1 }
     ], { duration, easing:spinEase, fill:'forwards' });
-    await Promise.all([oldAnim.finished, targetAnim.finished]);
+    await Promise.all([frameAnim.finished, oldAnim.finished, targetAnim.finished]);
+    frameAnim.cancel();
     oldAnim.cancel();
     targetAnim.cancel();
     tablet.style.transform = '';
@@ -1413,6 +1434,7 @@ async function rotateStudentTablet(){
     tablet.style.transform = '';
     tablet.style.transformOrigin = '';
   }finally{
+    frameLayer?.remove();
     oldLayer?.remove();
     targetLayer?.remove();
     tablet.style.visibility = prevVisibility;
