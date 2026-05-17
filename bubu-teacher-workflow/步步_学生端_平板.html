@@ -1314,31 +1314,34 @@ async function rotateStudentTablet(){
   tabletRotating = true;
   tablet.classList.add('rotating');
   const toLandscape = !isTabletLandscape();
-  const firstAngle = toLandscape ? -86 : 86;
-  const settleAngle = toLandscape ? 5 : -5;
+  const direction = toLandscape ? -1 : 1;
+  const firstAngle = direction * 89.2;
+  const settleAngle = direction * -0.8;
+  const spinEase = 'cubic-bezier(0.4, 0.0, 0.2, 1)';
+  const settleEase = 'cubic-bezier(0.0, 0.0, 0.2, 1)';
   try{
     tablet.style.transform = '';
     const first = tablet.animate([
       { transform:'rotate(0deg) scale(1)' },
-      { transform:`rotate(${firstAngle}deg) scale(.985)` }
-    ], { duration:360, easing:'cubic-bezier(.18,.82,.22,1)', fill:'forwards' });
+      { transform:`rotate(${firstAngle}deg) scale(.998)` }
+    ], { duration:560, easing:spinEase, fill:'forwards' });
     await first.finished;
     const before = tablet.getBoundingClientRect();
     first.cancel();
 
     setStudentTabletOrientation(toLandscape ? 'landscape' : 'portrait', {syncReader:false});
-    tablet.style.transform = `rotate(${settleAngle}deg) scale(.985)`;
+    tablet.style.transform = `rotate(${settleAngle}deg) scale(.998)`;
     const after = tablet.getBoundingClientRect();
     const dx = (before.left + before.width / 2) - (after.left + after.width / 2);
     const dy = (before.top + before.height / 2) - (after.top + after.height / 2);
-    const from = `translate(${dx}px, ${dy}px) rotate(${settleAngle}deg) scale(.985)`;
+    const from = `translate(${dx}px, ${dy}px) rotate(${settleAngle}deg) scale(.998)`;
     tablet.style.transform = from;
     tablet.getBoundingClientRect();
 
     const second = tablet.animate([
       { transform:from },
       { transform:'translate(0,0) rotate(0deg) scale(1)' }
-    ], { duration:320, easing:'cubic-bezier(.2,.8,.2,1)', fill:'forwards' });
+    ], { duration:240, easing:settleEase, fill:'forwards' });
     await second.finished;
     second.cancel();
     tablet.style.transform = '';
