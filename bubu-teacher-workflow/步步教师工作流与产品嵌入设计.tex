@@ -1,0 +1,627 @@
+﻿% !TEX program = xelatex
+\documentclass[11pt,a4paper]{article}
+
+% --- 中文支持 ---
+\usepackage[UTF8,heading=true]{ctex}
+\setCJKmainfont{SimSun}[BoldFont=SimHei,ItalicFont=KaiTi]
+\setCJKsansfont{SimHei}
+\setCJKmonofont{FangSong}
+
+% --- 页面布局 ---
+\usepackage[top=25mm,bottom=25mm,left=20mm,right=20mm]{geometry}
+\usepackage{fancyhdr}\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small\leftmark}
+\fancyhead[R]{\small 教师工作流与产品嵌入}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- 数学支持 ---
+\usepackage{amsmath,amssymb}
+
+% --- 灰度色系 ---
+\usepackage[dvipsnames]{xcolor}
+\definecolor{seccolor}{HTML}{333333}
+\definecolor{rowalt}{HTML}{F5F5F5}
+\definecolor{headbg}{HTML}{EBEBEB}
+\definecolor{boxbg}{HTML}{F0F0F0}
+
+% --- 表格 ---
+\usepackage{array,booktabs,tabularx,colortbl,multirow}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\renewcommand{\arraystretch}{1.3}
+
+% --- TikZ ---
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric}
+
+% --- 提示框 ---
+\usepackage[most]{tcolorbox}
+\newtcolorbox{notebox}[1][]{enhanced,colback=boxbg,colframe=black!30,
+  boxrule=0pt,leftrule=3pt,sharp corners,top=4pt,bottom=4pt,
+  left=10pt,right=10pt,fonttitle=\bfseries\sffamily,title={#1}}
+\newtcolorbox{dialogue}{enhanced,colback=black!2,colframe=black!15,
+  boxrule=0.5pt,sharp corners,top=6pt,bottom=6pt,
+  left=10pt,right=10pt}
+\newtcolorbox{aiplan}[1][]{enhanced,colback=boxbg,colframe=black!40,
+  boxrule=0.8pt,arc=2pt,top=8pt,bottom=8pt,
+  left=10pt,right=10pt,fonttitle=\bfseries\sffamily,title={#1}}
+\newtcolorbox{oldflow}{enhanced,colback=black!2,colframe=black!10,
+  boxrule=0pt,leftrule=2pt,sharp corners,top=4pt,bottom=4pt,
+  left=10pt,right=10pt}
+
+% --- 其他包 ---
+\usepackage{enumitem}
+\usepackage{pifont}
+\newcommand{\done}{\ding{192}}
+\newcommand{\dtwo}{\ding{193}}
+\newcommand{\dthree}{\ding{194}}
+\usepackage{hyperref}\hypersetup{colorlinks=false,pdfborder={0 0 0}}
+
+% --- 标题样式 ---
+\ctexset{
+  section/format=\Large\bfseries\sffamily\color{seccolor},
+  section/beforeskip=20pt,section/afterskip=10pt,
+  subsection/format=\large\bfseries\sffamily\color{seccolor},
+  subsection/beforeskip=12pt,subsection/afterskip=6pt,
+  subsubsection/format=\normalsize\bfseries\sffamily\color{seccolor},
+  subsubsection/beforeskip=8pt,subsubsection/afterskip=4pt,
+}
+
+% --- 封面 ---
+\newcommand{\makecover}{%
+\thispagestyle{empty}
+\begin{tikzpicture}[remember picture,overlay]
+  \fill[black!90](current page.south west)rectangle(current page.north east);
+  \foreach \i in {1,...,6}{
+    \draw[white,opacity=0.03,line width=1.5pt]
+      ([yshift=-\i*3.5cm]current page.north west)--
+      ([yshift=-\i*3.5cm]current page.north east);}
+  \fill[white,opacity=0.04]
+    ([xshift=3cm,yshift=-2cm]current page.north east)circle(8cm);
+  \node[text width=14cm,align=center]
+    at([yshift=3.5cm]current page.center){
+    {\color{white!80}\sffamily\large 步步教师端}\\[12pt]
+    {\color{white}\sffamily\fontsize{32}{38}\selectfont\bfseries 教师工作流与产品嵌入设计}\\[8pt]
+    {\color{white}\sffamily\fontsize{18}{24}\selectfont 交互逻辑设计文档}\\[16pt]
+    {\color{white!70}\sffamily\normalsize 同一份文档上，可以逐行批注、可以审阅方案后执行、也可以全权委托只看结果}};
+  \draw[white,opacity=0.4,line width=0.6pt]
+    ([yshift=-0.5cm]current page.center)+(-5,0)--+(5,0);
+  \node[text width=12cm,align=center]
+    at([yshift=-2.5cm]current page.center){
+    {\color{white!90}\sffamily\small Explorer 草案 \quad|\quad 2026-04-13}\\[10pt]
+    {\color{white!60}\sffamily\small 协作者：patmos}};
+\end{tikzpicture}\clearpage}
+
+\newcommand{\circled}[1]{\raisebox{0.5pt}{\textcircled{\raisebox{-0.5pt}{\small #1}}}}
+
+\begin{document}
+\makecover
+\tableofcontents
+\clearpage
+
+%% ============================================================
+\section{教师完整工作流程图}
+
+\begin{center}
+\begin{tikzpicture}[
+  phase/.style={rectangle,rounded corners=4pt,minimum width=3cm,minimum height=1cm,
+    draw=black,thick,fill=black!5,font=\sffamily\bfseries},
+  item/.style={font=\sffamily\small,text width=3.8cm,align=left},
+  >=Stealth,node distance=1.2cm
+]
+% 三个阶段
+\node[phase](prep){备\quad 课};
+\node[phase,right=2cm of prep](teach){授\quad 课};
+\node[phase,right=2cm of teach](after){课\quad 后};
+\draw[->,thick](prep)--(teach);
+\draw[->,thick](teach)--(after);
+
+% 各阶段子项
+\node[item,below=0.6cm of prep]{
+  \circled{1} 更新PPT素材\\
+  \circled{2} 分层准备题目\\
+  \circled{3} 储备前置知识和应急练习};
+\node[item,below=0.6cm of teach]{
+  \circled{4} 按计划讲课\\
+  \circled{5} 发现学生卡住\\
+  \circled{6} 临时调取素材};
+\node[item,below=0.6cm of after]{
+  \circled{7} 回顾今天重点\\
+  \circled{8} 按层级出补练题\\
+  \circled{9} 推送+批改+登记};
+
+% 数据回流
+\draw[->,dashed,thick,rounded corners=8pt]
+  ([yshift=-2.8cm]after.south) -- ++(0,-0.5) -- node[below,font=\sffamily\small]{
+    \circled{10} 补练完成情况$\rightarrow$下次备课参考} ++(-10.5,0) -- ([yshift=-2.8cm]prep.south);
+\end{tikzpicture}
+\end{center}
+
+%% ============================================================
+\subsection{教师在每个环节面临的困难}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{>{\bfseries}l >{\bfseries}l Y}
+\toprule
+\rowcolor{headbg}\textbf{环节} & \textbf{困难} & \textbf{现状} \\
+\midrule
+\multirow{4}{*}{备课} & 找题耗时巨大 & 翻教辅/学科网找题替换旧题，每次30--60分钟；学科网分类太粗，经常找不到合适的 \\
+\rowcolor{rowalt} & 分层无从下手 & 知道班里有好/中/差三类学生，但没精力为每类准备不同的题目，只能凭经验估 \\
+ & 前置知识容易遗漏 & 上课时才发现学生忘了前置知识点，临时找补救题已经来不及 \\
+\rowcolor{rowalt} & 总耗时过长 & 备一节课1--3小时，大量时间花在找题、判断难度、排版上 \\
+\midrule
+\multirow{3}{*}{授课} & 没有现成素材 & 讲到某个知识点学生卡住了，想临时出道题，但手头没有 \\
+\rowcolor{rowalt} & 翻找素材打断教学 & 想起昨天存了几道题在U盘里，翻半天找不到，课堂节奏被打断 \\
+ & 差生好生无法兼顾 & 给差生重新讲一遍，好生在等；不讲，差生继续掉队 \\
+\midrule
+\rowcolor{rowalt}\multirow{4}{*}{课后} & 组卷费时 & 下课后从题库找题组卷又要30--60分钟 \\
+ & 没精力分层 & 知道应该分层布置，但实际只能全班统一一套卷子 \\
+\rowcolor{rowalt} & 差生不做/乱写 & 统一难度的作业对差生太难，直接放弃或乱写，补弱根本没有发生 \\
+ & 结果不回流 & 批改完登记成绩后，数据停在纸上，下次备课又从零开始回忆 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{notebox}
+\textbf{一句话总结}：教师不是不知道学生有问题，而是没有足够低成本、可持续的动作去处理这些问题。
+\end{notebox}
+
+\subsection{步步解决了什么 $\times$ 如何方便教师}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{>{\bfseries}l Y Y}
+\toprule
+\rowcolor{headbg}\textbf{困难} & \textbf{步步怎么解决} & \textbf{教师体验变化} \\
+\midrule
+找题耗时 & AI基于学情数据自动检索匹配题目，教师说一句话就能出题 & 翻学科网30分钟 $\rightarrow$ 说一句话3分钟 \\
+\rowcolor{rowalt}分层无从下手 & AI自动按A/B/C三层生成不同难度的题目 & 没精力分层 $\rightarrow$ AI分好了，看一眼确认 \\
+前置知识遗漏 & 备课时AI主动提醒并储备前置题，上课时随时调取 & 上课才发现来不及 $\rightarrow$ 备课时就准备好了 \\
+\rowcolor{rowalt}课堂没素材 & 备课阶段的储备包直接成为课堂弹药库，一句话调取 & 翻U盘找不到 $\rightarrow$ 说一声就出来 \\
+差生好生无法兼顾 & 可以同时给不同层级学生展示不同的补位素材 & 只能顾一头 $\rightarrow$ 各组各有任务 \\
+\rowcolor{rowalt}课后组卷费时 & AI基于今天实际讲了什么自动出三层补练题 & 回忆+找题60分钟 $\rightarrow$ 看方案确认即可 \\
+差生不做 & 为C组学生出极简行为训练型题目（抄写、填空、分步引导） & 统一难度$\rightarrow$放弃 $\rightarrow$ 匹配难度$\rightarrow$愿意做 \\
+\rowcolor{rowalt}结果不回流 & 学生拍照回传$\rightarrow$AI批改$\rightarrow$数据自动成为下次备课输入 & 纸上登记就没了 $\rightarrow$ 下次备课自动看到 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{notebox}
+\textbf{核心价值}：步步不是又一个分析工具或报表系统——它直接帮教师完成"从发现问题到发起动作"这一步。教师不需要学习任何新系统，只需要像指挥实习助教一样说几句话，AI就去干活了。
+\end{notebox}
+
+%% ============================================================
+\section{各环节拆解：教师在做什么 $\times$ 产品如何嵌入}
+
+\subsection{备课环节}
+
+\subsubsection*{教师原始工作流（无产品时）}
+
+\begin{oldflow}
+教师打开昨天的PPT\\
+$\rightarrow$ 翻教辅/学科网找新题替换旧题 \hfill（30--60分钟）\\
+$\rightarrow$ 手动判断哪些题适合好学生/中等/差生 \hfill（费脑，常凭经验）\\
+$\rightarrow$ 想到上次有学生忘了前置知识点\\
+$\rightarrow$ 再翻教辅找几道基础铺垫题备着 \hfill（又20分钟）\\
+$\rightarrow$ 最后调格式、排版 \hfill（又15分钟）\\[4pt]
+\textbf{总耗时：1--3小时}
+\end{oldflow}
+
+\subsubsection*{产品嵌入后——三种交互深度}
+
+教师上传PPT（或说"用上次那个"），然后\textbf{自由选择参与深度}：
+
+\bigskip
+\noindent\textbf{\done{} 逐项批示（教师逐页指挥，AI逐条执行+汇报+建议）}
+
+\begin{dialogue}
+\textbf{教师}：（翻到第3页）这道例题太简单了，班里一半人都会\\
+\textbf{AI}：换了一道同知识点但多一步的，你看？\\
+\textbf{教师}：行。第7页的图不够直观\\
+\textbf{AI}：换了一张分步示意图\\
+\textbf{教师}：末尾加一组分层题，A组要有挑战的，C组要带框架的\\
+\textbf{AI}：加好了\\
+\textbf{教师}：就这些，没别的了
+\end{dialogue}
+
+\begin{aiplan}[AI 汇报执行情况]
+$\checkmark$ \textbf{本次修改完成，共改了3处：}
+\begin{itemize}[leftmargin=1.5em,nosep]
+  \item 第3页：例题升级为两步通分题
+  \item 第7页：换了分步示意图
+  \item 末尾：新增分层练习页（A/B/C三组）
+\end{itemize}
+\medskip
+\textbf{建议：}
+\begin{itemize}[leftmargin=1.5em,nosep]
+  \item 要不要我顺便做一个\textbf{前置知识储备包}？（上次周测5人约分不过关，备几道约分基础题，上课发现有人忘了可以随时调出来）
+  \item 要不要我生成\textbf{讲评提示}？（标注哪道题建议停下追问、讲后出什么堂测）
+\end{itemize}
+\end{aiplan}
+
+\begin{dialogue}
+\textbf{教师}：储备包做一个，讲评提示不用了\\
+\textbf{AI}：约分基础题$\times$3已备好，上课时随时调取。
+\end{dialogue}
+
+教师全程掌控每一处修改。AI执行完后像Windsurf一样汇报执行情况，并\textbf{固定在末尾建议}制作前置知识储备包和讲评提示——教师可以采纳也可以忽略。
+
+\bigskip
+\noindent\textbf{\dtwo{} 整体构思（AI出诊断+修改方案，教师审阅后执行）}
+
+\begin{dialogue}
+\textbf{教师}：帮我更新明天通分这节课的PPT
+\end{dialogue}
+
+\begin{aiplan}[PPT诊断与修改方案]
+\textbf{当前问题：}
+\begin{itemize}[leftmargin=1.5em,nosep]
+  \item 第3页例题偏易，A组无挑战
+  \item 第5--6页缺分步拆解，C组8人上次通分不及格
+  \item 全篇无前置复习，但5人约分概念未掌握
+  \item 缺少分层练习环节
+\end{itemize}
+\medskip
+\textbf{修改计划：}
+\begin{enumerate}[leftmargin=1.5em,nosep]
+  \item 第2页后插入约分快速复习（1页，2分钟）
+  \item 第3页例题升级为两步通分题
+  \item 第6页后插入分步拆解引导页
+  \item 末尾增加分层练习页：A组变式+应用延伸 / B组巩固$\times$3 / C组分步填空$\times$2
+  \item 另备3道约分基础题作为课堂应急储备
+\end{enumerate}
+\medskip
+要执行这个方案吗？
+\end{aiplan}
+
+\begin{dialogue}
+\textbf{教师}：第2点不用改，其余执行\\
+\textbf{AI}：已完成。修改后的PPT在这里，要预览吗？
+\end{dialogue}
+
+AI像经验丰富的同事一样主动诊断并制定系统性方案。教师审阅计划后一键执行，也可以对个别点切到\done{}逐项批示微调。
+
+\bigskip
+\noindent\textbf{\dthree{} 全权委托（AI构思+执行，教师只看最终版）}
+
+\begin{dialogue}
+\textbf{教师}：通分那课的PPT你全权处理，我直接看结果\\[6pt]
+\textit{AI：自主完成诊断$\rightarrow$制定方案$\rightarrow$执行修改$\rightarrow$排版$\rightarrow$储备前置题}\\[6pt]
+\textit{5分钟后——}\\[4pt]
+\textbf{AI}：改好了。主要改了4处，新增了分层练习页和前置复习页，另外备了3道应急题。你可以翻一遍确认，也可以直接用。
+\end{dialogue}
+
+教师彻底放权。适合AI已经证明过自己能力、教师信任度高的阶段。
+
+\bigskip
+\noindent\textbf{备课环节统一输出物}（无论用哪种深度）：
+\begin{itemize}[leftmargin=2em,nosep]
+  \item[$\checkmark$] 更新后的PPT（含分层题目，照顾A/B/C三类学生）
+  \item[$\checkmark$] 前置知识储备包（上课时发现学生忘了随时调取）
+  \item[$\checkmark$] 讲评提示（哪道题建议停下追问、讲后给什么堂测）
+\end{itemize}
+
+%% ============================================================
+\subsection{授课环节}
+
+\subsubsection*{教师原始工作流（无产品时）}
+
+\begin{oldflow}
+按PPT讲课\\
+$\rightarrow$ 讲到第5题，发现好几个学生脸上写着"听不懂"\\
+$\rightarrow$ 停下来重新讲一遍（但其他学生在等）\\
+$\rightarrow$ 想给差生出个简单的练一下，但手头没有现成的\\
+$\rightarrow$ 想起来昨天好像存了几道基础题在U盘里\\
+$\rightarrow$ 翻半天找不到\\
+$\rightarrow$ 算了，继续讲
+\end{oldflow}
+
+\subsubsection*{产品嵌入后——三种交互深度}
+
+授课环节以备课阶段的储备素材为弹药库，教师\textbf{通过对话框（文字/语音）选择性使用}：
+
+\bigskip
+\noindent\textbf{\done{} 逐项批示（教师主动下达具体指令）}
+
+\begin{dialogue}
+\textit{教师正常按PPT讲课，讲到通分发现C组跟不上}\\[4pt]
+\textbf{教师}（对话框/语音）：出道基础的给他们练\\
+\textbf{AI}：$\rightarrow$ 从备课储备中调出一道基础练习 $\rightarrow$ 投屏展示\\
+\textbf{教师}：换一道，这个他们做过了\\
+\textbf{AI}：$\rightarrow$ 换了一道\\
+\textbf{教师}：行\\
+\textit{$\rightarrow$ 该素材自动记录，进入课后推送队列}
+\end{dialogue}
+
+教师完全掌控课堂节奏。AI只是帮教师从备课储备中快速调取，省去翻U盘找文件的时间。
+
+\bigskip
+\noindent\textbf{\dtwo{} 整体构思（AI基于备课素材分析情况，提出补位建议）}
+
+\begin{dialogue}
+\textbf{教师}：通分这块C组跟不上，帮我想想怎么处理
+\end{dialogue}
+
+\begin{aiplan}[课堂补位建议]
+C组8人上次通分不及格，其中5人约分也不行。建议分两步处理：
+\begin{enumerate}[leftmargin=1.5em,nosep]
+  \item 先投屏约分快速复习（备课时已备好）
+  \item 再用分步引导题让C组跟着做（A/B组同时做PPT第8页的延伸题）
+\end{enumerate}
+要执行吗？
+\end{aiplan}
+
+\begin{dialogue}
+\textbf{教师}：约分不用了，直接用分步引导题\\
+\textbf{AI}：$\rightarrow$ 投屏展示分步引导题 $\rightarrow$ 素材自动记录
+\end{dialogue}
+
+AI不只是调取素材，而是\textbf{分析当前课堂情况并建议一个处理方案}。教师审阅后选择执行或部分修改。
+
+\bigskip
+\noindent\textbf{\dthree{} 全权委托（AI自主判断+自动准备，教师只需确认）}
+
+\begin{dialogue}
+\textit{AI检测到教师在通分计算部分反复讲了两遍（远期：通过录音感知）}\\[4pt]
+\textbf{AI}（侧边浮窗，不打断教师讲课）：你在通分这里讲了两遍，C组可能还是没跟上。我已经准备好了一道分步引导题，随时可以投屏。\\[4pt]
+\textbf{教师}：（瞥一眼）投吧\\
+\textbf{AI}：$\rightarrow$ 投屏展示
+\end{dialogue}
+
+远期目标。AI主动感知课堂状态并预备素材，教师只需一个字确认。MVP阶段此模式仅在教师主动说"你帮我盯着"时启用。
+
+\bigskip
+\noindent\textbf{授课环节通用规则：}
+\begin{itemize}[leftmargin=2em,nosep]
+  \item \textbf{素材来源优先是备课储备}——不是临时从题库搜的，保证和教学进度一致
+  \item \textbf{补位素材不只是题目}——可以是示意图、步骤拆解图、口头提示脚本
+  \item \textbf{课堂素材自动沉淀}——用过什么、没用什么，都记录下来
+  \item \textbf{推送不在课堂发生}——所有素材暂存队列，课后统一推送
+\end{itemize}
+
+%% ============================================================
+\subsection{课后环节}
+
+\subsubsection*{教师原始工作流（无产品时）}
+
+\begin{oldflow}
+下课后回忆今天重点讲了什么\\
+$\rightarrow$ 从题库里找题组卷 \hfill（30--60分钟）\\
+$\rightarrow$ 全班统一一套卷子（没精力分层）\\
+$\rightarrow$ 发到家长群\\
+$\rightarrow$ 第二天收上来批改 \hfill（又30分钟）\\
+$\rightarrow$ 登记成绩\\
+$\rightarrow$ 发现差生根本没做/乱写\\
+$\rightarrow$ 没办法，继续下一课
+\end{oldflow}
+
+\subsubsection*{产品嵌入后——三种交互深度}
+
+课后环节以\textbf{上课时着重讲述的知识和使用过的素材}为依据，对三个层级学生出补练题：
+
+\bigskip
+\noindent\textbf{\done{} 逐项批示（教师逐步指挥出题和推送）}
+
+\begin{dialogue}
+\textit{下课后，AI展示今天课堂沉淀素材清单}\\[4pt]
+\textbf{教师}：今天通分讲得比较多，A组出两道变式延伸\\
+\textbf{AI}：出好了，你看？\\
+\textbf{教师}：行。B组出四道标准巩固\\
+\textbf{AI}：出好了\\
+\textbf{教师}：C组用约分复习加两道分步填空\\
+\textbf{AI}：出好了\\
+\textbf{教师}：C组的小明约分其实还行，主要是不愿意动笔，给他单独出两道手写抄算式的\\
+\textbf{AI}：给小明单独加了2道，推给他家长。其余分组推送？\\
+\textbf{教师}：推吧\\
+\textit{$\rightarrow$ A组$\rightarrow$「数学拓展营」群 / B组$\rightarrow$「数学加油站」群 / C组$\rightarrow$「数学基础组」群 / 小明$\rightarrow$单独推给家长}
+\end{dialogue}
+
+教师完全掌控出什么题、给谁、怎么推。支持针对单个学生的精准定制。
+
+\bigskip
+\noindent\textbf{\dtwo{} 整体构思（AI出分层方案，教师审阅后执行）}
+
+\begin{aiplan}[课后补练方案]
+今天课上重点讲了通分计算，你用了3道补位题。基于课堂记录+学生历史数据，我出了三层补练：
+\begin{itemize}[leftmargin=1.5em,nosep]
+  \item A组（12人）：通分变式+一道应用延伸
+  \item B组（18人）：通分标准流程练习$\times$4
+  \item C组（8人）：约分复习+通分基础分步$\times$3
+\end{itemize}
+要推送到钉钉群吗？
+\end{aiplan}
+
+\begin{dialogue}
+\textbf{教师}：C组的小明单独处理，他主要是不愿意动笔，给他出两道手写抄算式的。其余按方案推\\
+\textbf{AI}：小明单独推家长，其余已推送。
+\end{dialogue}
+
+\bigskip
+\noindent\textbf{\dthree{} 全权委托（AI自动出题+自动推送，教师事后审阅）}
+
+\begin{dialogue}
+\textbf{教师}：（下课前）课后补练你全权处理\\[4pt]
+\textit{AI：自动基于课堂沉淀素材+学生历史数据 $\rightarrow$ 生成三层补练 $\rightarrow$ 自动推送到对应钉钉群 $\rightarrow$ 小明上次两次不动笔，自动给他出行为训练型题目}\\[4pt]
+\textbf{AI}：今天的补练已推送完毕。A组2题/B组4题/C组3题，小明单独出了2道抄写题。你可以随时查看推送记录或撤回。
+\end{dialogue}
+
+\bigskip
+\noindent\textbf{课后环节统一闭环}（无论用哪种深度）：
+
+\begin{notebox}
+补练推送后：学生收到题目（图片/PDF）$\rightarrow$ 家长打印 $\rightarrow$ 纸上完成 $\rightarrow$ 拍照回传 $\rightarrow$ AI辅助批改 $\rightarrow$ 回流"谁完成/卡在第几步/有没有微进步" $\rightarrow$ 这些数据自动成为下次备课的输入
+\end{notebox}
+
+%% ============================================================
+\section{产品交互逻辑的核心突破}
+
+\subsection{AI 的两种定位（随信任递进）}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{>{\bfseries}l Y Y}
+\toprule
+\rowcolor{headbg} & \textbf{实习助教} & \textbf{可靠同事} \\
+\midrule
+类比 & 刚来的大学生实习助教 & 合作多年的老教师搭档 \\
+\rowcolor{rowalt} 能力边界 & 执行教师的具体指令 & 能独立构思系统性方案 \\
+典型行为 & 教师说"第3页换道题"$\rightarrow$AI换 & 教师说"帮我备课"$\rightarrow$AI主动检查PPT并提出整体修改方案 \\
+\rowcolor{rowalt} 信任前提 & 零信任即可开始 & 教师验证过AI的判断力 \\
+适用阶段 & MVP初期 / 新教师首次使用 & 使用数周后 / 教师认可AI素材质量 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+两种定位不是两个产品，而是\textbf{同一个AI在同一份文档上的两种工作姿态}。教师随时可以切换。
+
+\subsection{三种交互深度（对标 Windsurf）}
+
+这是步步最核心的交互创新。三种深度在\textbf{每个教学环节}都适用：
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{>{\bfseries}l Y Y}
+\toprule
+\rowcolor{headbg} & \textbf{程序员用 Windsurf} & \textbf{教师用步步} \\
+\midrule
+\done{} 逐行批注 / 逐项批示 & "这行改一下"$\rightarrow$AI只改这一行 & "第3页换道题"$\rightarrow$AI只换这一道 \\
+\rowcolor{rowalt} \dtwo{} 整体构思+审阅执行 & "重构这个模块"$\rightarrow$AI出方案$\rightarrow$审阅$\rightarrow$执行 & "帮我备课"$\rightarrow$AI出方案$\rightarrow$审阅$\rightarrow$执行 \\
+\dthree{} 全权委托 & "你来做，我看结果" & "你全权处理，我看结果" \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{关键设计原则}
+
+\noindent\textbf{三种深度随时切换，不是三个独立功能。}教师可以在同一次备课中混用：先用"整体构思"让AI出方案，看完方案后对某几页不满意切到"逐项批示"微调，微调完说"其余的你处理"切到"全权委托"。
+
+\medskip
+\noindent\textbf{不是菜单切换，是自然语言自动识别：}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{Y l}
+\toprule
+\rowcolor{headbg}\textbf{教师说的话} & \textbf{AI识别为} \\
+\midrule
+"第3页这道题换一下" & $\rightarrow$ 逐项批示 \\
+\rowcolor{rowalt}"帮我整体看看这个PPT" & $\rightarrow$ 整体构思（先出方案） \\
+"你全权处理，我看结果" & $\rightarrow$ 全权委托 \\
+\rowcolor{rowalt}"这个方案里第2点不用改，其余执行" & $\rightarrow$ 审阅后部分执行 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+教师不需要知道有"三种模式"——AI从语义自动判断参与深度。
+
+\subsection{与传统教育软件的对比}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{>{\bfseries}l Y Y}
+\toprule
+\rowcolor{headbg} & \textbf{传统教育软件} & \textbf{步步} \\
+\midrule
+操作方式 & 选学段$\rightarrow$选年级$\rightarrow$选科目$\rightarrow$选知识点$\rightarrow$选题型$\rightarrow$选难度$\rightarrow$筛选$\rightarrow$翻页$\rightarrow$勾选$\rightarrow$组卷$\rightarrow$导出$\rightarrow$发送 & "帮我备明天的课"$\rightarrow$AI出方案$\rightarrow$"执行" \\
+\rowcolor{rowalt}操作量 & 点击15--30次，耗时30--60分钟 & 对话2--5句，耗时3--10分钟 \\
+交互模式 & 只有一种 & 三种深度自由切换 \\
+\rowcolor{rowalt}本质 & 教师操作系统 & 教师指挥助教 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{一句话总结}
+
+\begin{notebox}
+\textbf{传统教育软件让教师操作系统；步步让教师像程序员使用 Windsurf 一样使用 AI——}同一份文档上，可以逐行批注、可以审阅方案后执行、也可以全权委托只看结果。
+\end{notebox}
+
+%% ============================================================
+\section{演进路径：从实习助教到可靠同事}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{>{\bfseries}l Y Y Y}
+\toprule
+\rowcolor{headbg} & \textbf{当前（MVP）} & \textbf{近期（V1.0）} & \textbf{远期（V2.0）} \\
+\midrule
+AI定位 & 实习助教（听指令干活） & 成长中的助教（能主动发现问题） & 可靠同事（能独立构思方案） \\
+\midrule
+\rowcolor{rowalt}备课 & 教师上传PPT+逐项批示为主 & 教师说"帮我备课"$\rightarrow$AI出整体方案$\rightarrow$审阅执行 & AI提前一天主动准备$\rightarrow$教师看结果 \\
+ & \textit{主要用 \done{} 逐项批示} & \textit{主要用 \dtwo{} 整体构思} & \textit{主要用 \dthree{} 全权委托} \\
+\midrule
+\rowcolor{rowalt}授课 & 教师说"出道基础的"$\rightarrow$AI调取储备 & 教师说"通分不行"$\rightarrow$AI理解语境+主动推荐 & AI自动检测卡点$\rightarrow$主动浮出素材 \\
+ & \textit{主要用 \done{} 逐项批示} & \textit{\done{} \dtwo{} 混用} & \textit{\dtwo{} \dthree{} 混用} \\
+\midrule
+\rowcolor{rowalt}课后 & AI出题$\rightarrow$教师逐项审阅+可定制个别学生 & AI出三层方案$\rightarrow$教师确认执行 & AI自动出题+推送$\rightarrow$教师事后审阅 \\
+ & \textit{主要用 \done{} 逐项批示} & \textit{主要用 \dtwo{} 整体构思} & \textit{主要用 \dthree{} 全权委托} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\medskip
+\noindent\textbf{关键原则：}
+\begin{itemize}[leftmargin=2em,nosep]
+  \item 三种交互深度在每个版本都可用——MVP也支持全权委托，只是AI能力有限，教师自然倾向逐项批示
+  \item 演进的不是"解锁新模式"，而是\textbf{AI变得越来越靠谱}——教师自然从\done{}滑向\dtwo{}\dthree{}
+  \item 这跟程序员用Windsurf一样：新手逐行改，熟练后越来越多地让Cascade整体重构
+\end{itemize}
+
+%% ============================================================
+\section{总结：产品嵌入全景图}
+
+\begin{center}
+\begin{tikzpicture}[
+  phasebox/.style={rectangle,rounded corners=4pt,draw=black,thick,fill=black!3,
+    text width=14cm,minimum height=3.2cm,inner sep=8pt,font=\sffamily\small},
+  phasetitle/.style={font=\sffamily\bfseries\large,anchor=north west},
+  dataflow/.style={-{Stealth[length=5pt]},thick,dashed},
+  >=Stealth
+]
+
+% 备课
+\node[phasebox](prep) at (0,0){};
+\node[phasetitle] at ([xshift=5pt,yshift=-3pt]prep.north west){\color{seccolor}备\quad 课};
+\node[font=\sffamily\small,text width=13cm,anchor=north west] at ([xshift=5pt,yshift=-20pt]prep.north west){
+  教师上传PPT $\rightarrow$ AI更新素材+分层出题+储备前置题+讲评提示\\
+  \done{} 逐项批示："第3页换道题""加个基础的" \quad
+  \dtwo{} 整体构思：AI出方案$\rightarrow$审阅$\rightarrow$执行\\
+  \dthree{} 全权委托："你全权处理，我看结果"
+};
+
+% 箭头
+\draw[->,thick]([yshift=-2pt]prep.south)--++(0,-0.4) node[right,font=\sffamily\footnotesize]{备课素材传递};
+
+% 授课
+\node[phasebox](teach) at (0,-4.2){};
+\node[phasetitle] at ([xshift=5pt,yshift=-3pt]teach.north west){\color{seccolor}授\quad 课};
+\node[font=\sffamily\small,text width=13cm,anchor=north west] at ([xshift=5pt,yshift=-20pt]teach.north west){
+  以备课储备为弹药库 $\rightarrow$ 教师通过对话框选择性使用补位素材\\
+  \done{} 逐项批示："出道基础的给他们练" \quad
+  \dtwo{} 整体构思："C组跟不上，帮我想想"\\
+  \dthree{} 全权委托：（远期）AI自动感知卡点 \quad 通用规则：课堂素材自动沉淀，不立即发群
+};
+
+\draw[->,thick]([yshift=-2pt]teach.south)--++(0,-0.4) node[right,font=\sffamily\footnotesize]{课堂沉淀素材传递};
+
+% 课后
+\node[phasebox](after) at (0,-8.4){};
+\node[phasetitle] at ([xshift=5pt,yshift=-3pt]after.north west){\color{seccolor}课\quad 后};
+\node[font=\sffamily\small,text width=13cm,anchor=north west] at ([xshift=5pt,yshift=-20pt]after.north west){
+  以上课素材+学生数据为依据 $\rightarrow$ 三层级出补练题 $\rightarrow$ 推送钉钉群\\
+  \done{} 逐项批示：教师逐组指挥+可定制单个学生 \quad
+  \dtwo{} 整体构思：AI出方案$\rightarrow$"推吧"\\
+  \dthree{} 全权委托：AI自动出题+推送 $\rightarrow$ 教师事后审阅/撤回
+};
+
+% 数据回流
+\draw[dataflow,rounded corners=8pt]
+  ([xshift=3cm,yshift=-2pt]after.south)--++(0,-0.6)--++(-11,0)--++(0,12.8)
+  --node[above,font=\sffamily\footnotesize]{补练数据回流：谁完成了/卡在哪一步/有没有微进步}++(8,0)
+  --([xshift=-3cm,yshift=2pt]prep.north);
+
+\end{tikzpicture}
+\end{center}
+
+\begin{notebox}
+\textbf{交互方式}：全程对话驱动（文字/语音），不是菜单点选\\
+\textbf{三种深度}：\done{} 逐项批示\quad \dtwo{} 整体构思+审阅执行\quad \dthree{} 全权委托\\
+\textbf{核心创新}：同一份文档上自由切换参与深度，像用Windsurf改代码一样\\
+\textbf{AI演进}：实习助教（听指令）$\rightarrow$ 可靠同事（独立构思方案）
+\end{notebox}
+
+\end{document}

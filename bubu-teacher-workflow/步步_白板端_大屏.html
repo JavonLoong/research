@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1320">
+<title>步步 · 白板端（教室大屏）原型</title>
+<style>
+/* ====== Design tokens（与教师端 / 学生端一致） ====== */
+:root{
+  --primary:#22c993; --primary-dark:#0ea874; --primary-soft:#e8f7f0;
+  --accent:#7d6cf2; --accent-dark:#5b48d6; --accent-soft:#eee9ff;
+  --warn:#f5a623; --warn-soft:#fff4e0;
+  --danger:#e85a5a; --danger-soft:#fde7e7;
+  --text:#1a2332; --muted:#6c7689; --muted-2:#9aa4b8;
+  --line:#e3e6ec; --line-soft:#eef0f4;
+  --surface:#ffffff; --surface-2:#f6f8fa;
+  --bg:#eef1f6;
+  --shadow:0 6px 20px rgba(20,30,55,.08);
+  --shadow-lg:0 16px 50px rgba(20,30,55,.12);
+  --radius:10px; --radius-lg:14px;
+}
+*{ box-sizing:border-box }
+html, body{ margin:0; padding:0; }
+body{
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size:14px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* page intro */
+.page-intro{ max-width:1240px; margin:24px auto 0; padding:0 20px; }
+.page-intro h1{ margin:0 0 6px; font-size:22px; font-weight:800; color:var(--text); }
+.page-intro h1 .sub{ font-size:13px; font-weight:600; color:var(--muted); margin-left:8px; }
+.page-intro > p{ margin:0 0 14px; font-size:13.5px; color:var(--muted); line-height:1.6; }
+.page-intro > p strong{ color:var(--text); }
+.intro-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px; }
+.ic{ background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius-lg); padding:14px 16px; box-shadow:var(--shadow); }
+.ic h3{ margin:0 0 6px; font-size:14px; font-weight:800; }
+.ic p{ margin:0; font-size:12.5px; color:var(--muted); line-height:1.65; }
+.ic strong{ color:var(--text); }
+
+.explain-bar{
+  max-width:1240px; margin:0 auto 18px; padding:10px 18px;
+  display:flex; gap:12px; align-items:center;
+  background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius-lg);
+}
+.eb-icon{ width:30px; height:30px; flex:none; background:var(--primary-soft); color:var(--primary-dark); border-radius:50%; display:grid; place-items:center; font-size:13px; }
+.eb-text{ font-size:13px; color:var(--text); line-height:1.55; }
+.eb-text .key{ color:var(--primary-dark); font-weight:700; }
+
+/* scene tabs */
+.scene-tabs{
+  max-width:1240px; margin:0 auto 18px; padding:0 20px;
+  display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+}
+.scene-tabs .tab{
+  background:var(--surface); border:1px solid var(--line); border-radius:99px;
+  display:inline-flex; align-items:center; gap:6px;
+  padding:8px 16px; font-size:13px; font-weight:600;
+  cursor:pointer; color:var(--text); transition: all .2s;
+  user-select:none;
+}
+.scene-tabs .tab:hover{ border-color:var(--primary); color:var(--primary-dark); }
+.scene-tabs .tab.active{
+  background:var(--primary); color:#fff; border-color:var(--primary);
+  box-shadow: 0 6px 16px rgba(34,201,147,.32);
+}
+.feature-bar{
+  max-width:1240px; margin:0 auto 18px; padding:0 20px;
+  display:grid; grid-template-columns:repeat(5,1fr); gap:10px;
+}
+.feature-pill{
+  min-height:42px; border-radius:999px; border:1px solid var(--line);
+  background:var(--surface); color:var(--text);
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  font-size:14px; font-weight:800; cursor:pointer;
+  box-shadow:0 3px 10px rgba(20,30,55,.05);
+  transition:all .18s ease;
+}
+.feature-pill:hover{ border-color:var(--primary); color:var(--primary-dark); transform:translateY(-1px); }
+.feature-pill.active{ background:var(--primary); color:#fff; border-color:var(--primary); box-shadow:0 8px 20px rgba(34,201,147,.28); }
+.feature-pill .fp-icon{ font-size:16px; line-height:1; }
+.group-mark{
+  width:17px; height:17px; display:inline-block; position:relative; flex:none;
+}
+.group-mark::before{
+  content:""; position:absolute; left:1px; top:1px; width:7px; height:7px; border-radius:3px;
+  background:#7d6cf2; box-shadow:8px 0 0 #22c993, 4px 8px 0 #f59e0b;
+}
+.group-mark::after{
+  content:""; position:absolute; left:4px; top:4px; width:9px; height:9px; border-radius:4px;
+  border:2px solid currentColor; opacity:.42;
+}
+
+/* ====== Whiteboard device shell（大屏外壳） ====== */
+.board-shell{ max-width:1240px; margin: 0 auto 18px; padding: 0 20px; display:flex; justify-content:center; }
+.board-frame{ width:1100px; max-width:100%; position:relative; }
+.board-outer{
+  background: #1a1f2c;
+  padding: 22px 18px 22px;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(20, 30, 55, .26), inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.board-camera{
+  position:absolute; top:6px; left:50%; transform:translateX(-50%);
+  display:flex; gap:6px; align-items:center;
+  font-size:10px; color:#8b94aa; font-weight:600; z-index:2;
+  letter-spacing:.4px;
+}
+.board-camera::before{ content:""; width:6px; height:6px; border-radius:50%; background:#3a4256; box-shadow:0 0 0 2px #232938; }
+.board-screen{
+  width:100%; aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, #f6f8fa 0%, #edf2f7 100%);
+  border-radius: 8px;
+  position:relative; overflow:hidden;
+}
+.board-stand{
+  position:absolute; left:50%; bottom:-32px; transform:translateX(-50%);
+  width:280px; height:14px;
+  background: linear-gradient(180deg, #353b4c 0%, #1a1f2c 100%);
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.18);
+}
+.board-stand::after{
+  content:""; position:absolute; left:50%; top:14px; transform:translateX(-50%);
+  width:140px; height:8px;
+  background: linear-gradient(180deg, #1a1f2c 0%, #0d1018 100%);
+  border-radius: 0 0 12px 12px;
+}
+.board-base-text{
+  position:absolute; left:50%; bottom:-50px; transform:translateX(-50%);
+  font-size:10.5px; color:#8b94aa; font-weight:700; letter-spacing:1.2px;
+}
+
+/* ====== 大屏内部通用 UI ====== */
+.bd-topbar{
+  position:absolute; top:14px; left:18px; right:18px;
+  display:flex; justify-content:space-between; align-items:center;
+  z-index:5;
+}
+.bd-topbar .left, .bd-topbar .right{ display:flex; gap:8px; align-items:center; }
+.chip{
+  display:inline-flex; gap:6px; align-items:center;
+  padding:5px 11px; border-radius:99px;
+  background: var(--surface); border:1px solid var(--line-soft);
+  font-size:12px; font-weight:700; color:var(--text);
+  box-shadow: 0 1px 2px rgba(20,30,55,.04);
+}
+.chip strong{ color: var(--primary-dark); }
+.chip.live{
+  background: var(--danger-soft); color:var(--danger); border-color: rgba(232,90,90,.2);
+}
+.chip.live::before{
+  content:""; width:7px; height:7px; border-radius:50%; background:var(--danger);
+  animation: livePulse 1.4s infinite;
+}
+@keyframes livePulse{ 0%,100%{ opacity:.5; transform:scale(1) } 50%{ opacity:1; transform:scale(1.4) } }
+
+.bd-aibar{
+  position:absolute; left:18px; right:18px; bottom:14px;
+  background: rgba(125,108,242,.94); color:#fff;
+  padding:10px 14px; border-radius:10px;
+  font-size:12.5px; font-weight:600;
+  display:flex; gap:10px; align-items:center;
+  box-shadow: 0 6px 18px rgba(125,108,242,.32);
+  z-index:5;
+}
+.bd-aibar::before{
+  content:"状态"; flex:none;
+  font-weight:800; font-size:10px; letter-spacing:.5px;
+  background: rgba(255,255,255,.22); padding:3px 7px; border-radius:5px;
+}
+.bd-aibar .ai-text{ flex:1; line-height:1.55; }
+.bd-aibar .ai-text strong{ color:#fff7e0; }
+
+/* ====== Scene · welcome ====== */
+.scn-welcome{
+  position:absolute; inset:0; padding: 56px 40px 72px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  background: linear-gradient(135deg, #f0f5ff 0%, #e6f9f3 100%);
+}
+.w-eyebrow{ font-size:14px; color:var(--primary-dark); font-weight:700; letter-spacing:1px; margin-bottom:8px; }
+.w-title{ font-size:48px; font-weight:800; color:var(--text); margin:6px 0 8px; line-height:1.15; }
+.w-sub{ font-size:16px; color:var(--muted); font-weight:500; margin-bottom:22px; }
+.w-cd{
+  display:inline-flex; gap:12px; align-items:baseline;
+  background: var(--surface); padding:12px 22px; border-radius:14px;
+  box-shadow: var(--shadow); border:1px solid var(--line-soft);
+  margin-bottom:20px;
+}
+.w-cd .lab{ font-size:13px; color:var(--muted); font-weight:600; }
+.w-cd .num{ font-size:30px; font-weight:800; color:var(--primary-dark); font-variant-numeric: tabular-nums; }
+.pad-grid{ display:grid; grid-template-columns: repeat(14, 1fr); gap:5px; margin-top: 6px; max-width:520px; width:100%; }
+.pad-grid .p{ aspect-ratio:1; background: var(--primary); border-radius:3px; box-shadow: 0 2px 4px rgba(34,201,147,.22); }
+.pad-grid .p.charge{ background: var(--warn); }
+.pad-grid .p.off{ background: var(--line); box-shadow:none; }
+.pad-stat{ display:flex; gap:14px; margin-top:8px; font-size:12px; color:var(--muted); font-weight:600; }
+.pad-stat span{ display:inline-flex; gap:5px; align-items:center; }
+.pad-stat span::before{ content:""; width:8px; height:8px; border-radius:50%; }
+.pad-stat .p1::before{ background:var(--primary); }
+.pad-stat .p2::before{ background:var(--warn); }
+.pad-stat .p3::before{ background:var(--line); }
+
+/* ====== Scene · teach ====== */
+.scn-teach{ position:absolute; inset:0; padding: 50px 40px 70px; }
+.teach-page{
+  height: 100%; background: var(--surface); border-radius:12px;
+  border: 1px solid var(--line-soft); box-shadow: var(--shadow);
+  padding: 28px 36px; display:flex; flex-direction:column; gap:14px;
+  position:relative;
+}
+.teach-page h2{ margin:0; font-size:28px; font-weight:800; }
+.teach-page .lead{ font-size:15px; color:var(--muted); font-weight:500; line-height:1.7; max-width:75%; }
+.teach-page .lead strong{ color: var(--primary-dark); }
+.teach-vis{ flex:1; display:grid; grid-template-columns: 1fr 1fr; gap:24px; align-items:center; }
+.pizza{
+  width:200px; height:200px; border-radius:50%;
+  background: conic-gradient(var(--warn-soft) 0 25%, #fff 25% 50%, var(--warn-soft) 50% 75%, #fff 75%);
+  border: 4px solid var(--warn);
+  position:relative; margin: 0 auto;
+  box-shadow: 0 8px 20px rgba(245,166,35,.2);
+}
+.pizza::before, .pizza::after{ content:""; position:absolute; background:var(--warn); }
+.pizza::before{ top:0; left:50%; width:4px; height:100%; transform:translateX(-50%); }
+.pizza::after{ left:0; top:50%; width:100%; height:4px; transform:translateY(-50%); }
+.pizza-cap{ text-align:center; font-size:14px; color:var(--muted); font-weight:600; margin-top:10px; }
+.bullet-list{ list-style:none; padding:0; margin:0; font-size:15px; line-height:2; }
+.bullet-list li{ padding-left:24px; position:relative; }
+.bullet-list li::before{ content:"●"; color:var(--primary); font-size:14px; position:absolute; left:6px; top:0; }
+.bullet-list strong{ color:var(--primary-dark); }
+.teacher-mark{
+  position:absolute; left:54%; top:42%;
+  width:200px; height:120px; border:3px dashed var(--danger);
+  border-radius:50% / 30%;
+  transform: rotate(-8deg);
+  pointer-events:none;
+  animation: markIn .8s ease;
+}
+.teacher-mark::after{
+  content:"老师圈了这"; position:absolute; right:-110px; top:50%;
+  background: var(--danger); color:#fff; padding:5px 10px; border-radius:14px;
+  font-size:11.5px; font-weight:700;
+  transform:translateY(-50%);
+  box-shadow: var(--shadow);
+  white-space:nowrap;
+}
+@keyframes markIn{ from{ opacity:0; transform: rotate(-8deg) scale(.6); } to{ opacity:1; transform: rotate(-8deg) scale(1); } }
+.teach-pageinfo{
+  position:absolute; right:18px; top:14px;
+  font-size:12px; color:var(--muted); font-weight:600;
+  background: var(--surface-2); padding:4px 10px; border-radius:12px;
+  border:1px solid var(--line-soft);
+}
+
+/* ====== Scene · live（实时答题） ====== */
+.scn-live{ position:absolute; inset:0; padding: 60px 40px 70px; display:flex; flex-direction:column; gap:10px; }
+.live-q{ font-size:30px; font-weight:800; text-align:center; color:var(--text); margin: 0 0 4px; line-height:1.3; }
+.live-q small{ display:block; font-size:13px; color:var(--muted); font-weight:500; margin-top:4px; }
+.live-q strong{ color: var(--primary-dark); }
+.live-opts{ display:grid; grid-template-columns: repeat(4,1fr); gap:14px; margin: 8px 0 8px; }
+.live-opt{ background: var(--surface); border:2px solid var(--line); border-radius:12px; padding:14px 8px; text-align:center; }
+.live-opt .k{
+  width:34px; height:34px; border-radius:50%;
+  background: var(--primary-soft); color:var(--primary-dark);
+  display:grid; place-items:center;
+  font-size:15px; font-weight:800; margin: 0 auto 6px;
+}
+.live-opt .v{ font-size:22px; font-weight:800; color:var(--text); }
+.live-prog-row{
+  display:flex; gap:18px; align-items:center;
+  background: var(--surface); padding:12px 18px; border-radius:12px;
+  border:1px solid var(--line-soft);
+}
+.live-prog-row .lpr-l{ flex:none; font-size:13px; font-weight:700; color:var(--muted); }
+.live-prog-row .lpr-l strong{ color:var(--text); font-size:18px; }
+.live-bar{ flex:1; height:14px; background: var(--line-soft); border-radius:99px; overflow:hidden; position:relative; }
+.live-bar .fill{
+  position:absolute; left:0; top:0; bottom:0;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-radius:99px; transition: width 1s cubic-bezier(.25,.6,.3,1);
+}
+.live-prog-row .lpr-r{ flex:none; font-size:14px; font-weight:800; color:var(--primary-dark); min-width:40px; text-align:right; }
+.live-fastest{
+  background: var(--surface); border:1px solid var(--line-soft); border-radius:12px;
+  padding:10px 16px; display:flex; gap:14px; align-items:center;
+}
+.live-fastest .lf-l{ font-size:13px; font-weight:700; color:var(--muted); flex:none; }
+.live-fastest .lf-list{ display:flex; gap:14px; flex:1; align-items:center; overflow:hidden; }
+.live-avatar{ display:flex; flex-direction:column; align-items:center; gap:3px; flex:none; }
+.live-avatar .av{
+  width:36px; height:36px; border-radius:50%;
+  background: var(--accent-soft); color: var(--accent-dark);
+  display:grid; place-items:center;
+  font-size:14px; font-weight:800;
+  border: 2px solid var(--accent);
+}
+.live-avatar.gold .av{ background:#fff4d2; color:#a06800; border-color:#f5b840; box-shadow: 0 0 0 3px rgba(245,184,64,.3); }
+.live-avatar .nm{ font-size:11px; color:var(--text); font-weight:700; }
+.live-avatar .rk{ font-size:9px; color:var(--accent-dark); font-weight:800; }
+
+/* ====== Scene · result（揭晓） ====== */
+.scn-result{ position:absolute; inset:0; padding: 56px 60px 80px; display:flex; flex-direction:column; }
+.result-h{ display:flex; gap:10px; align-items:baseline; margin-bottom: 20px; flex-wrap:wrap; }
+.result-h .lab{ font-size:14px; color:var(--muted); font-weight:600; }
+.result-h .ans{
+  font-size:28px; font-weight:800; color:var(--primary-dark);
+  background: var(--primary-soft); padding:6px 16px; border-radius:10px;
+  border:1px solid rgba(34,201,147,.25);
+}
+.result-h .stats{ margin-left:auto; font-size:14px; color:var(--muted); font-weight:600; }
+.result-h .stats strong{ color:var(--primary-dark); font-size:20px; }
+.result-privacy{
+  flex-basis:100%;
+  font-size:12px; color:var(--muted); font-weight:700;
+  display:inline-flex; gap:6px; align-items:center;
+}
+.bars{ display:grid; grid-template-columns:repeat(4,1fr); gap:24px; flex:1; align-items:end; margin-bottom:14px; padding-bottom:30px; }
+.bar-col{ display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; }
+.bar-wrap{ width:100%; height:100%; display:flex; flex-direction:column; justify-content:flex-end; position:relative; }
+.bar{
+  width:100%; background: var(--line-soft); border-radius: 8px 8px 0 0;
+  transition: height 1.2s cubic-bezier(.25,.6,.3,1);
+  display:flex; flex-direction:column; justify-content:flex-end;
+  min-height:6px; position:relative;
+}
+.bar-col.correct .bar{ background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%); box-shadow: 0 -6px 18px rgba(34,201,147,.36); }
+.bar .ct{
+  font-size:14px; font-weight:800; color:var(--text);
+  position:absolute; top:-22px; left:50%; transform:translateX(-50%);
+}
+.bar-col.correct .bar .ct{ color: var(--primary-dark); }
+.bar-col .lab2{ margin-top:8px; font-size:13px; font-weight:600; color:var(--muted); display:flex; gap:6px; align-items:center; }
+.bar-col .lab2 .key{
+  display:inline-block; width:22px; height:22px; line-height:22px; border-radius:50%;
+  background: var(--surface-2); color: var(--text); text-align:center;
+  font-size:12px; font-weight:800;
+}
+.bar-col.correct .lab2 .key{ background: var(--primary); color:#fff; }
+
+/* ====== Scene · draw（抽人） ====== */
+.scn-draw{ position:absolute; inset:0; padding: 58px 56px 82px; display:grid; grid-template-columns: 1fr 1.15fr; gap:32px; align-items:center; }
+.draw-pool{
+  background: var(--surface); border:1px solid var(--line-soft); border-radius:14px;
+  padding:18px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:12px;
+}
+.draw-pool-title{ display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--muted); font-weight:800; }
+.draw-pool-title strong{ color:var(--text); font-size:16px; }
+.draw-list{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.draw-student{
+  height:40px; border-radius:8px; border:1px solid var(--line-soft); background:var(--surface-2);
+  display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; color:var(--text-soft);
+}
+.draw-student.active{ background:var(--primary-soft); color:var(--primary-dark); border-color:rgba(34,201,147,.35); box-shadow:0 0 0 3px rgba(34,201,147,.12); }
+.draw-student.dim{ color:var(--muted-2); }
+.draw-status{ font-size:12px; color:var(--muted); font-weight:700; }
+.draw-info{ flex:0 1 380px; }
+.draw-info .di-h{ font-size:14px; color:var(--muted); font-weight:600; margin-bottom:6px; }
+.draw-info .di-name{ font-size:64px; font-weight:800; color:var(--primary-dark); margin: 4px 0 16px; line-height:1; }
+.draw-info .di-name.pop{ animation: popIn .5s cubic-bezier(.25,.6,.3,1.4); }
+@keyframes popIn{
+  0%{ transform: scale(.4); opacity:0; }
+  60%{ transform: scale(1.18); opacity:1; }
+  100%{ transform: scale(1); opacity:1; }
+}
+.draw-why{
+  background: var(--accent-soft); padding: 14px 16px; border-radius:10px;
+  border: 1px solid rgba(125,108,242,.18);
+  font-size:14px; color:var(--text); line-height:1.7; font-weight:500;
+}
+.draw-why strong{ color: var(--accent-dark); }
+
+/* ====== Scene · group（小组讨论） ====== */
+.scn-group{ position:absolute; inset:0; padding: 50px 30px 80px; display:flex; flex-direction:column; }
+.grp-row{ flex:1; display:grid; grid-template-columns: repeat(4,1fr); gap:14px; margin-top:12px; }
+.grp-card{
+  background: var(--surface); border:1px solid var(--line-soft); border-radius:14px;
+  padding:14px; display:flex; flex-direction:column; gap:10px;
+  box-shadow: var(--shadow);
+}
+.grp-h{ display:flex; gap:8px; align-items:center; }
+.grp-h .gh-k{
+  width:28px; height:28px; border-radius:50%;
+  background: var(--primary); color:#fff; display:grid; place-items:center;
+  font-size:12px; font-weight:800;
+}
+.grp-h .gh-t{ font-size:14px; font-weight:800; }
+.grp-h .gh-t small{ display:block; margin-top:2px; color:var(--muted); font-size:11px; font-weight:700; }
+.grp-h .gh-tag{ margin-left:auto; font-size:10px; padding:2px 8px; border-radius:6px; background:var(--primary-soft); color:var(--primary-dark); font-weight:700; }
+.grp-photo{
+  flex:1; min-height:112px;
+  background:#f8fafc;
+  border:1px solid var(--line-soft);
+  border-radius:10px;
+  overflow:hidden;
+  display:block; font-size:0;
+}
+.grp-photo svg{ width:100%; height:100%; display:block; }
+.scene-art .paper{ fill:#fff; stroke:#dbe4ef; stroke-width:1.5; }
+.scene-art .label{ fill:#607086; font-size:11px; font-weight:800; }
+.scene-art .thin{ stroke:#94a3b8; stroke-width:2; stroke-linecap:round; }
+.scene-art .bold{ stroke:#0f172a; stroke-width:3; stroke-linecap:round; }
+.grp-tags{ display:flex; flex-wrap:wrap; gap:5px; }
+.grp-tags span{ font-size:11px; padding:3px 8px; border-radius:6px; background: var(--accent-soft); color:var(--accent-dark); font-weight:700; }
+
+/* ====== Scene · end（下课总结） ====== */
+.scn-end{ position:absolute; inset:0; padding: 50px 50px 80px; display:flex; flex-direction:column; gap:14px; background: linear-gradient(135deg, #f6efff 0%, #e6f9f3 100%); }
+.end-h{ font-size:30px; font-weight:800; color:var(--text); }
+.end-h small{ display:block; font-size:14px; color:var(--muted); font-weight:500; margin-top:4px; }
+.end-key{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.ek-card{
+  background: var(--surface); border-radius:12px; padding:18px;
+  border:1px solid var(--line-soft); box-shadow: var(--shadow);
+  position:relative;
+}
+.ek-num{
+  width:36px; height:36px; border-radius:50%;
+  background: var(--primary); color:#fff; font-size:18px; font-weight:800;
+  display:grid; place-items:center; margin-bottom:8px;
+}
+.ek-card h4{ margin:0 0 4px; font-size:16px; font-weight:800; }
+.ek-card p{ margin:0; font-size:13px; color:var(--muted); line-height:1.6; }
+.ek-card p strong{ color: var(--primary-dark); }
+
+.end-foot{ display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+.end-card{ background: var(--surface); border-radius:12px; padding:14px 16px; border:1px solid var(--line-soft); }
+.end-card .ec-l{ font-size:13px; color:var(--muted); font-weight:600; margin-bottom:4px; }
+.end-card .ec-t{ font-size:15px; font-weight:700; }
+.end-card.warm{ background: linear-gradient(135deg, var(--warn-soft), #fff); border-color: rgba(245,166,35,.25); }
+
+.scene-actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px; }
+.scene-btn{
+  border:0; background:var(--primary); color:#fff; border-radius:8px;
+  padding:10px 18px; font-size:14px; font-weight:800; cursor:pointer;
+  box-shadow:0 6px 16px rgba(34,201,147,.24);
+}
+.scene-btn.secondary{ background:var(--surface); color:var(--text); border:1px solid var(--line); box-shadow:none; }
+.scene-btn.purple{ background:var(--accent); box-shadow:0 6px 16px rgba(125,108,242,.24); }
+.scene-btn:active{ transform:translateY(1px); }
+.metric-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.metric-card{
+  background:var(--surface); border:1px solid var(--line-soft); border-radius:10px;
+  padding:12px 14px;
+}
+.metric-card .m-num{ font-size:28px; line-height:1; font-weight:800; color:var(--primary-dark); }
+.metric-card .m-lab{ margin-top:5px; font-size:12px; color:var(--muted); font-weight:700; }
+.group-progress{ height:8px; background:var(--line-soft); border-radius:99px; overflow:hidden; }
+.group-progress span{ display:block; height:100%; width:0; background:linear-gradient(90deg,var(--primary),var(--accent)); border-radius:99px; transition:width 1s cubic-bezier(.25,.6,.3,1); }
+.end-mini-list{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:4px; }
+.end-mini-list span{ background:var(--surface-2); border:1px solid var(--line-soft); border-radius:8px; padding:8px 10px; font-size:12px; font-weight:700; color:var(--text); }
+
+/* ====== 三端联动小图 ====== */
+.link-row{
+  max-width:1240px; margin: 56px auto 28px; padding: 0 20px;
+  display:flex; gap:12px; align-items:center; justify-content:center;
+}
+.link-card{
+  flex:1; max-width:300px;
+  background: var(--surface); border:1px solid var(--line-soft);
+  border-radius:14px; padding:12px; text-align:center;
+  box-shadow: var(--shadow);
+}
+.lc-h{ font-size:13px; font-weight:800; color:var(--text); margin-bottom:8px; }
+.lc-mini{
+  width:100%; height:130px; border-radius:10px;
+  background: var(--surface-2);
+  display:grid; place-items:center;
+  border:1px solid var(--line-soft);
+  position:relative; overflow:hidden;
+  font-size:11.5px; color:var(--muted); font-weight:600;
+  padding:6px;
+}
+.lc-foot{ font-size:11px; color:var(--muted); margin-top:8px; }
+.link-arrow{ font-size:22px; color:var(--accent); font-weight:800; }
+.lc-teacher{ background: linear-gradient(135deg, #fff, #f6f8fa); }
+.lc-board{
+  background:#1a1f2c; color:#fff;
+  font-weight:700; font-size:12px;
+}
+.lc-board::before{
+  content:""; position:absolute; left:8px; right:8px; top:8px; bottom:8px;
+  background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
+  border-radius:6px;
+}
+.lc-board > span{ position:relative; z-index:1; color:var(--text); background: rgba(255,255,255,.85); padding:3px 10px; border-radius:6px; }
+.lc-pads{ background: linear-gradient(135deg, #f5f0ff, #ecf9f3); position:relative; }
+.lc-pads .pad-mini{
+  position:absolute; width:11%; aspect-ratio:.74;
+  background:var(--surface); border:1px solid var(--line); border-radius:3px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+.lc-pads .pad-mini.off{ background: var(--line-soft); border-color:var(--line); }
+.lc-pads .pad-mini.on::after{
+  content:""; position:absolute; inset:1.5px; border-radius:2px;
+  background: linear-gradient(135deg, var(--primary-soft), var(--accent-soft));
+}
+
+/* ====== Toast / Modal ====== */
+.toast-stack{ position:fixed; right:20px; top:80px; display:flex; flex-direction:column; gap:8px; z-index:1000; pointer-events:none; }
+.toast{
+  background: var(--surface); border:1px solid var(--line);
+  border-radius:10px; padding:10px 14px; font-size:13px; font-weight:600;
+  box-shadow: var(--shadow); display:flex; gap:8px; align-items:center;
+  transition: opacity .25s, transform .25s; max-width: 320px;
+}
+.toast.ok{ border-left:4px solid var(--primary); }
+.toast.no{ border-left:4px solid var(--danger); }
+.toast.warn{ border-left:4px solid var(--warn); }
+.toast.info{ border-left:4px solid var(--accent); }
+
+.modal-bg{ position:fixed; inset:0; background: rgba(20,30,55,.45); display:none; align-items:center; justify-content:center; z-index:1001; }
+.modal-bg.show{ display:flex; }
+.modal{
+  background: var(--surface); border-radius: var(--radius-lg);
+  padding: 22px 26px; box-shadow: var(--shadow-lg);
+  max-width: 520px; width: 90%; max-height: 80vh; overflow:auto;
+}
+.modal h3{ margin:0 0 12px; font-size:17px; font-weight:800; display:flex; gap:10px; align-items:center; }
+.mh-tag{ font-size:11px; padding:3px 8px; border-radius:6px; background: var(--accent-soft); color:var(--accent-dark); font-weight:800; }
+.m-body{ font-size:13.5px; line-height:1.7; color:var(--text); }
+.m-body p{ margin:0 0 10px; }
+.m-body ul{ margin:0 0 10px; padding-left: 22px; }
+.m-body li{ margin: 4px 0; }
+.m-body strong{ color: var(--primary-dark); }
+.m-body .note{ background: var(--surface-2); padding:10px 12px; border-radius:8px; border-left:3px solid var(--accent); font-size:12.5px; color:var(--muted); margin: 8px 0; }
+.m-body .note.accent{ background: var(--primary-soft); border-left-color: var(--primary); color:var(--text); }
+.m-foot{ display:flex; gap:8px; justify-content:flex-end; margin-top:14px; padding-top:14px; border-top:1px solid var(--line-soft); }
+.m-foot button{
+  border:1px solid var(--line); background:var(--surface); color:var(--text);
+  border-radius:8px; padding:8px 16px; font-size:13px; font-weight:700;
+  cursor:pointer; transition: all .2s;
+}
+.m-foot button:hover{ border-color: var(--primary); color: var(--primary-dark); }
+.m-foot button.pri{ background: var(--primary); color:#fff; border-color: var(--primary); }
+.m-foot button.pri:hover{ background: var(--primary-dark); }
+
+.design-note{
+  max-width:1240px; margin:24px auto 0; padding:0 20px;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:12px;
+}
+.design-note .ic{ box-shadow:none; }
+.foot-note{ text-align:center; font-size:12px; color:var(--muted); padding:18px 20px 50px; max-width:1240px; margin: 0 auto; }
+.radial-tools{position:fixed;right:28px;top:52%;z-index:80;width:58px;height:58px}
+.radial-main,.radial-tool{position:absolute;width:54px;height:54px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--text);font-size:12px;font-weight:900;display:grid;place-items:center;box-shadow:0 10px 26px rgba(15,23,42,.16);cursor:pointer;transition:.2s;font-family:inherit}
+.radial-main{right:0;top:0;background:var(--primary);color:#fff;border-color:var(--primary)}
+.radial-tool{right:2px;top:2px;opacity:0;pointer-events:none}
+.radial-tools.open .radial-tool,.radial-tools:hover .radial-tool{opacity:1;pointer-events:auto}
+.radial-tools.open .radial-tool:nth-child(2),.radial-tools:hover .radial-tool:nth-child(2){transform:translate(-72px,-72px)}
+.radial-tools.open .radial-tool:nth-child(3),.radial-tools:hover .radial-tool:nth-child(3){transform:translate(-88px,0)}
+.radial-tools.open .radial-tool:nth-child(4),.radial-tools:hover .radial-tool:nth-child(4){transform:translate(-72px,72px)}
+.radial-tools.open .radial-tool:nth-child(5),.radial-tools:hover .radial-tool:nth-child(5){transform:translate(0,88px)}
+@media (max-width:900px){
+  .feature-bar{ grid-template-columns:repeat(2,1fr); }
+  .design-note{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+<!-- ===== Page intro ===== -->
+<div class="page-intro">
+  <h1>步步 · 白板端 <span class="sub">教室大屏</span></h1>
+  <p>课堂公共屏，只保留全班需要看的内容。</p>
+</div>
+
+<!-- ===== Core classroom functions ===== -->
+<div class="feature-bar" id="featureBar">
+  <button class="feature-pill active" data-scene="live"><span class="fp-icon">⏱</span>实时答题</button>
+  <button class="feature-pill" data-scene="result"><span class="fp-icon">📊</span>揭晓答案</button>
+  <button class="feature-pill" data-scene="draw"><span class="fp-icon">🎯</span>抽人提问</button>
+  <button class="feature-pill" data-scene="group"><span class="group-mark" aria-hidden="true"></span>小组讨论</button>
+  <button class="feature-pill" data-scene="end"><span class="fp-icon">🌙</span>下课总结</button>
+</div>
+
+<!-- ===== Scene tabs ===== -->
+<div class="scene-tabs" id="sceneTabs" style="display:none">
+  <div class="tab active" data-scene="welcome">📅 上课前</div>
+  <div class="tab" data-scene="teach">📖 课件讲解</div>
+  <div class="tab" data-scene="live">⏱ 实时答题</div>
+  <div class="tab" data-scene="result">📊 揭晓答案</div>
+  <div class="tab" data-scene="draw">🎯 抽人提问</div>
+  <div class="tab" data-scene="group"><span class="group-mark" aria-hidden="true"></span>小组讨论</div>
+  <div class="tab" data-scene="end">🌙 下课总结</div>
+</div>
+
+<!-- ===== Whiteboard device shell ===== -->
+<div class="board-shell">
+  <div class="board-frame">
+    <div class="board-camera">📡 步步教学一体机 · WB-A23</div>
+    <div class="board-outer">
+      <div class="board-screen" id="boardScreen">
+        <!-- 由 JS 渲染 -->
+      </div>
+    </div>
+    <div class="board-stand"></div>
+    <div class="board-base-text">STEP · STEP · CLASSROOM 65"</div>
+  </div>
+</div>
+
+<div class="radial-tools" id="radialTools">
+  <button class="radial-main" id="radialMain">工具</button>
+  <button class="radial-tool" data-board-tool="pen">笔</button>
+  <button class="radial-tool" data-board-tool="eraser">擦</button>
+  <button class="radial-tool" data-board-tool="timer">1分</button>
+  <button class="radial-tool" data-board-tool="feedback">反馈</button>
+</div>
+
+<div class="design-note">
+  <div class="ic">
+    <h3>公共屏</h3>
+    <p>只呈现学生和老师当下都需要看到的状态、题目和结果。</p>
+  </div>
+  <div class="ic">
+    <h3>老师主导</h3>
+    <p>讲解、点名、收题由老师触发，系统只做显示和记录。</p>
+  </div>
+  <div class="ic">
+    <h3>三端联动</h3>
+    <p>教师端发起，学生端提交，大屏显示全班进度。</p>
+  </div>
+</div>
+
+<!-- ===== 三端联动小图 ===== -->
+<div class="link-row">
+  <div class="link-card">
+    <div class="lc-h">👩‍🏫 老师手里</div>
+    <div class="lc-mini lc-teacher">教师手机端 · 上课遥控</div>
+    <div class="lc-foot">点"推送"→ 大屏切换</div>
+  </div>
+  <div class="link-arrow">⇄</div>
+  <div class="link-card">
+    <div class="lc-h">📺 教室前面</div>
+    <div class="lc-mini lc-board"><span id="miniBoardLabel">本端 · 当前展示</span></div>
+    <div class="lc-foot">白板大屏（本页）</div>
+  </div>
+  <div class="link-arrow">⇄</div>
+  <div class="link-card">
+    <div class="lc-h">📱 28 个学生平板</div>
+    <div class="lc-mini lc-pads" id="miniPads"></div>
+    <div class="lc-foot">学生端 · 平板</div>
+  </div>
+</div>
+
+<div class="foot-note">※ 本原型独立运行，所有交互均在浏览器内完成。三端真实使用时通过教室局域网/云端同步。</div>
+
+<!-- ===== Toast / Modal ===== -->
+<div class="toast-stack" id="toastStack"></div>
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="modalTitle">标题 <span class="mh-tag" id="modalTag">说明</span></h3>
+    <div class="m-body" id="modalBody"></div>
+    <div class="m-foot">
+      <button data-act="modalClose">关闭</button>
+      <button class="pri" id="modalPri" data-act="modalClose">我知道了</button>
+    </div>
+  </div>
+</div>
+<script>
+// ============ 全局工具 ============
+const $  = (s, p=document) => p.querySelector(s);
+const $$ = (s, p=document) => Array.from(p.querySelectorAll(s));
+$('#radialMain')?.addEventListener('click',()=>$('#radialTools')?.classList.toggle('open'));
+$$('[data-board-tool]').forEach(btn=>btn.addEventListener('click',()=>{
+  $('#radialTools')?.classList.remove('open');
+  toast('白板工具：' + btn.textContent.trim());
+}));
+
+function toast(msg, type='ok', ms=2200){
+  const stack = $('#toastStack'); if(!stack) return;
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type||'');
+  const ic = type==='no'?'⛔':type==='warn'?'⚠️':type==='info'?'💡':'✓';
+  el.innerHTML = `<span>${ic}</span><span>${msg}</span>`;
+  stack.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateX(20px)'; }, ms-300);
+  setTimeout(()=> el.remove(), ms);
+}
+function showModal(title, html, tag='演示', priText='我知道了'){
+  $('#modalTitle').firstChild.nodeValue = title + ' ';
+  $('#modalTag').textContent = tag;
+  $('#modalBody').innerHTML = html;
+  $('#modalPri').textContent = priText;
+  $('#modalBg').classList.add('show');
+}
+function closeModal(){ $('#modalBg').classList.remove('show'); }
+$('#modalBg').addEventListener('click', e=>{ if(e.target===$('#modalBg')) closeModal(); });
+
+const CLASSMATES = ['李小明','陈思雨','张佳怡','王浩然','赵一诺','孙晨','刘安琪','周航','何雨桐','郑嘉豪','钱乐乐','许知远'];
+
+function padGridHTML(){
+  return Array.from({length:28}, (_,i)=>{
+    const cls = i===11 ? 'charge' : i===27 ? 'off' : '';
+    const label = cls==='off' ? '未到' : cls==='charge' ? '充电' : '在线';
+    return `<div class="p ${cls}" title="${i+1}号平板 ${label}"></div>`;
+  }).join('');
+}
+function avatarHTML(names=CLASSMATES.slice(0,7)){
+  return names.map((n,i)=>`
+    <div class="live-avatar ${i===0?'gold':''}">
+      <div class="av">${n.slice(0,1)}</div>
+      <div class="nm">${n}</div>
+      <div class="rk">#${i+1}</div>
+    </div>`).join('');
+}
+function barAvatars(n){
+  return Array.from({length:n}, (_,i)=>`<span class="a">${i+1}</span>`).join('');
+}
+const GROUP_DISCUSSION = [
+  {id:'1', title:'分披萨：3/4 块', status:'食物', art:'pizza', tags:['分成4份','3/4块'], score:84, detail:'把一个披萨平均分成 4 份，先拿 1/2（2 份），再拿 1/4（1 份），合起来是 3/4。'},
+  {id:'2', title:'时间：3/4 小时', status:'时间', art:'time', tags:['45分钟','3/4小时'], score:76, detail:'把 1 小时平均分成 4 段，每段 15 分钟，3 段就是 45 分钟，也就是 3/4 小时。'},
+  {id:'3', title:'用药：1/2 片', status:'医疗', art:'medicine', tags:['半片药','剂量'], score:92, detail:'把一片药平均分成 2 份，每次吃其中 1 份，就是 1/2 片。这里重点是“平均分”和“单位 1”。'},
+  {id:'4', title:'地图：比例尺', status:'出行', art:'map', tags:['1:50000','实际距离'], score:88, detail:'用比例尺把图上距离和实际距离对应起来，说明分数和比例都在描述“部分与整体”的关系。'}
+];
+function groupArtHTML(type){
+  const art = {
+    pizza:`<svg class="scene-art" viewBox="0 0 220 150" role="img" aria-label="披萨分成四份的图示">
+      <rect class="paper" x="17" y="14" width="186" height="122" rx="18"/>
+      <circle cx="110" cy="72" r="46" fill="#fff7ed" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M110 72 L110 26 A46 46 0 0 1 156 72 Z" fill="#fdba74"/>
+      <path d="M110 72 L156 72 A46 46 0 0 1 110 118 Z" fill="#fb923c"/>
+      <path d="M110 72 L110 118 A46 46 0 0 1 64 72 Z" fill="#fed7aa"/>
+      <path d="M110 26 L110 118 M64 72 L156 72" class="thin"/>
+      <circle cx="126" cy="52" r="4" fill="#ef4444"/><circle cx="138" cy="82" r="4" fill="#ef4444"/><circle cx="94" cy="94" r="4" fill="#ef4444"/>
+      <text x="86" y="131" class="label">1/2 + 1/4 = 3/4</text>
+    </svg>`,
+    time:`<svg class="scene-art" viewBox="0 0 220 150" role="img" aria-label="一小时分成四段的时间图示">
+      <rect class="paper" x="17" y="14" width="186" height="122" rx="18"/>
+      <circle cx="72" cy="66" r="34" fill="#eef2ff" stroke="#7d6cf2" stroke-width="2"/>
+      <path d="M72 66 L72 43 M72 66 L90 78" class="bold"/>
+      <circle cx="72" cy="66" r="4" fill="#22c993"/>
+      <path d="M118 93 H184" class="bold"/>
+      <path d="M118 83 V103 M140 83 V103 M162 83 V103 M184 83 V103" class="thin"/>
+      <rect x="118" y="88" width="50" height="10" rx="5" fill="#22c993"/>
+      <text x="116" y="69" class="label">45 分钟</text><text x="137" y="124" class="label">3/4 小时</text>
+    </svg>`,
+    medicine:`<svg class="scene-art" viewBox="0 0 220 150" role="img" aria-label="药片半片剂量图示">
+      <rect class="paper" x="17" y="14" width="186" height="122" rx="18"/>
+      <rect x="66" y="50" width="88" height="38" rx="19" fill="#fee2e2" stroke="#f43f5e" stroke-width="2" transform="rotate(-26 110 69)"/>
+      <path d="M107 49 L123 85" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="77" cy="106" r="11" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+      <circle cx="113" cy="106" r="11" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+      <circle cx="149" cy="106" r="11" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+      <text x="88" y="131" class="label">每次 1/2 片</text>
+    </svg>`,
+    map:`<svg class="scene-art" viewBox="0 0 220 150" role="img" aria-label="地图比例尺图示">
+      <rect class="paper" x="17" y="14" width="186" height="122" rx="18"/>
+      <path d="M54 45 L92 34 V105 L54 116 Z" fill="#dbeafe" stroke="#60a5fa" stroke-width="2"/>
+      <path d="M92 34 L130 47 V118 L92 105 Z" fill="#ecfdf5" stroke="#22c993" stroke-width="2"/>
+      <path d="M130 47 L166 36 V107 L130 118 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M66 82 C88 62 104 88 124 70 S150 64 158 82" fill="none" stroke="#7d6cf2" stroke-width="4" stroke-linecap="round"/>
+      <path d="M62 126 H142" class="bold"/><path d="M62 119 V133 M102 119 V133 M142 119 V133" class="thin"/>
+      <text x="151" y="131" class="label">1:50000</text>
+    </svg>`
+  };
+  return art[type] || art.pizza;
+}
+function groupCardsHTML(){
+  const groups = GROUP_DISCUSSION;
+  return groups.map(g=>`
+    <div class="grp-card" data-act="groupDetail" data-group="${g.id}">
+      <div class="grp-h"><span class="gh-k">${g.id}</span><span class="gh-t">第 ${g.id} 组<small>${g.title}</small></span><span class="gh-tag">${g.status}</span></div>
+      <div class="grp-photo">${groupArtHTML(g.art)}</div>
+      <div class="grp-tags"><span>${g.tags[0]}</span><span>${g.tags[1]}</span></div>
+      <div class="group-progress"><span data-w="${g.score}%"></span></div>
+    </div>
+  `).join('');
+}
+
+// ============ 8 个场景的 HTML 渲染 ============
+const SCENES = {
+  welcome: () => `
+    <div class="bd-topbar">
+      <div class="left">
+        <span class="chip">📅 周三 11/12</span>
+        <span class="chip">⏰ 14:25</span>
+      </div>
+      <div class="right">
+        <span class="chip">📡 已联网</span>
+        <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">📱 26 / 28 在线</span>
+      </div>
+    </div>
+    <div class="scn-welcome">
+      <div class="w-eyebrow">五年级（3）班 · 第 3 节</div>
+      <div class="w-title">数学 · 分数加减法</div>
+      <div class="w-sub">王老师 · 课件版本 v3.2 · 准备就绪</div>
+      <div class="w-cd">
+        <span class="lab">距上课</span>
+        <span class="num" id="welcomeCD">04:58</span>
+      </div>
+      <div class="pad-grid" id="padGrid"></div>
+      <div class="pad-stat">
+        <span class="p1">已上线 26</span>
+        <span class="p2">充电中 1</span>
+        <span class="p3">未到 1</span>
+      </div>
+    </div>
+    <div class="bd-aibar">
+      <div class="ai-text">课件就绪 · 学生平板 <strong>26/28 在线</strong></div>
+    </div>
+  `,
+  teach: () => `
+    <div class="bd-topbar">
+      <div class="left">
+        <span class="chip">📖 第 5 章 · 分数加减法</span>
+        <span class="chip live">直播中</span>
+      </div>
+      <div class="right">
+        <span class="chip">🖊 老师手写笔已连</span>
+      </div>
+    </div>
+    <div class="scn-teach">
+      <div class="teach-page">
+        <div class="teach-pageinfo">第 3 / 12 页</div>
+        <h2>什么是分数？</h2>
+        <p class="lead">把一个整体<strong>平均分成若干份</strong>，其中的一份或几份就是分数。比如把一张披萨平均分成 4 块，<strong>其中 1 块就是 1/4 个披萨</strong>。</p>
+        <div class="teach-vis">
+          <div>
+            <div class="pizza"></div>
+            <div class="pizza-cap">把披萨平均分成 4 块</div>
+          </div>
+          <ul class="bullet-list">
+            <li><strong>1 整张</strong> = 4 / 4 = 1</li>
+            <li><strong>1 块</strong> = 1 / 4</li>
+            <li><strong>2 块</strong> = 2 / 4 = 1 / 2</li>
+            <li><strong>关键：</strong>必须是<strong>平均分</strong></li>
+          </ul>
+        </div>
+        <div class="teacher-mark"></div>
+      </div>
+      <div class="scene-actions" style="position:absolute;left:40px;bottom:72px;">
+        <button class="scene-btn" data-act="pushLive">推送随堂题</button>
+        <button class="scene-btn secondary" data-act="showTeacherTip">查看 AI 提醒</button>
+      </div>
+    </div>
+    <div class="bd-aibar">
+      <div class="ai-text">讲解中 · 白板与学生端同步</div>
+    </div>
+  `,
+  live: () => `
+    <div class="bd-topbar">
+      <div class="left">
+        <span class="chip live">⏱ 答题中</span>
+        <span class="chip" style="background:var(--warn-soft);color:#a06800">倒计时 <strong id="liveCD" style="margin-left:4px">02:08</strong></span>
+      </div>
+      <div class="right">
+        <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">📊 实时统计</span>
+      </div>
+    </div>
+    <div class="scn-live">
+      <div class="live-q">下面哪个分数最接近 <strong>1/2</strong>？<small>提示：先想想 1/2 等于多少</small></div>
+      <div class="live-opts">
+        <div class="live-opt"><div class="k">A</div><div class="v">2/5</div></div>
+        <div class="live-opt"><div class="k">B</div><div class="v">3/7</div></div>
+        <div class="live-opt"><div class="k">C</div><div class="v">4/9</div></div>
+        <div class="live-opt"><div class="k">D</div><div class="v">5/8</div></div>
+      </div>
+      <div class="live-prog-row">
+        <div class="lpr-l">已答 <strong id="liveAns">17</strong> / 28</div>
+        <div class="live-bar"><div class="fill" id="liveFill" style="width:0%"></div></div>
+        <div class="lpr-r" id="livePct">0%</div>
+      </div>
+      <div class="live-fastest">
+        <div class="lf-l">⚡ 最快 5 名</div>
+        <div class="lf-list" id="lfList"></div>
+      </div>
+      <div class="scene-actions" style="justify-content:center;">
+        <button class="scene-btn" data-act="collectAnswers">收题并揭晓</button>
+        <button class="scene-btn secondary" data-act="showSlowList">查看未答名单</button>
+      </div>
+    </div>
+    <div class="bd-aibar">
+      <div class="ai-text">已答 <strong>17/28</strong> · 可收题或继续等待</div>
+    </div>
+  `,
+  result: () => `
+    <div class="bd-topbar">
+      <div class="left">
+        <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">✅ 答案揭晓</span>
+        <span class="chip">第 1 题 · 单选</span>
+      </div>
+      <div class="right">
+        <span class="chip">⏱ 本题用时 02:30</span>
+      </div>
+    </div>
+    <div class="scn-result">
+      <div class="result-h">
+        <span class="lab">正确答案：</span>
+        <span class="ans">C · 4/9</span>
+        <span class="stats">全班正确率 <strong>39%</strong> · 11 / 28 答对</span>
+        <span class="result-privacy">🔒 大屏仅显示全班汇总，不公开个人对错</span>
+      </div>
+      <div class="bars">
+        <div class="bar-col"><div class="bar-wrap"><div class="bar" data-h="32" style="height:6px"><span class="ct">5</span></div></div><div class="lab2"><span class="key">A</span>2/5</div></div>
+        <div class="bar-col"><div class="bar-wrap"><div class="bar" data-h="20" style="height:6px"><span class="ct">3</span></div></div><div class="lab2"><span class="key">B</span>3/7</div></div>
+        <div class="bar-col correct"><div class="bar-wrap"><div class="bar" data-h="72" style="height:6px"><span class="ct">11</span></div></div><div class="lab2"><span class="key">C</span>4/9</div></div>
+        <div class="bar-col"><div class="bar-wrap"><div class="bar" data-h="58" style="height:6px"><span class="ct">9</span></div></div><div class="lab2"><span class="key">D</span>5/8</div></div>
+      </div>
+      <div class="scene-actions" style="justify-content:center;">
+        <button class="scene-btn purple" data-act="explainWrong">讲评 D 选项错因</button>
+        <button class="scene-btn secondary" data-act="sendRemedial">给错答学生推 1 道同类题</button>
+      </div>
+    </div>
+    <div class="bd-aibar">
+      <div class="ai-text">正确率 <strong>39%</strong> · D 选项需讲评</div>
+    </div>
+  `,
+  draw: () => `
+    <div class="bd-topbar">
+      <div class="left">
+        <span class="chip" style="background:var(--accent-soft);color:var(--accent-dark)">🎯 抽人提问</span>
+        <span class="chip">模式 · 鼓励型</span>
+      </div>
+      <div class="right">
+        <span class="chip">28 名候选</span>
+      </div>
+    </div>
+    <div class="scn-draw">
+      <div class="draw-pool">
+        <div class="draw-pool-title"><span>候选名单</span><strong>28 人</strong></div>
+        <div class="draw-list" id="drawList">
+          <div class="draw-student">李小明</div>
+          <div class="draw-student">陈思雨</div>
+          <div class="draw-student">王浩然</div>
+          <div class="draw-student">赵一诺</div>
+          <div class="draw-student active">张嘉怡</div>
+          <div class="draw-student">孙晨</div>
+          <div class="draw-student">刘安琪</div>
+          <div class="draw-student">周航</div>
+          <div class="draw-student dim">其余 20 人</div>
+        </div>
+        <div class="draw-status" id="drawStatus">正在抽取…</div>
+      </div>
+      <div class="draw-info">
+        <div class="di-h">抽中同学：</div>
+        <div class="di-name" id="drawWaiting" style="font-size:24px;color:var(--muted)">名单抽取中…</div>
+        <div class="di-name pop" id="drawName" style="display:none">张嘉怡</div>
+        <div class="draw-why" id="drawWhy" style="display:none">
+          请回答：5/8 为什么最接近 1/2？
+        </div>
+        <div class="scene-actions">
+          <button class="scene-btn" data-act="rerollDraw">再抽一次</button>
+          <button class="scene-btn secondary" data-act="switchDrawMode">切到关注型</button>
+        </div>
+      </div>
+    </div>
+    <div class="bd-aibar">
+      <div class="ai-text">抽人中 · 课堂锁屏 <strong>10 秒</strong></div>
+    </div>
+  `,
+  group: () => `
+    <div class="bd-topbar">
+      <div class="left">
+        <span class="chip" style="background:var(--accent-soft);color:var(--accent-dark)"><span class="group-mark" aria-hidden="true"></span>小组讨论</span>
+        <span class="chip">主题 · 分数在生活里</span>
+      </div>
+      <div class="right">
+        <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">✅ 4 / 4 组已交</span>
+      </div>
+    </div>
+    <div class="scn-group">
+      <div style="font-size:18px;font-weight:800;color:var(--text)">小组成果展示 · 各组找一个生活场景</div>
+      <div class="grp-row">${groupCardsHTML()}</div>
+    </div>
+    <div class="bd-aibar">
+      <div class="ai-text">第 3 组把“半片药”和“单位 1”讲清楚了，适合先分享；再请第 2 组补充时间换算。</div>
+    </div>
+  `,
+  end: () => `
+    <div class="bd-topbar">
+      <div class="left">
+        <span class="chip">🌙 14:55 下课</span>
+        <span class="chip" style="background:var(--primary-soft);color:var(--primary-dark)">本节用时 30 分钟</span>
+      </div>
+      <div class="right">
+        <span class="chip">📊 课后报告已生成</span>
+      </div>
+    </div>
+    <div class="scn-end">
+      <div class="end-h">今日重点 · 三句话<small>看完再走 ✋</small></div>
+      <div class="end-key">
+        <div class="ek-card"><div class="ek-num">1</div><h4>分数 = 平均分</h4><p>必须把整体<strong>平均</strong>分成若干份。</p></div>
+        <div class="ek-card"><div class="ek-num">2</div><h4>同分母加减</h4><p>分子相加，<strong>分母不变</strong>。</p></div>
+        <div class="ek-card"><div class="ek-num">3</div><h4>异分母先通分</h4><p>找到<strong>公分母</strong>再相加。</p></div>
+      </div>
+      <div class="end-foot">
+        <div class="end-card">
+          <div class="ec-l">📅 明日预告</div>
+          <div class="ec-t">分数应用题 · 单位换算（千克 / 克）</div>
+        </div>
+        <div class="end-card warm">
+          <div class="ec-l">💪 今日鼓励</div>
+          <div class="ec-t">圈选题正确率 92%！比上周提升 14% 👍</div>
+        </div>
+      </div>
+      <div class="end-mini-list">
+        <span>课后自动生成：3 份分层练习</span>
+        <span>教师端待办：批阅 4 份订正</span>
+        <span>学生端推送：错题本 + AI 提示</span>
+        <span>校长端沉淀：优秀课堂片段 1 个</span>
+      </div>
+      <div class="scene-actions">
+        <button class="scene-btn" data-act="publishHomework">发布课后练习</button>
+        <button class="scene-btn secondary" data-act="openReport">查看课堂报告</button>
+      </div>
+    </div>
+    <div class="bd-aibar">
+      <div class="ai-text">课后练习已生成 · 等待发布</div>
+    </div>
+  `,
+};
+let welcomeCDInterval, liveCDInterval, liveAnsInterval;
+
+function renderScene(scene){
+  const fn = SCENES[scene];
+  const screen = $('#boardScreen');
+  if(!fn){ screen.innerHTML = '<div style="padding:80px;text-align:center;color:#999">场景不存在</div>'; return; }
+  // 清理 interval
+  welcomeCDInterval && clearInterval(welcomeCDInterval);
+  liveCDInterval && clearInterval(liveCDInterval);
+  liveAnsInterval && clearInterval(liveAnsInterval);
+  screen.innerHTML = fn();
+  setupSceneEffects(scene);
+  updateMiniBoard(scene);
+}
+
+function setupSceneEffects(scene){
+  // ---- welcome：平板网格 + 距上课倒计时 ----
+  if(scene==='welcome'){
+    const grid = $('#padGrid');
+    if(grid) grid.innerHTML = padGridHTML();
+    let s = 4*60+58;
+    welcomeCDInterval = setInterval(()=>{
+      const el = $('#welcomeCD'); if(!el){ clearInterval(welcomeCDInterval); return; }
+      s--;
+      if(s<0){ el.textContent='上课啦'; clearInterval(welcomeCDInterval); return; }
+      const m = String(Math.floor(s/60)).padStart(2,'0');
+      const ss = String(s%60).padStart(2,'0');
+      el.textContent = m+':'+ss;
+    }, 1000);
+  }
+  // ---- live：进度条 / 最快头像 / 倒计时 / 已答数 ----
+  if(scene==='live'){
+    const lfl = $('#lfList');
+    const names = [['嘉怡','1','gold'],['子涵','2',''],['晓彤','3',''],['家豪','4',''],['雨桐','5','']];
+    if(lfl){
+      lfl.innerHTML = names.map(([n,r,c])=>`
+        <div class="live-avatar ${c}">
+          <div class="av">${n[0]}</div>
+          <div class="nm">${n}</div>
+          <div class="rk">第 ${r} 名</div>
+        </div>`).join('');
+    }
+    setTimeout(()=>{
+      const fill = $('#liveFill'); if(fill) fill.style.width = '60.7%';
+      const pct = $('#livePct'); if(pct) pct.textContent='61%';
+    }, 200);
+    let cd = 2*60+8;
+    liveCDInterval = setInterval(()=>{
+      const el = $('#liveCD'); if(!el){ clearInterval(liveCDInterval); return; }
+      cd--;
+      if(cd<0){ el.textContent='时间到'; clearInterval(liveCDInterval); return; }
+      const m = String(Math.floor(cd/60)).padStart(2,'0');
+      const ss = String(cd%60).padStart(2,'0');
+      el.textContent = m+':'+ss;
+    }, 1000);
+    let ans = 17;
+    liveAnsInterval = setInterval(()=>{
+      const el = $('#liveAns'); if(!el){ clearInterval(liveAnsInterval); return; }
+      if(ans>=27) return;
+      if(Math.random()<0.35){
+        ans++;
+        el.textContent = ans;
+        const p = Math.round(ans/28*100);
+        const fill = $('#liveFill'); if(fill) fill.style.width = p+'%';
+        const pct = $('#livePct'); if(pct) pct.textContent = p+'%';
+      }
+    }, 1500);
+  }
+  // ---- result：柱状图增长（只显示汇总，不展示个人） ----
+  if(scene==='result'){
+    setTimeout(()=>{
+      $$('.bars .bar').forEach(b=>{ b.style.height = b.dataset.h + '%'; });
+    }, 200);
+  }
+  // ---- draw：名单高亮后揭晓 ----
+  if(scene==='draw'){
+    setTimeout(()=>{
+      const wait = $('#drawWaiting'); if(wait) wait.style.display='none';
+      const nm = $('#drawName'); if(nm) nm.style.display='block';
+      const why = $('#drawWhy'); if(why) why.style.display='block';
+      const status = $('#drawStatus'); if(status) status.textContent = '已抽中 · 等待回答';
+      toast('🎯 抽中：张嘉怡', 'info', 1800);
+    }, 900);
+  }
+  // ---- group：小组进度条增长 ----
+  if(scene==='group'){
+    setTimeout(()=>{
+      $$('.group-progress span').forEach(p=>{ p.style.width = p.dataset.w || '70%'; });
+    }, 180);
+  }
+}
+
+function updateMiniBoard(scene){
+  const map = {
+    welcome:'上课前 · 28 平板状态',
+    teach:'课件第 3 页 · 老师讲解',
+    live:'答题中 · 17/28',
+    result:'答案揭晓 · 柱状图',
+    draw:'抽人名单',
+    group:'小组成果',
+    end:'下课总结'
+  };
+  const lab = $('#miniBoardLabel'); if(lab) lab.textContent = map[scene] || '本端';
+  // mini pads
+  const pads = $('#miniPads');
+  if(pads){
+    let h = '';
+    const cols = 7, rows = 4;
+    for(let r=0; r<rows; r++){
+      for(let c=0; c<cols; c++){
+        const i = r*cols + c;
+        if(i>=28) continue;
+        const cls = i===27?'off':'on';
+        h += `<div class="pad-mini ${cls}" style="left:${4+c*13}%;top:${10+r*22}%"></div>`;
+      }
+    }
+    pads.innerHTML = h;
+  }
+}
+
+// 切换 tab
+$$('#sceneTabs .tab').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    $$('#sceneTabs .tab').forEach(x => x.classList.toggle('active', x===t));
+    renderScene(t.dataset.scene);
+    syncFeature(t.dataset.scene);
+  });
+});
+$$('#featureBar .feature-pill').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    jumpScene(b.dataset.scene);
+  });
+});
+
+// 全局事件
+document.addEventListener('click', e=>{
+  const a = e.target.closest('[data-act]');
+  if(!a) return;
+  const act = a.dataset.act;
+  if(act==='modalClose') closeModal();
+  if(act==='pushLive'){
+    toast('已向 28 台学生平板推送随堂题', 'ok', 1800);
+    jumpScene('live');
+  }
+  if(act==='showTeacherTip'){
+    showModal('课中提醒', '<p><strong>可追问：</strong>每份不一样大，还能叫 1/4 吗？</p>', '提醒');
+  }
+  if(act==='collectAnswers'){
+    toast('已收题，准备展示全班分布', 'ok', 1500);
+    jumpScene('result');
+  }
+  if(act==='showSlowList'){
+    showModal('未答名单', '<p><strong>芷雨、明轩、星辰、嘉豪、乐乐、知远、晨晨、雨桐、佳宁、书航、子墨</strong>尚未提交。</p><p>可延长 30 秒后收题。</p>', '课堂状态', '延长 30 秒');
+  }
+  if(act==='explainWrong'){
+    showModal('D 选项错因', '<p>9 名学生选了 <strong>D · 5/8</strong>。</p><p><strong>C · 4/9</strong> 离 1/2 更近。讲评时用数轴比较 4/9、1/2、5/8。</p>', '错因');
+  }
+  if(act==='sendRemedial'){
+    toast('已给错答学生推送 1 道同类题', 'ok', 2200);
+  }
+  if(act==='rerollDraw'){
+    const wait = $('#drawWaiting');
+    const name = $('#drawName');
+    const why = $('#drawWhy');
+    const status = $('#drawStatus');
+    $$('.draw-student').forEach(s=>s.classList.remove('active'));
+    const students = $$('.draw-student');
+    if(students[5]) students[5].classList.add('active');
+    if(status) status.textContent = '正在抽取…';
+    if(wait) wait.style.display='block';
+    if(name){ name.style.display='none'; name.textContent='孙晨'; }
+    if(why){ why.style.display='none'; why.innerHTML='请回答：5/8 为什么最接近 1/2？'; }
+    setTimeout(()=>{
+      if(wait) wait.style.display='none';
+      if(name) name.style.display='block';
+      if(why) why.style.display='block';
+      if(status) status.textContent = '已抽中 · 等待回答';
+      toast('🎯 抽中：孙晨', 'info', 1800);
+    }, 900);
+  }
+  if(act==='switchDrawMode'){
+    showModal('抽人模式已切换', '<p>当前模式：<strong>关注型</strong>。</p><p>系统会优先考虑“举手少、错题多、最近表达机会少”的学生，但仍然由老师决定是否点名。</p>', '课堂公平');
+  }
+  if(act==='groupDetail'){
+    const g = a.dataset.group || 'A';
+    const item = GROUP_DISCUSSION.find(x => x.id === g);
+    const body = item
+      ? `<p><strong>${item.title}</strong></p><p>${item.detail}</p><p><strong>追问：</strong>这里的整体是什么？每一份是不是一样大？</p>`
+      : `<p>${g} 组已提交图片和关键词。</p><p><strong>追问：</strong>整体是什么？每一份一样大吗？</p>`;
+    showModal(`第 ${g} 组成果`, body, '小组');
+  }
+  if(act==='publishHomework'){
+    toast('已发布 3 层课后练习：基础 / 提升 / 挑战', 'ok', 2200);
+  }
+  if(act==='openReport'){
+    showModal('课堂报告', '<div class="metric-row"><div class="metric-card"><div class="m-num">92%</div><div class="m-lab">圈选题正确率</div></div><div class="metric-card"><div class="m-num">9</div><div class="m-lab">通分错因人数</div></div><div class="metric-card"><div class="m-num">3</div><div class="m-lab">需课后跟进</div></div></div><p>报告已同步到教师端，课后批阅页会自动带出本节错因标签。</p>', '课后沉淀');
+  }
+});
+
+function jumpScene(scene){
+  const tab = $(`#sceneTabs .tab[data-scene="${scene}"]`);
+  if(tab){
+    $$('#sceneTabs .tab').forEach(x => x.classList.toggle('active', x===tab));
+  }
+  syncFeature(scene);
+  renderScene(scene);
+}
+function syncFeature(scene){
+  $$('#featureBar .feature-pill').forEach(x => x.classList.toggle('active', x.dataset.scene===scene));
+}
+
+// 初次渲染
+setTimeout(()=>{
+  jumpScene('live');
+}, 50);
+</script>
+</body>
+</html>

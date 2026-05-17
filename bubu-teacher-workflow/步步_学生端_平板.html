@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>步步 — 学生端平板（课堂 + 课后双模式）</title>
+<style>
+:root{
+  --bg:#f5f6f8;--surface:#fff;--surface-2:#fafbfc;--surface-3:#f0f2f5;--surface-active:#f0fdfa;
+  --text:#1f2937;--text-soft:#374151;--muted:#6b7280;--muted-2:#9ca3af;
+  --line:#e5e7eb;--line-soft:#eef0f3;
+  --primary:#10b981;--primary-dark:#059669;--primary-soft:#d1fae5;--primary-soft-2:#ecfdf5;
+  --accent:#7c3aed;--accent-dark:#6d28d9;--accent-soft:#ede9fe;--accent-soft-2:#f5f3ff;
+  --warn:#f59e0b;--warn-soft:#fef3c7;
+  --danger:#ef4444;--danger-soft:#fee2e2;
+  --info:#3b82f6;--info-soft:#dbeafe;
+  --radius:8px;--radius-sm:6px;--radius-lg:12px;--radius-xl:18px;
+  --shadow-1:0 1px 2px rgba(15,23,42,.04);
+  --shadow-2:0 2px 8px rgba(15,23,42,.06);
+  --shadow-3:0 8px 24px rgba(15,23,42,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;padding:24px 0 60px;-webkit-font-smoothing:antialiased}
+
+/* ===== Page intro ===== */
+.page-intro{max-width:1400px;margin:0 auto 16px;padding:0 24px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.intro-left h1{font-size:20px;font-weight:800;letter-spacing:.5px;color:var(--text)}
+.intro-left p{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.6;max-width:760px}
+
+/* ===== Explain bar ===== */
+.explain-bar{max-width:1400px;margin:0 auto 22px;padding:14px 18px;background:#fff;border-radius:var(--radius);border:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.eb-icon{width:34px;height:34px;flex-shrink:0;border-radius:8px;background:var(--primary-soft-2);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid var(--primary-soft)}
+.eb-text h3{font-size:13.5px;color:var(--text);margin-bottom:3px;font-weight:700}
+.eb-text p{font-size:12.5px;color:var(--muted);line-height:1.65}
+.eb-text .key{color:var(--primary-dark);font-weight:700}
+.eb-text .key.accent{color:var(--accent-dark)}
+
+/* ===== Stage (two tablets) ===== */
+.stage{max-width:1400px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start}
+.stage-col{display:flex;flex-direction:column;gap:14px}
+.stage-label{display:flex;justify-content:space-between;align-items:flex-end;padding:0 4px}
+.stage-label .sl-title{font-size:13px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:6px}
+.stage-label .sl-pill{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--surface-3);color:var(--muted)}
+.stage-label .sl-pill.live{background:var(--primary);color:#fff}
+.stage-label .sl-pill.idle{background:var(--accent-soft);color:var(--accent-dark)}
+.stage-label .sl-meta{font-size:11px;color:var(--muted)}
+
+/* ===== Tablet shell ===== */
+.tablet{background:#0f172a;border-radius:38px;padding:13px;box-shadow:0 30px 60px rgba(15,23,42,.18),0 1px 0 rgba(255,255,255,.04) inset;position:relative}
+.tablet::before{content:"";position:absolute;left:50%;top:18px;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:#1e293b}
+.tablet::after{content:"";position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:60px;height:4px;border-radius:2px;background:#1e293b}
+.tablet-screen{background:#fff;border-radius:26px;overflow:hidden;width:100%;aspect-ratio:3/4.05;display:flex;flex-direction:column;position:relative;min-height:660px}
+
+/* iOS-like statusbar */
+.statusbar{display:flex;justify-content:space-between;padding:9px 26px 4px;font-size:11px;font-weight:700;color:var(--text);flex-shrink:0}
+.statusbar .sb-icons{display:flex;gap:5px;align-items:center;font-size:10px}
+.statusbar .sb-icons span{opacity:.85}
+
+/* App bar */
+.appbar2{padding:8px 16px 10px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;border-bottom:1px solid var(--line-soft)}
+.appbar2 .ab-greet{display:flex;align-items:center;gap:10px}
+.appbar2 .ab-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.appbar2 .ab-name{font-size:13px;font-weight:700;color:var(--text)}
+.appbar2 .ab-sub{font-size:10.5px;color:var(--muted);margin-top:1px}
+.appbar2 .ab-tools{display:flex;gap:4px}
+.appbar2 .ab-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface-3);color:var(--muted);cursor:pointer;font-size:14px;position:relative}
+.appbar2 .ab-ico:hover{background:var(--primary-soft-2);color:var(--primary-dark)}
+.appbar2 .ab-ico .dot{position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--danger);border:1.5px solid #fff}
+
+/* live banner (老师在线) */
+.live-bar{margin:8px 12px 0;padding:7px 10px;background:var(--primary-soft-2);border:1px solid var(--primary-soft);border-radius:8px;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--primary-dark);font-weight:600;flex-shrink:0}
+.live-bar .pulse{width:7px;height:7px;border-radius:50%;background:var(--primary);box-shadow:0 0 0 0 rgba(16,185,129,.5);animation:pulse 1.8s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}70%{box-shadow:0 0 0 8px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+.live-bar .grow{flex:1}
+.live-bar .lb-btn{font-size:10.5px;font-weight:700;padding:3px 9px;background:#fff;border-radius:999px;border:1px solid var(--primary-soft);color:var(--primary-dark);cursor:pointer}
+.live-bar .lb-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* scroll area */
+.scroll-area{flex:1;overflow-y:auto;padding:0 12px 12px;min-height:0}
+.scroll-area::-webkit-scrollbar{width:5px}
+.scroll-area::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+
+/* tab panel (课后模式 5 屏) */
+.s-panel{display:none;padding-top:10px}
+.s-panel.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* === Home: stats === */
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.stat-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 10px;text-align:center}
+.stat-card .sc-v{font-size:18px;font-weight:800;color:var(--primary-dark);line-height:1}
+.stat-card .sc-l{font-size:10px;color:var(--muted);margin-top:4px;font-weight:600}
+.stat-card.accent .sc-v{color:var(--accent-dark)}
+.stat-card.warn .sc-v{color:#92400e}
+
+/* Section header */
+.sec-h{display:flex;justify-content:space-between;align-items:center;padding:6px 2px 8px}
+.sec-h h4{font-size:12.5px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:6px}
+.sec-h .sec-meta{font-size:10.5px;color:var(--muted);font-weight:600}
+.sec-h .sec-more{font-size:10.5px;color:var(--primary-dark);cursor:pointer;font-weight:600}
+
+/* task card */
+.task-list{display:flex;flex-direction:column;gap:8px}
+.tcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 11px;cursor:pointer;transition:.15s;position:relative;overflow:hidden}
+.tcard::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:3px;background:var(--primary)}
+.tcard.lv-extend::before{background:var(--accent)}
+.tcard.lv-opt::before{background:var(--warn)}
+.tcard:hover{border-color:var(--primary);box-shadow:var(--shadow-2)}
+.tcard.done{background:var(--primary-soft-2);border-color:var(--primary-soft)}
+.tcard.done::before{background:var(--primary-dark)}
+.tc-top{display:flex;justify-content:space-between;align-items:center;margin-left:6px}
+.tc-title{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px}
+.tc-lvl{font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--primary-soft);color:var(--primary-dark);letter-spacing:.5px}
+.tc-lvl.lv-extend{background:var(--accent-soft);color:var(--accent-dark)}
+.tc-lvl.lv-opt{background:var(--warn-soft);color:#92400e}
+.tc-due{font-size:10.5px;color:var(--muted);font-weight:600}
+.tc-info{margin:5px 0 6px 6px;font-size:11px;color:var(--muted);line-height:1.5}
+.tc-bar{margin-left:6px;height:5px;background:var(--surface-3);border-radius:3px;overflow:hidden}
+.tc-bar > i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--primary),#34d399);transition:width .4s}
+.tcard.lv-extend .tc-bar > i{background:linear-gradient(90deg,var(--accent),#a78bfa)}
+.tc-foot{margin:6px 0 0 6px;display:flex;justify-content:space-between;align-items:center;font-size:10.5px;color:var(--muted-2);font-weight:600}
+.tc-foot .tc-action{color:var(--primary-dark);font-weight:700}
+.tcard.done .tc-action{color:var(--primary-dark)}
+
+/* AI chat (Tab 2) === */
+.chat-wrap{display:flex;flex-direction:column;min-height:520px}
+.chat-meta{padding:10px 12px;background:linear-gradient(135deg,var(--primary-soft-2),var(--accent-soft-2));border-radius:10px;margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.chat-meta .cm-ava{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700}
+.chat-meta h4{font-size:13px;font-weight:800;color:var(--text)}
+.chat-meta p{font-size:10.5px;color:var(--muted);margin-top:2px}
+.chat-body{flex:1;display:flex;flex-direction:column;gap:8px;padding:4px 2px}
+.bubble{padding:8px 11px;border-radius:12px;font-size:12px;line-height:1.55;max-width:82%}
+.bubble.ai{background:#fff;border:1px solid var(--line);align-self:flex-start;border-top-left-radius:4px}
+.bubble.me{background:var(--primary);color:#fff;align-self:flex-end;border-top-right-radius:4px}
+.bubble.ai strong{color:var(--primary-dark)}
+.bubble .hint-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.bubble .hint-pills span{font-size:10.5px;padding:2px 8px;background:var(--primary-soft-2);color:var(--primary-dark);border-radius:999px;border:1px solid var(--primary-soft);cursor:pointer;font-weight:600}
+.bubble .hint-pills span:hover{background:var(--primary);color:#fff}
+.chat-input{margin-top:8px;display:flex;gap:6px;padding:6px;background:#fff;border:1px solid var(--line);border-radius:18px}
+.chat-input input{flex:1;border:0;outline:0;font-size:12.5px;padding:5px 10px;background:transparent;color:var(--text);font-family:inherit}
+.chat-input button{padding:6px 14px;background:var(--primary);color:#fff;border:0;border-radius:14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.chat-input button:hover{background:var(--primary-dark)}
+.chat-tools{display:flex;gap:6px;margin:6px 0 0;flex-wrap:wrap}
+.chat-tools span{font-size:10.5px;padding:3px 9px;background:#fff;border:1px solid var(--line);border-radius:999px;cursor:pointer;color:var(--muted);font-weight:600}
+.chat-tools span:hover{border-color:var(--primary);color:var(--primary-dark)}
+
+/* === Wrong book (Tab 3) === */
+.wb-list{display:flex;flex-direction:column;gap:8px}
+.wb-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 11px}
+.wb-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.wb-tag{font-size:9.5px;font-weight:700;padding:2px 6px;background:var(--danger-soft);color:#991b1b;border-radius:4px;letter-spacing:.5px}
+.wb-tag.fixed{background:var(--primary-soft);color:var(--primary-dark)}
+.wb-meta{font-size:10px;color:var(--muted-2);font-weight:600}
+.wb-q{font-size:12px;color:var(--text);line-height:1.55;font-weight:600;margin-bottom:6px}
+.wb-ans{display:flex;gap:8px;font-size:11px;margin-bottom:6px}
+.wb-ans .lbl{color:var(--muted);font-weight:600}
+.wb-ans .my{color:var(--danger);font-weight:700;text-decoration:line-through;text-decoration-color:rgba(239,68,68,.5)}
+.wb-ans .ok{color:var(--primary-dark);font-weight:700}
+.wb-actions{display:flex;gap:6px;margin-top:8px}
+.wb-actions button{flex:1;padding:6px 10px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--text);font-family:inherit}
+.wb-actions .wb-pri{background:var(--primary);color:#fff;border-color:var(--primary)}
+.wb-actions .wb-pri:hover{background:var(--primary-dark)}
+.wb-actions button:hover{border-color:var(--primary);color:var(--primary-dark)}
+.wb-actions .wb-pri:hover{color:#fff}
+
+/* === Review (Tab 4) === */
+.rev-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rev-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px;cursor:pointer;transition:.15s}
+.rev-card:hover{border-color:var(--primary);box-shadow:var(--shadow-2)}
+.rev-card.full{grid-column:1/-1;background:linear-gradient(135deg,var(--accent-soft-2),#fff)}
+.rev-ico{width:30px;height:30px;border-radius:8px;background:var(--primary-soft-2);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:6px}
+.rev-card.accent .rev-ico{background:var(--accent-soft);color:var(--accent-dark)}
+.rev-card.warn .rev-ico{background:var(--warn-soft);color:#92400e}
+.rev-t{font-size:12.5px;font-weight:800;color:var(--text)}
+.rev-d{font-size:10.5px;color:var(--muted);margin-top:3px;line-height:1.5}
+.rev-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:10.5px}
+.rev-foot .rev-go{color:var(--primary-dark);font-weight:700}
+.rev-foot .rev-cnt{color:var(--muted);font-weight:600}
+.badge-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.badge-row .bdg{font-size:10px;padding:2px 7px;border-radius:999px;background:var(--surface-3);color:var(--muted);font-weight:700}
+.badge-row .bdg.on{background:var(--warn-soft);color:#92400e}
+
+/* === Me (Tab 5) === */
+.me-head{padding:14px 4px 12px;display:flex;align-items:center;gap:12px}
+.me-ava{width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800}
+.me-name{font-size:15px;font-weight:800;color:var(--text)}
+.me-cls{font-size:11px;color:var(--muted);margin-top:2px}
+.me-quote{font-size:10.5px;color:var(--primary-dark);margin-top:4px;font-weight:600}
+.me-portrait{margin-bottom:10px;padding:12px;background:linear-gradient(135deg,var(--primary-soft-2),var(--accent-soft-2));border:1px solid var(--primary-soft);border-radius:10px}
+.me-portrait h5{font-size:11.5px;font-weight:800;color:var(--text);margin-bottom:8px;display:flex;justify-content:space-between}
+.bar-cmp{display:flex;flex-direction:column;gap:6px;font-size:11px}
+.bar-cmp .row{display:flex;align-items:center;gap:6px}
+.bar-cmp .row .nm{width:64px;color:var(--text-soft);font-weight:600}
+.bar-cmp .row .ln{flex:1;height:6px;border-radius:3px;background:#fff;overflow:hidden;border:1px solid var(--line)}
+.bar-cmp .row .ln > i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--primary),#34d399)}
+.bar-cmp .row.weak .ln > i{background:linear-gradient(90deg,var(--warn),#fbbf24)}
+.bar-cmp .row .vl{font-size:10.5px;color:var(--muted);font-weight:700;width:32px;text-align:right}
+
+.set-list{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.set-item{padding:11px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line-soft);cursor:pointer}
+.set-item:last-child{border-bottom:0}
+.set-item:hover{background:var(--surface-2)}
+.set-l{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600;color:var(--text)}
+.set-l .ico{width:24px;height:24px;border-radius:6px;background:var(--surface-3);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:13px}
+.set-r{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.toggle{width:32px;height:18px;border-radius:9px;background:var(--surface-3);position:relative;transition:.2s;flex-shrink:0;cursor:pointer}
+.toggle::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle.on{background:var(--primary)}
+.toggle.on::after{left:16px}
+
+/* === Tabbar (底部) === */
+.tabbar{background:#fff;border-top:1px solid var(--line);padding:7px 8px 9px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;flex-shrink:0}
+.tb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 4px;border-radius:8px;cursor:pointer;font-size:10px;color:var(--muted);font-weight:600;transition:.15s}
+.tb i{font-size:18px;line-height:1;font-style:normal}
+.tb:hover{color:var(--primary-dark);background:var(--primary-soft-2)}
+.tb.active{color:var(--primary-dark);background:var(--primary-soft-2)}
+.tb.has-dot{position:relative}
+.tb.has-dot::after{content:"";position:absolute;top:4px;right:18px;width:6px;height:6px;border-radius:50%;background:var(--danger);border:1.5px solid #fff}
+
+/* ===== 课堂模式 (右平板 cover) ===== */
+.class-cover{position:absolute;inset:0;background:linear-gradient(180deg,#ecfdf5 0%,#fff 25%);display:flex;flex-direction:column}
+.class-bar{padding:10px 14px;background:var(--primary);color:#fff;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.class-bar .cb-pulse{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 0 0 rgba(255,255,255,.7);animation:pulse 1.6s infinite}
+.class-bar .cb-title{font-size:13px;font-weight:800;flex:1}
+.class-bar .cb-timer{font-size:12px;font-weight:700;padding:3px 9px;background:rgba(255,255,255,.18);border-radius:999px;letter-spacing:.5px;font-variant-numeric:tabular-nums}
+
+.class-stage{flex:1;padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+
+/* 共用：问题卡 */
+.q-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow-2)}
+.q-prompt{font-size:11px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:6px;letter-spacing:.5px}
+.q-prompt .qp-tag{padding:2px 8px;background:var(--accent-soft);color:var(--accent-dark);border-radius:4px;font-size:10px}
+.q-text{font-size:15px;font-weight:700;color:var(--text);line-height:1.55;margin-bottom:10px}
+.q-text small{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:4px}
+
+/* 单选题 */
+.opt-list{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface-2);border:1.5px solid var(--line);border-radius:10px;cursor:pointer;transition:.15s;user-select:none}
+.opt:hover{border-color:var(--primary);background:#fff}
+.opt.sel{border-color:var(--primary);background:var(--primary-soft-2)}
+.opt.correct{border-color:var(--primary);background:var(--primary-soft-2)}
+.opt.wrong{border-color:var(--danger);background:var(--danger-soft)}
+.opt .opt-k{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted-2);background:#fff;flex-shrink:0}
+.opt.sel .opt-k{background:var(--primary);color:#fff;border-color:var(--primary)}
+.opt.wrong .opt-k{background:var(--danger);color:#fff;border-color:var(--danger)}
+.opt .opt-t{font-size:13px;color:var(--text);font-weight:600;flex:1}
+
+/* 输入框（听写/填空） */
+.q-input{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:14px;font-weight:600;outline:none;font-family:inherit;background:var(--surface-2);transition:.15s}
+.q-input:focus{border-color:var(--primary);background:#fff}
+.q-input.ok{border-color:var(--primary);background:var(--primary-soft-2);color:var(--primary-dark)}
+.q-input.no{border-color:var(--danger);background:var(--danger-soft)}
+.handwrite-card{border-color:var(--primary-soft);box-shadow:0 10px 28px rgba(16,185,129,.12)}
+.handwrite-card .q-text{position:sticky;top:0;z-index:1;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.unit-basis{margin:0 0 10px;padding:9px 12px;border-radius:10px;background:var(--primary-soft-2);border:1px solid var(--primary-soft);color:var(--primary-dark);font-size:13px;font-weight:900}
+.unit-basis strong{font-size:17px;color:var(--primary-dark)}
+.write-pad{height:330px;border:1.5px dashed #cbd5e1;border-radius:12px;background:linear-gradient(#fff,#fff),repeating-linear-gradient(0deg,transparent 0,transparent 31px,#e5e7eb 32px);position:relative;overflow:hidden}
+.write-pad::before{content:"书写区";position:absolute;left:12px;top:10px;color:var(--muted-2);font-size:12px;font-weight:800}
+.write-stroke{position:absolute;height:3px;background:#111827;border-radius:999px;transform-origin:left center;opacity:.78}
+.write-note{position:absolute;left:48px;color:#111827;font-size:18px;font-weight:700;font-family:"KaiTi","STKaiti","PingFang SC","Microsoft YaHei",sans-serif;letter-spacing:.5px}
+.write-note .hi{color:var(--primary-dark);font-weight:900}
+
+/* 听写 */
+.dict-card{display:flex;align-items:center;gap:10px;padding:14px;background:var(--accent-soft-2);border:1px solid var(--accent-soft);border-radius:12px;margin-bottom:10px}
+.dict-card .audio{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 12px rgba(124,58,237,.3)}
+.dict-card .audio:hover{background:var(--accent-dark)}
+.dict-card .audio.playing{animation:rotate 2s linear infinite}
+@keyframes rotate{to{transform:rotate(360deg)}}
+.dict-card .dt-info h5{font-size:12px;font-weight:800;color:var(--accent-dark)}
+.dict-card .dt-info p{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* 圈选区 */
+.circle-canvas{position:relative;width:100%;aspect-ratio:1.4/1;background:linear-gradient(135deg,#fef3c7,#fde68a 50%,#fbbf24);border-radius:10px;overflow:hidden;cursor:crosshair;margin-bottom:8px}
+.circle-canvas .ck-num{position:absolute;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.85);color:#92400e;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.15);transition:.15s;user-select:none}
+.circle-canvas .ck-num.sel{background:var(--primary);color:#fff;transform:scale(1.15);box-shadow:0 4px 14px rgba(16,185,129,.4)}
+.circle-canvas .ck-hint{position:absolute;left:8px;bottom:6px;font-size:10.5px;color:rgba(146,64,14,.8);font-weight:700;background:rgba(255,255,255,.7);padding:2px 8px;border-radius:6px}
+
+/* 投票饼 */
+.vote-row{display:flex;flex-direction:column;gap:8px}
+.vote-opt{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surface-2);border:1.5px solid var(--line);border-radius:10px;cursor:pointer;transition:.15s}
+.vote-opt:hover{border-color:var(--accent);background:#fff}
+.vote-opt.sel{border-color:var(--accent);background:var(--accent-soft-2)}
+.vote-opt .vo-k{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--muted);background:#fff}
+.vote-opt.sel .vo-k{background:var(--accent);color:#fff;border-color:var(--accent)}
+.vote-opt .vo-t{font-size:13px;color:var(--text);font-weight:600;flex:1}
+
+/* 抽人弹屏 */
+.draw-card{padding:20px 14px;text-align:center;background:linear-gradient(135deg,#fef3c7,#fed7aa);border:1.5px solid #fbbf24;border-radius:14px}
+.draw-card .dc-emo{font-size:42px;line-height:1;margin-bottom:6px}
+.draw-card .dc-t{font-size:15px;font-weight:800;color:#92400e}
+.draw-card .dc-sub{font-size:11px;color:#a16207;margin-top:4px;line-height:1.5}
+
+/* 提交栏 */
+.q-submit-row{display:flex;gap:8px;margin-top:12px}
+.q-submit-row .q-sub-l{flex:1;padding:10px;border-radius:10px;background:var(--surface-3);color:var(--muted);font-size:11.5px;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600}
+.q-submit-row .q-sub-btn{padding:11px 22px;background:var(--primary);color:#fff;border:0;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.5px;transition:.15s;box-shadow:0 4px 14px rgba(16,185,129,.3)}
+.q-submit-row .q-sub-btn:hover{background:var(--primary-dark);transform:translateY(-1px)}
+.q-submit-row .q-sub-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.q-submit-row .q-sub-btn.done{background:var(--primary-dark);box-shadow:none}
+
+/* 反馈条 */
+.q-feedback{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;display:flex;gap:8px;align-items:flex-start;line-height:1.6;display:none}
+.q-feedback.show{display:flex;animation:fadeIn .25s ease}
+.q-feedback.ok{background:var(--primary-soft-2);border:1px solid var(--primary-soft);color:var(--primary-dark)}
+.q-feedback.no{background:var(--danger-soft);border:1px solid #fecaca;color:#991b1b}
+.q-feedback .qf-ico{font-size:16px;line-height:1}
+
+/* 课堂任务切换器 (开发预览用) */
+.cls-switch{padding:8px 14px;background:var(--surface-2);border-top:1px solid var(--line);display:flex;gap:5px;flex-shrink:0;overflow-x:auto}
+.cls-switch::-webkit-scrollbar{display:none}
+.cls-switch .cs-btn{font-size:10.5px;padding:5px 10px;background:#fff;border:1px solid var(--line);border-radius:999px;color:var(--muted);cursor:pointer;font-weight:600;white-space:nowrap;font-family:inherit;flex-shrink:0}
+.cls-switch .cs-btn:hover{border-color:var(--primary);color:var(--primary-dark)}
+.cls-switch .cs-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* ===== Feature grid (底部解读卡) ===== */
+.feat-grid{max-width:1400px;margin:32px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.feat{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;gap:12px;align-items:flex-start}
+.feat .f-ico{width:38px;height:38px;border-radius:10px;background:var(--primary-soft-2);color:var(--primary-dark);border:1px solid var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.feat.accent .f-ico{background:var(--accent-soft);color:var(--accent-dark);border-color:var(--accent-soft)}
+.feat.warn .f-ico{background:var(--warn-soft);color:#92400e;border-color:#fde68a}
+.feat h4{font-size:13px;font-weight:800;color:var(--text);margin-bottom:4px}
+.feat p{font-size:11.5px;color:var(--muted);line-height:1.65}
+.feat p .key{color:var(--primary-dark);font-weight:700}
+.feat.accent p .key{color:var(--accent-dark)}
+
+/* ===== Toast / Modal ===== */
+.toast-stack{position:fixed;top:24px;right:24px;display:flex;flex-direction:column;gap:8px;z-index:9999;pointer-events:none}
+.toast{padding:10px 14px;background:#1f2937;color:#fff;border-radius:8px;font-size:12.5px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.18);display:flex;gap:8px;align-items:center;animation:toastIn .25s ease;max-width:380px;pointer-events:all}
+.toast.ok{background:var(--primary-dark)}
+.toast.warn{background:var(--warn)}
+.toast.no{background:var(--danger)}
+.toast.info{background:var(--info)}
+@keyframes toastIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+.modal-bg{position:absolute;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;z-index:80;opacity:0;pointer-events:none;transition:.2s;padding:18px;border-radius:26px}
+.modal-bg.show{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:var(--radius-lg);padding:0;width:min(520px,100%);max-height:calc(100% - 10px);display:flex;flex-direction:column;overflow:hidden;transform:translateY(20px) scale(.96);transition:.25s cubic-bezier(.16,1,.3,1)}
+.modal-bg.show .modal{transform:none}
+.modal h3{font-size:14.5px;font-weight:800;padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;color:var(--text)}
+.modal h3 .mh-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--primary-soft-2);color:var(--primary-dark)}
+.modal .m-body{padding:16px 18px;font-size:12.5px;color:var(--text-soft);line-height:1.7;overflow-y:auto;max-height:calc(100vh - 260px)}
+.modal .m-body p{margin-bottom:10px}
+.modal .m-body p:last-child{margin-bottom:0}
+.modal .m-body ul{padding-left:18px;margin-bottom:10px}
+.modal .m-body li{margin-bottom:5px}
+.modal .m-body strong{color:var(--primary-dark)}
+.modal .m-body .note{padding:10px 12px;background:var(--primary-soft-2);border-left:3px solid var(--primary);border-radius:6px;font-size:11.5px;color:var(--primary-dark);margin-bottom:10px}
+.modal .m-body .note.accent{background:var(--accent-soft-2);border-left-color:var(--accent);color:var(--accent-dark)}
+.modal .m-body .note.warn{background:var(--warn-soft);border-left-color:var(--warn);color:#92400e}
+.modal .m-foot{padding:11px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;background:var(--surface-2)}
+.modal .m-foot button{padding:7px 16px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--text);font-family:inherit}
+.modal .m-foot button:hover{border-color:var(--primary);color:var(--primary-dark)}
+.modal .m-foot button.pri{background:var(--primary);color:#fff;border-color:var(--primary)}
+.modal .m-foot button.pri:hover{background:var(--primary-dark)}
+
+/* ===== Responsive (压栈) ===== */
+@media (max-width: 1024px){
+  .stage{grid-template-columns:1fr}
+  .feat-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width: 640px){
+  .feat-grid{grid-template-columns:1fr}
+}
+
+</style>
+</head>
+<body>
+
+<!-- ===== Page intro ===== -->
+<div class="page-intro">
+  <div class="intro-left">
+    <h1>步步 · 学生端 · 平板（手写作答优先）</h1>
+    <p><strong>重点 1：课堂手写题。</strong>题目固定在上方，下面只留大面积书写区，并回收完整书写过程；课后 AI 学伴只是第二身份。</p>
+  </div>
+</div>
+
+<!-- ===== Explain bar ===== -->
+<div class="explain-bar">
+  <div class="eb-icon">📱</div>
+  <div class="eb-text">
+    <h3>重点 1 = 课堂手写作答；左屏只说明课后身份，右屏才是课堂接管后的核心界面。</h3>
+    <p>手写题要先强调单位换算依据：<span class="key">1 米 = 100 厘米</span>。学生在平板上写过程，老师回收看到的是步骤、停顿和擦改，不只是最后答案。AI 能力只出现在<span class="key accent">课后</span>，<span class="key accent">不在课堂上代替老师</span>。</p>
+  </div>
+</div>
+
+<!-- ===== Stage ===== -->
+<div class="stage" id="stage">
+
+  <!-- ===== 左：课后模式 ===== -->
+  <div class="stage-col" id="col-home">
+    <div class="stage-label">
+      <div class="sl-title">📚 课后模式 <span class="sl-pill idle">默认主屏</span></div>
+      <div class="sl-meta">王嘉怡 · 五（2）班 · 周三 19:30</div>
+    </div>
+    <div class="tablet">
+      <div class="tablet-screen">
+        <div class="statusbar">
+          <span>19:30</span>
+          <div class="sb-icons"><span>📶</span><span>📡</span><span>🔋 78%</span></div>
+        </div>
+        <div class="appbar2">
+          <div class="ab-greet">
+            <div class="ab-avatar">嘉</div>
+            <div>
+              <div class="ab-name">嘉怡，晚上好</div>
+              <div class="ab-sub">连续打卡 <strong style="color:var(--primary-dark)">14</strong> 天 · 今天还差 2 题</div>
+            </div>
+          </div>
+          <div class="ab-tools">
+            <div class="ab-ico" data-act="search" title="搜索">🔍</div>
+            <div class="ab-ico" data-act="notify" title="消息中心">🔔<span class="dot"></span></div>
+          </div>
+        </div>
+
+        <div class="live-bar" id="liveBar">
+          <span class="pulse"></span>
+          <span class="grow">王老师已离线 · 你在自习模式下，AI 学伴随时可问</span>
+          <button class="lb-btn" data-act="liveBarSwitch">体验"老师推送"</button>
+        </div>
+
+        <div class="scroll-area" id="homeScroll">
+
+          <!-- ===== Tab 1: 今日 ===== -->
+          <div class="s-panel active" data-pane="today">
+            <div class="stat-row">
+              <div class="stat-card"><div class="sc-v">3/5</div><div class="sc-l">基础题</div></div>
+              <div class="stat-card accent"><div class="sc-v">0/3</div><div class="sc-l">拓展题</div></div>
+              <div class="stat-card warn"><div class="sc-v">8</div><div class="sc-l">本周对话</div></div>
+            </div>
+
+            <div class="sec-h"><h4>📋 今日作业</h4><span class="sec-meta">截止 今晚 22:00</span></div>
+            <div class="task-list" id="taskList">
+              <div class="tcard" data-task="t1">
+                <div class="tc-top"><div class="tc-title">分数加减法 · 基础 5 题 <span class="tc-lvl">基础</span></div><span class="tc-due">22:00</span></div>
+                <div class="tc-info">围绕"同分母分数加减"，每题约 1.5 分钟。错了 AI 会立即讲解。</div>
+                <div class="tc-bar"><i style="width:60%"></i></div>
+                <div class="tc-foot"><span>已答 3 / 5</span><span class="tc-action">继续做 →</span></div>
+              </div>
+              <div class="tcard lv-extend" data-task="t2">
+                <div class="tc-top"><div class="tc-title">小华买水果 · 应用题 3 题 <span class="tc-lvl lv-extend">拓展</span></div><span class="tc-due">22:00</span></div>
+                <div class="tc-info">综合运用分数加减，需要看图列式。<strong style="color:var(--accent-dark)">第 2 题是上次错题的同类题</strong>。</div>
+                <div class="tc-bar"><i style="width:0%"></i></div>
+                <div class="tc-foot"><span>未开始</span><span class="tc-action">开始做 →</span></div>
+              </div>
+              <div class="tcard lv-opt" data-task="t3">
+                <div class="tc-top"><div class="tc-title">数学小报 · 我的分数表达 <span class="tc-lvl lv-opt">选修</span></div><span class="tc-due">周日</span></div>
+                <div class="tc-info">把这周学的分数知识做成一张数学小报，自由发挥。可以选择 AI 帮你想思路。</div>
+                <div class="tc-bar"><i style="width:0%"></i></div>
+                <div class="tc-foot"><span>选做 · 不计分</span><span class="tc-action">看示例 →</span></div>
+              </div>
+              <div class="tcard done" data-task="t0">
+                <div class="tc-top"><div class="tc-title">课堂表现 · 老师写给你的 <span class="tc-lvl">已完成</span></div><span class="tc-due">已查看</span></div>
+                <div class="tc-info">"今天圈选题答得很准，应用题再练 2 道就稳了。" — 王老师 17:42</div>
+                <div class="tc-bar"><i style="width:100%"></i></div>
+                <div class="tc-foot"><span>来自课堂</span><span class="tc-action">回信 →</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== Tab 2: AI 学伴 ===== -->
+          <div class="s-panel" data-pane="ai">
+            <div class="chat-meta">
+              <div class="cm-ava">🤖</div>
+              <div>
+                <h4>步步 · AI 学伴</h4>
+                <p>不会的题先讲思路，不直接给答案 · 已陪你聊 12 次</p>
+              </div>
+            </div>
+            <div class="chat-body" id="chatBody">
+              <div class="bubble ai">嗨嘉怡，今天的<strong>"小华买水果"</strong>第 2 题是你上次错过的同类题哦。要不要一起读题？
+                <div class="hint-pills">
+                  <span data-quick="读题">🔍 帮我读题</span>
+                  <span data-quick="思路">💡 给我思路</span>
+                  <span data-quick="例子">📝 一个例子</span>
+                </div>
+              </div>
+              <div class="bubble me">为什么 3/9 要化成 1/3 啊？</div>
+              <div class="bubble ai">好问题！我们看 3 和 9 是不是有共同的"朋友"——能不能被同一个数整除？<br><strong>提示：</strong>3 ÷ 3 = ?，9 ÷ 3 = ?
+                <div class="hint-pills">
+                  <span data-quick="还不懂">😣 还不太懂</span>
+                  <span data-quick="再来一题">▶️ 再来一题练</span>
+                </div>
+              </div>
+            </div>
+            <div class="chat-tools">
+              <span data-quick="语音">🎤 按住说话</span>
+              <span data-quick="拍照">📷 拍照问题</span>
+              <span data-quick="今日复习">📚 今日复习</span>
+              <span data-quick="错题">📕 我的错题</span>
+            </div>
+            <form class="chat-input" id="chatForm" onsubmit="return false">
+              <input id="chatInput" placeholder="问 AI 学伴…（不会的题、不懂的字）" autocomplete="off" />
+              <button type="submit" data-act="chatSend">发送</button>
+            </form>
+          </div>
+
+          <!-- ===== Tab 3: 错题本 ===== -->
+          <div class="s-panel" data-pane="wb">
+            <div class="sec-h"><h4>📕 错题本</h4><span class="sec-meta">本周 3 题 · 修复 1</span></div>
+            <div class="wb-list" id="wbList">
+              <div class="wb-card" data-wb="w1">
+                <div class="wb-top"><span class="wb-tag">分数化简 · 未掌握</span><span class="wb-meta">周一 数学课</span></div>
+                <div class="wb-q">把 <strong style="font-family:Georgia">3/9</strong> 化为最简分数。</div>
+                <div class="wb-ans"><span class="lbl">你写的：</span><span class="my">1/2</span><span class="lbl">应该是：</span><span class="ok">1/3</span></div>
+                <div class="wb-actions">
+                  <button data-act="wbReview" data-wb="w1">看 AI 讲解</button>
+                  <button class="wb-pri" data-act="wbRetry" data-wb="w1">再做一次</button>
+                </div>
+              </div>
+              <div class="wb-card" data-wb="w2">
+                <div class="wb-top"><span class="wb-tag">应用题 · 单位理解</span><span class="wb-meta">周二 作业</span></div>
+                <div class="wb-q">妈妈买了 1/2 千克苹果，又买了 1/4 千克橙子，一共多少<strong>克</strong>？</div>
+                <div class="wb-ans"><span class="lbl">你写的：</span><span class="my">3/4</span><span class="lbl">应该是：</span><span class="ok">750 克</span></div>
+                <div class="wb-actions">
+                  <button data-act="wbReview" data-wb="w2">看 AI 讲解</button>
+                  <button class="wb-pri" data-act="wbRetry" data-wb="w2">再做一次</button>
+                </div>
+              </div>
+              <div class="wb-card" data-wb="w3">
+                <div class="wb-top"><span class="wb-tag fixed">已修复 · 通分计算</span><span class="wb-meta">上周三</span></div>
+                <div class="wb-q">1/2 + 1/3 = ?</div>
+                <div class="wb-ans"><span class="lbl">你写的：</span><span class="my">2/5</span><span class="lbl">应该是：</span><span class="ok">5/6</span></div>
+                <div class="wb-actions">
+                  <button data-act="wbReview" data-wb="w3">复看讲解</button>
+                  <button class="wb-pri" data-act="wbRetry" data-wb="w3">再练同类</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== Tab 4: 复习挑战 ===== -->
+          <div class="s-panel" data-pane="rev">
+            <div class="sec-h"><h4>🎯 复习挑战</h4><span class="sec-meta">AI 根据你的薄弱点出题</span></div>
+            <div class="rev-grid">
+              <div class="rev-card" data-rev="r1">
+                <div class="rev-ico">🧮</div>
+                <div class="rev-t">单元 · 分数加减</div>
+                <div class="rev-d">10 题挑战 · 限时 8 分钟</div>
+                <div class="rev-foot"><span class="rev-cnt">最佳 8/10</span><span class="rev-go">挑战 →</span></div>
+              </div>
+              <div class="rev-card accent" data-rev="r2">
+                <div class="rev-ico">📕</div>
+                <div class="rev-t">错题重练</div>
+                <div class="rev-d">3 道未掌握错题 · 不限时</div>
+                <div class="rev-foot"><span class="rev-cnt">3 题</span><span class="rev-go">开始 →</span></div>
+              </div>
+              <div class="rev-card warn" data-rev="r3">
+                <div class="rev-ico">🎲</div>
+                <div class="rev-t">AI 出题</div>
+                <div class="rev-d">基于你昨天的难点，出 5 题陪你练</div>
+                <div class="rev-foot"><span class="rev-cnt">5 题</span><span class="rev-go">出题 →</span></div>
+              </div>
+              <div class="rev-card" data-rev="r4">
+                <div class="rev-ico">⚡</div>
+                <div class="rev-t">速算闯关</div>
+                <div class="rev-d">60 秒挑战 · 当前第 4 关</div>
+                <div class="rev-foot"><span class="rev-cnt">关卡 4</span><span class="rev-go">开始 →</span></div>
+              </div>
+              <div class="rev-card full" data-rev="r5">
+                <div class="rev-ico" style="background:var(--accent);color:#fff;border:0">⭐</div>
+                <div class="rev-t">本周徽章 · 距离"分数小达人"还差 2 颗 ⭐</div>
+                <div class="rev-d">完成今日基础题 + 1 次错题重练，立即解锁。</div>
+                <div class="badge-row">
+                  <span class="bdg on">⭐ 连续打卡 14 天</span>
+                  <span class="bdg on">⭐ 错题修复 1</span>
+                  <span class="bdg">⭐ 分数小达人</span>
+                  <span class="bdg">⭐ 速算王 · 第 5 关</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== Tab 5: 我的 ===== -->
+          <div class="s-panel" data-pane="me">
+            <div class="me-head">
+              <div class="me-ava">嘉</div>
+              <div>
+                <div class="me-name">王嘉怡</div>
+                <div class="me-cls">培新小学 · 五（2）班 · 学号 28</div>
+                <div class="me-quote">"今天的圈选题很棒！" — 王老师</div>
+              </div>
+            </div>
+
+            <div class="me-portrait">
+              <h5><span>📊 我的学习画像</span><span style="color:var(--primary-dark);font-size:10.5px;cursor:pointer" data-act="portraitMore">详情 →</span></h5>
+              <div class="bar-cmp">
+                <div class="row"><span class="nm">分数计算</span><span class="ln"><i style="width:78%"></i></span><span class="vl">78</span></div>
+                <div class="row"><span class="nm">看图列式</span><span class="ln"><i style="width:65%"></i></span><span class="vl">65</span></div>
+                <div class="row weak"><span class="nm">应用题</span><span class="ln"><i style="width:48%"></i></span><span class="vl">48</span></div>
+                <div class="row"><span class="nm">课堂参与</span><span class="ln"><i style="width:88%"></i></span><span class="vl">88</span></div>
+              </div>
+            </div>
+
+            <div class="sec-h"><h4>⚙️ 设置</h4></div>
+            <div class="set-list">
+              <div class="set-item"><div class="set-l"><div class="ico">🌙</div>夜间模式</div><div class="set-r"><div class="toggle" data-toggle="dark"></div></div></div>
+              <div class="set-item"><div class="set-l"><div class="ico">🔔</div>作业到时提醒</div><div class="set-r"><div class="toggle on" data-toggle="remind"></div></div></div>
+              <div class="set-item"><div class="set-l"><div class="ico">🎤</div>课堂自动开麦</div><div class="set-r"><div class="toggle" data-toggle="mic"></div></div></div>
+              <div class="set-item" data-act="setParent"><div class="set-l"><div class="ico">👨‍👩‍👧</div>家长查看权限</div><div class="set-r">仅作业概览 ›</div></div>
+              <div class="set-item" data-act="setHistory"><div class="set-l"><div class="ico">🕒</div>学习历史</div><div class="set-r">14 天 ›</div></div>
+              <div class="set-item" data-act="setLogout"><div class="set-l"><div class="ico" style="background:var(--danger-soft);color:var(--danger)">🚪</div><span style="color:var(--danger)">退出当前账号</span></div><div class="set-r">›</div></div>
+            </div>
+          </div>
+
+        </div><!-- /scroll-area -->
+
+        <!-- 底部 Tab Bar -->
+        <div class="tabbar" id="tabbar">
+          <div class="tb active" data-tab="today"><i>🏠</i>今日</div>
+          <div class="tb" data-tab="ai"><i>🤖</i>AI 学伴</div>
+          <div class="tb has-dot" data-tab="wb"><i>📕</i>错题本</div>
+          <div class="tb" data-tab="rev"><i>🎯</i>复习</div>
+          <div class="tb" data-tab="me"><i>👤</i>我的</div>
+        </div>
+
+      </div><!-- /tablet-screen -->
+    </div><!-- /tablet -->
+  </div>
+
+  <!-- ===== 右：课堂模式 ===== -->
+  <div class="stage-col" id="col-class">
+    <div class="stage-label">
+      <div class="sl-title">🎓 课堂模式 · 重点 1：手写作答 <span class="sl-pill live">老师推送中</span></div>
+      <div class="sl-meta">题目固定上方 · 书写过程回收</div>
+    </div>
+    <div class="tablet">
+      <div class="tablet-screen">
+
+        <div class="class-cover">
+          <div class="class-bar">
+            <span class="cb-pulse"></span>
+            <span class="cb-title" id="classTitle">王老师 · 手写题</span>
+            <span class="cb-timer" id="classTimer">05:00</span>
+          </div>
+
+          <div class="class-stage" id="classStage">
+            <!-- 默认显示：手写题 -->
+            <div class="q-card handwrite-card">
+              <div class="q-prompt"><span class="qp-tag">重点 1 · 手写题</span><span>题目固定在上方，下面只留作答区</span></div>
+              <div class="q-text">请用自己的话说明：为什么 <strong style="color:var(--primary-dark)">0.8 米 = 80 厘米</strong>？写出换算过程。</div>
+              <div class="unit-basis">先写清：<strong>1 米 = 100 厘米</strong></div>
+              <div class="write-pad" id="writePad">
+                <div class="write-note" style="top:58px"><span class="hi">1米 = 100厘米</span></div>
+                <div class="write-note" style="top:104px">0.8米 = 0.8 × 100厘米</div>
+                <div class="write-note" style="top:150px">= 80厘米</div>
+                <div class="write-note" style="top:196px">所以 0.8米 = 80厘米</div>
+                <span class="write-stroke" style="left:48px;top:82px;width:170px;transform:rotate(.8deg)"></span>
+                <span class="write-stroke" style="left:50px;top:128px;width:250px;transform:rotate(-.6deg)"></span>
+                <span class="write-stroke" style="left:52px;top:174px;width:120px;transform:rotate(.4deg)"></span>
+              </div>
+              <div class="q-submit-row"><div class="q-sub-l">支持手写过程回收</div><button class="q-sub-btn" id="handSubmit">提交</button></div>
+              <div class="q-feedback" id="handFB"><span class="qf-ico">✓</span><span id="handFBText"></span></div>
+            </div>
+          </div>
+
+          <!-- 切换器（开发预览） -->
+          <div class="cls-switch">
+            <button class="cs-btn active" data-class-scene="handwrite">手写题</button>
+            <button class="cs-btn" data-class-scene="mcq">📋 单选</button>
+            <button class="cs-btn" data-class-scene="dict">🎧 听写</button>
+            <button class="cs-btn" data-class-scene="circle">⭕ 圈选</button>
+            <button class="cs-btn" data-class-scene="vote">📊 投票</button>
+            <button class="cs-btn" data-class-scene="draw">🎲 抽到你</button>
+            <button class="cs-btn" data-class-scene="read">🗣️ 朗读</button>
+            <button class="cs-btn" data-class-scene="fill">✍️ 填空</button>
+            <button class="cs-btn" data-class-scene="done">✅ 已提交</button>
+          </div>
+
+        </div><!-- /class-cover -->
+
+      </div><!-- /tablet-screen -->
+    </div>
+  </div>
+
+</div><!-- /stage -->
+
+<!-- ===== Feature grid ===== -->
+<div class="feat-grid">
+  <div class="feat">
+    <div class="f-ico">⚡</div>
+    <div>
+      <h4>课堂上不喧宾夺主</h4>
+      <p>老师推送时<span class="key">全屏接管</span>，AI 入口自动隐藏；课堂结束后回到主屏，AI 学伴才可见。<br>避免学生上课时偷偷"用 AI 写答案"。</p>
+    </div>
+  </div>
+  <div class="feat accent">
+    <div class="f-ico">🤖</div>
+    <div>
+      <h4>AI 不直接给答案</h4>
+      <p>错题本与学伴对话都遵守<span class="key">"先思路、后答案"</span>原则：先抛提示词、追问、给同类例题，最后才确认答案。家长可在"我的"里看到完整对话。</p>
+    </div>
+  </div>
+  <div class="feat warn">
+    <div class="f-ico">📊</div>
+    <div>
+      <h4>错题 ↔ 复习闭环</h4>
+      <p>课堂错的、作业错的会自动进错题本；复习页"错题重练"和"AI 出题"基于<span class="key">真实薄弱点</span>而不是题库随机。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Toast / Modal ===== -->
+<div class="toast-stack" id="toastStack"></div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="modalTitle">标题 <span class="mh-tag" id="modalTag">说明</span></h3>
+    <div class="m-body" id="modalBody"></div>
+    <div class="m-foot">
+      <button data-act="modalClose">关闭</button>
+      <button class="pri" id="modalPri" data-act="modalClose">我知道了</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ 全局工具 ============
+const $  = (s, p=document) => p.querySelector(s);
+const $$ = (s, p=document) => Array.from(p.querySelectorAll(s));
+
+function toast(msg, type='ok', ms=2200){
+  const stack = $('#toastStack'); if(!stack) return;
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type||'');
+  const ic = type==='no'?'⛔':type==='warn'?'⚠️':type==='info'?'💡':'✓';
+  el.innerHTML = `<span>${ic}</span><span>${msg}</span>`;
+  stack.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateX(20px)'; }, ms-300);
+  setTimeout(()=> el.remove(), ms);
+}
+
+function modalHostFrom(anchor){
+  return anchor?.closest?.('.tablet-screen') || $('#col-home .tablet-screen') || document.body;
+}
+function showModal(title, html, tag='演示', priText='我知道了', onPri=null, anchor=null){
+  const modalBg = $('#modalBg');
+  const host = modalHostFrom(anchor);
+  if(modalBg.parentElement !== host) host.appendChild(modalBg);
+  $('#modalTitle').firstChild.nodeValue = title + ' ';
+  $('#modalTag').textContent = tag;
+  $('#modalBody').innerHTML = html;
+  $('#modalPri').textContent = priText;
+  $('#modalPri').onclick = ()=>{ closeModal(); if(onPri) onPri(); };
+  modalBg.classList.add('show');
+}
+function closeModal(){ $('#modalBg').classList.remove('show'); }
+$('#modalBg').addEventListener('click', e => { if(e.target===$('#modalBg')) closeModal(); });
+
+// ============ 课后模式：Tab 切换 ============
+$$('#tabbar .tb').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    const k = t.dataset.tab;
+    $$('#tabbar .tb').forEach(x => x.classList.toggle('active', x===t));
+    $$('.s-panel').forEach(p => p.classList.toggle('active', p.dataset.pane===k));
+    $('#homeScroll').scrollTop = 0;
+  });
+});
+
+// ============ 课堂：单选题逻辑 ============
+const CORRECT_MCQ = 'D';
+let mcqDone = false;
+
+// ============ 课堂场景库 ============
+const SCENES = {
+  mcq: {
+    title:'王老师 · 随堂练', timer:'02:30',
+    html:`<div class="q-card">
+      <div class="q-prompt"><span class="qp-tag">单选题</span><span>第 3 张课件 · 全班 28 人 · 已答 17</span></div>
+      <div class="q-text">下面哪个分数最接近 <strong style="color:var(--primary-dark)">1/2</strong>？<small>提示：先想想 1/2 等于多少。</small></div>
+      <div class="opt-list" id="optList">
+        <div class="opt" data-opt="A"><div class="opt-k">A</div><div class="opt-t">2/5</div></div>
+        <div class="opt" data-opt="B"><div class="opt-k">B</div><div class="opt-t">3/7</div></div>
+        <div class="opt" data-opt="C"><div class="opt-k">C</div><div class="opt-t">4/9</div></div>
+        <div class="opt" data-opt="D"><div class="opt-k">D</div><div class="opt-t">5/8</div></div>
+      </div>
+      <div class="q-submit-row"><div class="q-sub-l" id="optStatus">未选择</div><button class="q-sub-btn" id="optSubmit">提交</button></div>
+      <div class="q-feedback" id="optFB"><span class="qf-ico">✅</span><span id="optFBText"></span></div>
+    </div>`, bind:()=>bindMCQ()
+  },
+  dict: {
+    title:'王老师 · 听写词语', timer:'03:00',
+    html:`<div class="q-card">
+      <div class="q-prompt"><span class="qp-tag" style="background:var(--accent-soft);color:var(--accent-dark)">听写</span><span>词语 1 / 5 · 全班 28 人</span></div>
+      <div class="dict-card">
+        <div class="audio" id="dictAudio">▶</div>
+        <div class="dt-info"><h5>点击播放老师录音</h5><p>语速正常 · 课堂上限播 2 次</p></div>
+      </div>
+      <input class="q-input" id="dictInput" placeholder="听完写下这个词语…" autocomplete="off" />
+      <div class="q-submit-row"><div class="q-sub-l">还能听 1 次</div><button class="q-sub-btn" id="dictSubmit">提交</button></div>
+      <div class="q-feedback" id="dictFB"><span class="qf-ico">✅</span><span id="dictFBText"></span></div>
+    </div>`, bind:()=>bindDict()
+  },
+  circle: {
+    title:'王老师 · 圈出最简分数', timer:'02:00',
+    html:`<div class="q-card">
+      <div class="q-prompt"><span class="qp-tag">圈选</span><span>把所有 <strong>最简分数</strong> 圈出来</span></div>
+      <div class="circle-canvas" id="circleCv">
+        <div class="ck-num" style="left:12%;top:20%" data-v="2/4">2/4</div>
+        <div class="ck-num" style="left:60%;top:14%" data-v="1/3">1/3</div>
+        <div class="ck-num" style="left:28%;top:54%" data-v="3/6">3/6</div>
+        <div class="ck-num" style="left:72%;top:50%" data-v="1/2">1/2</div>
+        <div class="ck-num" style="left:42%;top:78%" data-v="4/8">4/8</div>
+        <span class="ck-hint">点击数字圈出 · 可多选</span>
+      </div>
+      <div class="q-submit-row"><div class="q-sub-l" id="circleStatus">未圈选</div><button class="q-sub-btn" id="circleSubmit">提交</button></div>
+      <div class="q-feedback" id="circleFB"><span class="qf-ico">✅</span><span id="circleFBText"></span></div>
+    </div>`, bind:()=>bindCircle()
+  },
+  vote: {
+    title:'王老师 · 课堂投票', timer:'01:00',
+    html:`<div class="q-card">
+      <div class="q-prompt"><span class="qp-tag" style="background:var(--accent-soft);color:var(--accent-dark)">投票</span><span>无对错 · 选你赞同的</span></div>
+      <div class="q-text">你觉得分数在生活里<strong style="color:var(--accent-dark)">最有用</strong>的地方是？</div>
+      <div class="vote-row">
+        <div class="vote-opt" data-opt="A"><div class="vo-k">A</div><div class="vo-t">分蛋糕 / 切披萨</div></div>
+        <div class="vote-opt" data-opt="B"><div class="vo-k">B</div><div class="vo-t">看时间 / 半小时</div></div>
+        <div class="vote-opt" data-opt="C"><div class="vo-k">C</div><div class="vo-t">买东西打折</div></div>
+        <div class="vote-opt" data-opt="D"><div class="vo-k">D</div><div class="vo-t">医生开药剂量</div></div>
+      </div>
+      <div class="q-submit-row"><div class="q-sub-l" id="voteStatus">未投票</div><button class="q-sub-btn" id="voteSubmit">投票</button></div>
+      <div class="q-feedback" id="voteFB"><span class="qf-ico">📊</span><span id="voteFBText"></span></div>
+    </div>`, bind:()=>bindVote()
+  },
+  draw: {
+    title:'王老师 · 抽人提问', timer:'00:30',
+    html:`<div class="draw-card">
+      <div class="dc-emo">🎯</div>
+      <div class="dc-t">嘉怡，请回答</div>
+      <div class="dc-sub">告诉大家<strong>"5/8 为什么最接近 1/2"</strong>。<br>不会可以求助同桌或老师。</div>
+      <button class="q-sub-btn" id="drawAccept" style="margin-top:14px;display:none">我准备好了 →</button>
+    </div>
+    <div class="q-card" style="margin-top:10px">
+      <div class="q-prompt"><span class="qp-tag">为什么是我</span><span>前 3 题答得最快、准确率高</span></div>
+      <div style="font-size:12px;color:var(--muted);font-weight:500;line-height:1.6">回答完后等待老师切到下一题。</div>
+    </div>`, bind:()=>bindDraw()
+  },
+  read: {
+    title:'王老师 · 课文朗读', timer:'01:30',
+    html:`<div class="q-card">
+      <div class="q-prompt"><span class="qp-tag" style="background:var(--accent-soft);color:var(--accent-dark)">朗读</span><span>第 2 段 · 限时 1 分 30 秒</span></div>
+      <div class="q-text" style="font-size:13.5px;line-height:1.8;background:var(--surface-2);padding:14px;border-radius:8px;font-weight:500;border:1px solid var(--line-soft)">
+        分数表示<strong style="color:var(--primary-dark)">把一个整体平均分成若干份</strong>后，其中的一份或者几份。<br>
+        例如：把一个苹果切成 4 块，其中 1 块就是 <strong>1/4</strong> 个苹果。
+      </div>
+      <div class="q-submit-row"><div class="q-sub-l">🎤 录音准备就绪</div><button class="q-sub-btn" id="readStart">开始朗读</button></div>
+      <div class="q-feedback" id="readFB"><span class="qf-ico">🎙️</span><span id="readFBText"></span></div>
+    </div>`, bind:()=>bindRead()
+  },
+  fill: {
+    title:'王老师 · 填空题', timer:'02:00',
+    html:`<div class="q-card">
+      <div class="q-prompt"><span class="qp-tag">填空</span><span>第 5 张课件 · 全班 28 人 · 已答 11</span></div>
+      <div class="q-text" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">
+        <span>1/2 + 1/4 = </span>
+        <input class="q-input" id="fillIn1" placeholder="?" style="display:inline-block;width:60px;padding:6px 10px;text-align:center;font-size:15px" />
+        <span>/</span>
+        <input class="q-input" id="fillIn2" placeholder="?" style="display:inline-block;width:60px;padding:6px 10px;text-align:center;font-size:15px" />
+      </div>
+      <div class="q-text" style="font-size:11.5px;color:var(--muted);font-weight:500;margin-top:6px"><small>提示：先把分母通分到一样大</small></div>
+      <div class="q-submit-row"><div class="q-sub-l">先通分再相加</div><button class="q-sub-btn" id="fillSubmit">提交</button></div>
+      <div class="q-feedback" id="fillFB"><span class="qf-ico">✅</span><span id="fillFBText"></span></div>
+    </div>`, bind:()=>bindFill()
+  },
+  handwrite: {
+    title:'王老师 · 手写题', timer:'05:00',
+    html:`<div class="q-card handwrite-card">
+      <div class="q-prompt"><span class="qp-tag">重点 1 · 手写题</span><span>题目固定在上方，下面只留作答区</span></div>
+      <div class="q-text">请用自己的话说明：为什么 <strong style="color:var(--primary-dark)">0.8 米 = 80 厘米</strong>？写出换算过程。</div>
+      <div class="unit-basis">先写清：<strong>1 米 = 100 厘米</strong></div>
+      <div class="write-pad" id="writePad">
+        <div class="write-note" style="top:58px"><span class="hi">1米 = 100厘米</span></div>
+        <div class="write-note" style="top:104px">0.8米 = 0.8 × 100厘米</div>
+        <div class="write-note" style="top:150px">= 80厘米</div>
+        <div class="write-note" style="top:196px">所以 0.8米 = 80厘米</div>
+        <span class="write-stroke" style="left:48px;top:82px;width:170px;transform:rotate(.8deg)"></span>
+        <span class="write-stroke" style="left:50px;top:128px;width:250px;transform:rotate(-.6deg)"></span>
+        <span class="write-stroke" style="left:52px;top:174px;width:120px;transform:rotate(.4deg)"></span>
+      </div>
+      <div class="q-submit-row"><div class="q-sub-l">支持手写过程回收</div><button class="q-sub-btn" id="handSubmit">提交</button></div>
+      <div class="q-feedback" id="handFB"><span class="qf-ico">✓</span><span id="handFBText"></span></div>
+    </div>`, bind:()=>bindHandwrite()
+  },
+  done: {
+    title:'王老师 · 已提交', timer:'—',
+    html:`<div class="q-card" style="text-align:center;padding:34px 18px">
+      <div style="font-size:42px;line-height:1;margin-bottom:8px">✅</div>
+      <div style="font-size:14.5px;font-weight:800;color:var(--primary-dark)">已提交，等待下一题</div>
+      <div style="font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.65">老师正在讲解上一题。<br>这个过程<strong style="color:var(--text)">AI 学伴是禁用的</strong>，请认真听讲。</div>
+    </div>
+    <div class="q-card" style="margin-top:10px;background:var(--surface-2);border-style:dashed">
+      <div class="q-prompt"><span class="qp-tag">等待</span><span>下一道题 · 预计 30 秒</span></div>
+      <div style="font-size:12px;color:var(--muted);font-weight:500;text-align:center;padding:6px 0">📺 大屏正在显示讲解…</div>
+    </div>`, bind:null
+  }
+};
+
+function renderClassScene(scene){
+  const s = SCENES[scene] || SCENES.handwrite;
+  mcqDone = false;
+  $('#classTitle').textContent = s.title;
+  $('#classTimer').textContent = s.timer;
+  $('#classStage').innerHTML = s.html;
+  if(s.bind) s.bind();
+}
+
+function bindMCQ(){
+  $$('#optList .opt').forEach(o=>{
+    o.addEventListener('click', ()=>{
+      if(mcqDone) return;
+      $$('#optList .opt').forEach(x => x.classList.toggle('sel', x===o));
+      $('#optStatus').textContent = '已选 ' + o.dataset.opt;
+    });
+  });
+  $('#optSubmit').addEventListener('click', ()=>{
+    if(mcqDone) return;
+    const sel = $('#optList .opt.sel');
+    if(!sel){ toast('请先选一个答案','warn'); return; }
+    mcqDone = true;
+    const ok = sel.dataset.opt === 'D';
+    sel.classList.add(ok?'correct':'wrong');
+    $('#optSubmit').textContent='已提交'; $('#optSubmit').disabled=true; $('#optSubmit').classList.add('done');
+    const fb=$('#optFB'); fb.classList.remove('ok','no'); fb.classList.add('show', ok?'ok':'no');
+    $('#optFB .qf-ico').textContent = ok?'✅':'❌';
+    $('#optFBText').innerHTML = ok?'回答正确！老师看到你答得最快的前 5 个。':'答错了。这道题<strong>晚上会自动进你的错题本</strong>。';
+  });
+}
+
+function bindDict(){
+  const a = $('#dictAudio');
+  a && a.addEventListener('click', ()=>{
+    a.classList.toggle('playing');
+    a.textContent = a.classList.contains('playing')?'❚❚':'▶';
+    toast(a.classList.contains('playing')?'🔊 朗读中…':'⏸ 暂停','info',1200);
+  });
+  const s = $('#dictSubmit');
+  s && s.addEventListener('click', ()=>{
+    const v = $('#dictInput').value.trim();
+    if(!v){ toast('请先写答案','warn'); return; }
+    const ok = v.replace(/\s/g,'') === '滥竽充数';
+    $('#dictInput').classList.add(ok?'ok':'no'); $('#dictInput').disabled = true;
+    s.textContent='已提交'; s.disabled=true; s.classList.add('done');
+    const fb=$('#dictFB'); fb.classList.add('show', ok?'ok':'no');
+    $('#dictFB .qf-ico').textContent = ok?'✅':'❌';
+    $('#dictFBText').innerHTML = ok?'写对了！老师正在看全班正确率。':'再听一遍，注意每个字的偏旁。<strong>错的会进错题本</strong>。';
+  });
+}
+
+function bindCircle(){
+  $$('#circleCv .ck-num').forEach(n=>{
+    n.addEventListener('click', ()=>{
+      n.classList.toggle('sel');
+      const ct = $$('#circleCv .ck-num.sel').length;
+      $('#circleStatus').textContent = ct?('已圈 '+ct+' 个'):'未圈选';
+    });
+  });
+  const s = $('#circleSubmit');
+  s && s.addEventListener('click', ()=>{
+    const sels = $$('#circleCv .ck-num.sel').map(x=>x.dataset.v);
+    if(!sels.length){ toast('先圈出你认为对的','warn'); return; }
+    const need = ['1/3','1/2'];
+    const ok = sels.length===2 && need.every(x=>sels.includes(x));
+    s.textContent='已提交'; s.disabled=true; s.classList.add('done');
+    const fb=$('#circleFB'); fb.classList.add('show', ok?'ok':'no');
+    $('#circleFB .qf-ico').textContent = ok?'✅':'❌';
+    $('#circleFBText').innerHTML = ok?'正确！只有 <strong>1/3</strong> 和 <strong>1/2</strong> 是最简分数。':'再想想——还有哪些分数的分子分母能除以同一个数？';
+  });
+}
+
+function bindVote(){
+  $$('.vote-row .vote-opt').forEach(v=>{
+    v.addEventListener('click', ()=>{
+      $$('.vote-row .vote-opt').forEach(x => x.classList.toggle('sel', x===v));
+      $('#voteStatus').textContent = '已投 ' + v.dataset.opt;
+    });
+  });
+  const s = $('#voteSubmit');
+  s && s.addEventListener('click', ()=>{
+    const sel = $('.vote-row .vote-opt.sel');
+    if(!sel){ toast('请先投一个','warn'); return; }
+    s.textContent='已投票'; s.disabled=true; s.classList.add('done');
+    const fb=$('#voteFB'); fb.classList.add('show','ok');
+    $('#voteFBText').innerHTML = '投票<strong>无对错</strong>。老师正在看全班分布，等下一起讨论。';
+  });
+}
+
+function bindDraw(){
+  setTimeout(()=>{ const a=$('#drawAccept'); if(a) a.style.display='inline-block'; }, 1400);
+}
+
+function bindRead(){
+  const btn = $('#readStart');
+  btn && btn.addEventListener('click', ()=>{
+    if(btn.classList.contains('done')) return;
+    btn.classList.add('done');
+    let t = 0;
+    const iv = setInterval(()=>{
+      t++; btn.textContent = '录音中… 0:'+String(t).padStart(2,'0');
+      if(t>=8){
+        clearInterval(iv);
+        btn.textContent = '已上传 · 等评分';
+        const fb=$('#readFB'); fb.classList.add('show','ok');
+        $('#readFBText').innerHTML = 'AI 给你打分：<strong>流利度 88，发音 92</strong>。老师可以回放你的录音。';
+      }
+    }, 240);
+  });
+}
+
+function bindFill(){
+  const s = $('#fillSubmit');
+  s && s.addEventListener('click', ()=>{
+    const a = $('#fillIn1').value.trim();
+    const b = $('#fillIn2').value.trim();
+    if(!a || !b){ toast('两个空都要填','warn'); return; }
+    const ok = (a==='3') && (b==='4');
+    [$('#fillIn1'),$('#fillIn2')].forEach(i => { i.classList.add(ok?'ok':'no'); i.disabled=true; });
+    s.textContent='已提交'; s.disabled=true; s.classList.add('done');
+    const fb=$('#fillFB'); fb.classList.add('show', ok?'ok':'no');
+    $('#fillFB .qf-ico').textContent = ok?'✅':'❌';
+    $('#fillFBText').innerHTML = ok?'答对了！1/2 通分为 2/4，加 1/4 = 3/4。':'再算一遍：1/2 和 1/4 的<strong>公分母</strong>是几？';
+  });
+}
+function bindHandwrite(){
+  const s = $('#handSubmit');
+  s && s.addEventListener('click', ()=>{
+    s.textContent='已提交'; s.disabled=true; s.classList.add('done');
+    const fb=$('#handFB'); fb.classList.add('show','ok');
+    $('#handFBText').innerHTML='手写过程已提交给王老师，AI 学伴课堂内保持隐藏。';
+  });
+}
+
+$$('.cls-switch .cs-btn').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    $$('.cls-switch .cs-btn').forEach(x => x.classList.toggle('active', x===b));
+    renderClassScene(b.dataset.classScene);
+  });
+});
+renderClassScene('handwrite');
+
+// ============ 课后侧 demo 字典 ============
+const DEMOS = {
+  search: { tag:'课后', t:'搜索 · 题 / 字 / 课堂时刻', h:`
+    <p>学生可以搜索：</p>
+    <ul>
+      <li>📖 <strong>课堂时刻：</strong>"星期一第 3 节我答错的那道题"</li>
+      <li>📕 <strong>错题：</strong>按"分数"、"应用题"等标签</li>
+      <li>📚 <strong>知识点：</strong>"约分"、"通分"</li>
+    </ul>
+    <div class="note">搜索结果会优先<strong>关联你自己的错题和学习画像</strong>，不会乱跳到题库随机题。</div>` },
+  notify: { tag:'通知中心', t:'消息中心 · 3 条未读', h:`
+    <ul>
+      <li>🔔 <strong>王老师：</strong>"今天小报截止本周日，加油！"（17:45）</li>
+      <li>📚 <strong>步步 AI：</strong>"你昨天的错题已全部修复，奖励 1 颗 ⭐"（早 8:00）</li>
+      <li>👨‍👩‍👧 <strong>妈妈：</strong>"今天作业做完了吗？"（19:20）</li>
+    </ul>
+    <div class="note">家长消息走<strong>独立通道</strong>，不会出现在课堂模式里。</div>` },
+  portraitMore: { tag:'学习画像', t:'我的学习画像 · 近 4 周聚合', h:`
+    <p>下面是基于<strong>课堂答题 + 作业 + 错题修复</strong>三类数据画出来的能力分布：</p>
+    <ul>
+      <li>✅ <strong>课堂参与 88：</strong>这周圈选、随堂练都答得快</li>
+      <li>📈 <strong>分数计算 78：</strong>从上周 65 提到 78，进步明显</li>
+      <li>⚠️ <strong>应用题 48：</strong>"看图列式"还有空间，AI 已经准备了 3 道同类题</li>
+    </ul>
+    <div class="note accent">画像<strong>不给同学看</strong>，只有你和王老师能看。家长侧在"家长查看权限"里选择是否开放。</div>` },
+  setParent: { tag:'家长权限', t:'家长能看到什么', h:`
+    <p>当前权限：<strong>仅作业概览</strong></p>
+    <ul>
+      <li>✅ 今天是否完成作业（不显示具体分数）</li>
+      <li>✅ 连续打卡天数 / 本周题数</li>
+      <li>❌ 不显示 AI 学伴对话内容</li>
+      <li>❌ 不显示具体错题</li>
+      <li>❌ 不显示班级排名</li>
+    </ul>
+    <div class="note">你可以随时申请<strong>调整权限</strong>，老师会通知爸爸妈妈。</div>`, pri:'申请调整权限' },
+  setHistory: { tag:'学习历史', t:'最近 14 天 · 学习轨迹', h:`
+    <p>每天的活动会保留 14 天，老师 / 家长无法看到对话明细，<strong>只能看完成度</strong>。</p>
+    <ul>
+      <li>📅 周一：1 个课堂任务 · 5 道作业 · 4 次 AI 学伴对话</li>
+      <li>📅 周二：2 个课堂任务 · 6 道作业 · 6 次 AI 学伴对话</li>
+      <li>📅 周三（今天）：还有 2 题没做</li>
+    </ul>
+    <div class="note">超过 14 天会自动归档进<strong>"学期档案"</strong>。</div>` },
+  setLogout: { tag:'退出', t:'确定要退出账号吗？', h:`
+    <p>退出之后：</p>
+    <ul>
+      <li>课堂模式下，老师推送的任务会<strong>暂时收不到</strong>。</li>
+      <li>错题本和 AI 学伴的对话<strong>仍然保留</strong>。</li>
+      <li>家长那边会收到一条"嘉怡退出了平板账号"。</li>
+    </ul>`, pri:'确认退出', danger:true },
+  t1: { tag:'基础题', t:'分数加减法 · 基础 5 题', h:`
+    <p>当前进度：<strong>3 / 5</strong>，平均每题 1.5 分钟。</p>
+    <ul><li>第 4 题（同分母加减）</li><li>第 5 题（同分母加减）</li></ul>
+    <div class="note">这类题目<strong>AI 学伴只给思路，不直接给答案</strong>。错了会进错题本，AI 讲解后再让你练 1 道。</div>`, pri:'继续做第 4 题' },
+  t2: { tag:'拓展题', t:'小华买水果 · 应用题 3 题', h:`
+    <p>第 2 题是你<strong>上次错题的同类题</strong>。AI 会先帮你读题、提示单位换算：</p>
+    <ul><li>1/2 千克 = 多少克？</li><li>列式：1/2 × 1000 + 1/4 × 1000 = ?</li></ul>
+    <div class="note">5 分钟没动，<strong>AI 会自动弹"要提示吗？"</strong>，但不会主动给答案。</div>`, pri:'开始做' },
+  t3: { tag:'选修', t:'数学小报 · 我的分数表达', h:`
+    <p>这是开放型作业，不计分。你可以：</p>
+    <ul><li>📷 拍生活里的分数（披萨、时间、温度）</li><li>✏️ 写一句对分数的理解</li><li>🎨 画图 / 做表格</li></ul>
+    <div class="note accent">优秀的小报会被推到<strong>校长端"阶段成果"</strong>展示。</div>`, pri:'看示例小报' },
+  t0: { tag:'课堂', t:'王老师写给你的', h:`
+    <div class="note">"今天圈选题答得很准，应用题再练 2 道就稳了。" — 王老师 17:42</div>
+    <p>你可以给老师写回信，或者点"知道了"。</p>`, pri:'写回信给王老师' },
+  liveBarSwitch: { tag:'功能演示', t:'体验老师推送场景', h:`
+    <p>真实使用时，<strong>右屏的课堂模式只在课上出现</strong>：</p>
+    <ul>
+      <li>📡 老师在教师端点"推送"</li>
+      <li>📱 平板屏幕被任务覆盖，所有其他入口隐藏</li>
+      <li>⏱ 倒计时 / 提交 / 反馈，由老师决定持续时间</li>
+      <li>✅ 提交后回到"已提交"，等下一题或下课</li>
+    </ul>
+    <div class="note">演示里，<strong>右侧已经在模拟推送中状态</strong>，可以用底部 8 个按钮切换不同任务类型。</div>` },
+  wbReview: { tag:'AI 讲解', t:'分数化简 · 用一个例子讲', h:`
+    <p>题目：把 <strong>3/9</strong> 化为最简分数。</p>
+    <ul>
+      <li>第 1 步：找 3 和 9 的<strong>公因数</strong> · 都能除以 3</li>
+      <li>第 2 步：分子分母同时除以 3 · 3÷3=1，9÷3=3</li>
+      <li>第 3 步：结果 <strong>1/3</strong>，分子分母没有大于 1 的公因数了</li>
+    </ul>
+    <div class="note">AI 不会直接说"答案是 1/3"，而是引导你<strong>把步骤想出来</strong>。每次讲解都会附上同类题立刻练。</div>`, pri:'马上做同类题' },
+  wbRetry: { tag:'再做一次', t:'再做这道题（变了数字）', h:`
+    <p>变了数字版本：把 <strong>4/12</strong> 化为最简分数。</p>
+    <ul><li>提示：先想 4 和 12 的公因数</li></ul>
+    <div class="note">完整做题界面里你会看到<strong>输入框 + 提交</strong>。提交后 AI 立刻反馈，是否需要再练。</div>`, pri:'我会做了' },
+  r1: { tag:'单元复习', t:'分数加减 · 10 题挑战', h:`
+    <p>10 题来自<strong>本单元课堂答题 + 你最近 7 天的薄弱点</strong>，限时 8 分钟。</p>
+    <div class="note">完成后 AI 给你一份"复盘卡"：哪类题快、哪类题慢、哪类题容易错。</div>`, pri:'开始挑战' },
+  r2: { tag:'错题重练', t:'3 道未掌握错题', h:`
+    <p>下面这 3 道还没修复：</p>
+    <ul>
+      <li>分数化简：3/9（同类题练 0/3）</li>
+      <li>应用题 · 单位：1/2 千克 + 1/4 千克</li>
+      <li>通分计算：1/2 + 1/3（已修复，可选练）</li>
+    </ul>`, pri:'开始重练' },
+  r3: { tag:'AI 出题', t:'AI 基于薄弱点出题', h:`
+    <p>今天 AI 选了这 5 题陪你练：</p>
+    <ul>
+      <li>看图列式 × 2（薄弱）</li>
+      <li>分数化简 × 1（巩固）</li>
+      <li>同分母加减 × 1（保持）</li>
+      <li>挑战题 × 1（拓展）</li>
+    </ul>
+    <div class="note accent">题目是 AI <strong>临时生成</strong>，不是题库随机抽，所以每天不一样。</div>`, pri:'开始练' },
+  r4: { tag:'速算闯关', t:'60 秒速算 · 第 4 关', h:`
+    <p>规则：60 秒内答对最多题，错 3 次结束。第 4 关全部是<strong>同分母分数加减</strong>。</p>
+    <div class="note">通关解锁第 5 关——异分母分数加减。</div>`, pri:'开始第 4 关' },
+  r5: { tag:'徽章', t:'分数小达人 · 还差 2 颗 ⭐', h:`
+    <p>已获得：连续打卡 14 天 ⭐ · 错题修复 1 ⭐</p>
+    <p>解锁条件：</p>
+    <ul><li>⭐ 完成今天的基础题（剩 2 题）</li><li>⭐ 完成 1 次错题重练</li></ul>
+    <div class="note">徽章只在<strong>"我的"页</strong>看，不会出现在班级排行榜。</div>` },
+  drawAccept: { tag:'抽人提问', t:'抽中后怎么做', h:`
+    <p>大屏上你的名字被高亮，<strong>麦克风会自动开</strong>，老师和同学都能听到你的回答。</p>
+    <div class="note">如果不会：可以说"老师我想求助同桌"。<strong>AI 学伴此刻是禁用的</strong>——课堂上 AI 不替学生答题。</div>
+    <p>回答完点"我已答完"，老师可以继续追问或者放过你。</p>`, pri:'我已答完', onPri:'drawDone' }
+};
+
+function showDemo(key, anchor=null){
+  const d = DEMOS[key];
+  if(!d){ toast('演示内容待补','warn'); return; }
+  showModal(d.t, d.h, d.tag, d.pri||'我知道了', d.onPri?(()=>handleAfter(d.onPri)):null, anchor);
+}
+function handleAfter(key){
+  if(key==='drawDone'){
+    const c = $('#drawAccept');
+    if(c){ c.textContent='已答完'; c.disabled=true; c.classList.add('done'); }
+    toast('已告知老师','ok');
+  }
+}
+
+// ============ 全局事件分发 ============
+document.addEventListener('click', e=>{
+  // 1. 设置开关
+  const tg = e.target.closest('[data-toggle]');
+  if(tg){
+    tg.classList.toggle('on');
+    const k = tg.dataset.toggle;
+    const labels = { dark:'夜间模式', remind:'作业到时提醒', mic:'课堂自动开麦' };
+    toast((labels[k]||'设置') + '：' + (tg.classList.contains('on')?'开':'关'),'ok',1400);
+    return;
+  }
+  // 2. AI 学伴 quick 词
+  const qk = e.target.closest('[data-quick]');
+  if(qk){
+    const t = qk.dataset.quick;
+    addChatBubble(qk.textContent.trim(),'me');
+    setTimeout(()=> aiReply(t), 500);
+    return;
+  }
+  // 3. 任务卡
+  const tk = e.target.closest('[data-task]');
+  if(tk){ showDemo(tk.dataset.task, tk); return; }
+  // 4. 复习卡
+  const rv = e.target.closest('[data-rev]');
+  if(rv){ showDemo(rv.dataset.rev, rv); return; }
+  // 5. 抽人按钮（动态生成）
+  if(e.target && e.target.id==='drawAccept'){ showDemo('drawAccept', e.target); return; }
+  // 6. 通用 data-act
+  const a = e.target.closest('[data-act]');
+  if(!a) return;
+  const act = a.dataset.act;
+  switch(act){
+    case 'modalClose': closeModal(); break;
+    case 'liveBarSwitch': showDemo('liveBarSwitch', a); break;
+    case 'search': showDemo('search', a); break;
+    case 'notify': showDemo('notify', a); break;
+    case 'portraitMore': showDemo('portraitMore', a); break;
+    case 'setParent': showDemo('setParent', a); break;
+    case 'setHistory': showDemo('setHistory', a); break;
+    case 'setLogout': showDemo('setLogout', a); break;
+    case 'wbReview': {
+      const id = a.dataset.wb;
+      if(id==='w2') showModal('应用题 · AI 讲解', `
+        <p>题目：买 1/2 千克苹果 + 1/4 千克橙子，<strong>共多少克</strong>？</p>
+        <ul>
+          <li>1/2 千克 = <strong>500 克</strong></li>
+          <li>1/4 千克 = <strong>250 克</strong></li>
+          <li>500 + 250 = <strong>750 克</strong></li>
+        </ul>
+        <div class="note">这道题<strong>难点在单位换算</strong>，AI 会让你下次先在题目里圈出"克 / 千克"再列式。</div>
+      `,'AI 讲解','再做一道同类题', null, a);
+      else if(id==='w3') showModal('通分计算 · 已修复', `
+        <p>1/2 + 1/3 = ? · 你已经掌握。</p>
+        <ul><li>通分到分母 6：3/6 + 2/6</li><li>相加：<strong>5/6</strong></li></ul>
+        <div class="note">这条已经从"未掌握"移到"已修复"。<strong>过 7 天 AI 会再随机出 1 道同类题</strong>巩固。</div>
+      `,'已修复','复看一遍', null, a);
+      else showDemo('wbReview', a);
+      break;
+    }
+    case 'wbRetry': showDemo('wbRetry', a); break;
+    case 'chatSend': {
+      const v = $('#chatInput').value.trim();
+      if(!v){ toast('说点什么吧','warn'); return; }
+      addChatBubble(v, 'me');
+      $('#chatInput').value='';
+      setTimeout(()=> aiReply(v), 600);
+      break;
+    }
+    default: break;
+  }
+});
+
+function addChatBubble(text, side){
+  const wrap = $('#chatBody');
+  if(!wrap) return;
+  const div = document.createElement('div');
+  div.className = 'bubble ' + side;
+  div.textContent = text;
+  wrap.appendChild(div);
+  $('#homeScroll').scrollTop = $('#homeScroll').scrollHeight;
+}
+
+// 智能 AI 回复（识别关键字 + quick 词）
+function aiReply(q){
+  const wrap = $('#chatBody');
+  if(!wrap) return;
+  const div = document.createElement('div');
+  div.className = 'bubble ai';
+  let html;
+  // quick 词分支
+  if(q==='读题') html = `好，我帮你读：<strong>"妈妈买了 1/2 千克苹果，又买了 1/4 千克橙子，一共多少克？"</strong><br>注意：问的是<strong>克</strong>，但题里给的是<strong>千克</strong>。<div class="hint-pills"><span data-quick="思路">💡 接着给思路</span></div>`;
+  else if(q==='思路') html = `两步：①把"千克"换成"克"（× 1000）；②同分母 / 同单位再相加。<br>试试看，你想第一步先算哪个？<div class="hint-pills"><span data-quick="例子">📝 一个例子</span><span data-quick="还不懂">😣 还不懂</span></div>`;
+  else if(q==='例子') html = `举个小例子：1/2 米 = ? 厘米。<br>1 米 = 100 厘米，1/2 米 = <strong>50 厘米</strong>。同理 1/2 千克 = ?<div class="hint-pills"><span data-quick="再来一题">▶️ 再练一题</span></div>`;
+  else if(q==='还不懂') html = `没关系～<strong>这种题你只要练 3 道就会了</strong>。要不要我帮你出一道更简单的？比如"1/2 元 + 1/4 元 = 多少角"？<div class="hint-pills"><span data-quick="再来一题">👍 来吧</span></div>`;
+  else if(q==='再来一题') html = `<strong>新题：</strong>3/4 + 1/4 = ?<br>同分母分数加法，分子相加，分母不变。<div class="hint-pills"><span data-quick="答案">说答案</span><span data-quick="思路">💡 思路</span></div>`;
+  else if(q==='答案') html = `先别急着要答案哦～<strong>分子 3+1=?</strong> 分母不变。<div class="hint-pills"><span data-quick="还不懂">😣 还不懂</span></div>`;
+  else if(q==='语音') html = `🎤 (假装在听)…你说："为什么 6/8 要写成 3/4？"<br>因为<strong>6 和 8 都能除以 2</strong>。6÷2=3，8÷2=4。<div class="hint-pills"><span data-quick="再来一题">▶️ 来一题练</span></div>`;
+  else if(q==='拍照') html = `📷 (假装识别题目)…我看到了：<strong>"1/2 + 1/4"</strong>。要不要先一起把分母通分？<div class="hint-pills"><span data-quick="思路">💡 给思路</span></div>`;
+  else if(q==='今日复习') html = `今天 AI 给你准备了：<strong>看图列式 × 2</strong>、分数化简 × 1、同分母加减 × 1。要现在开始吗？<div class="hint-pills"><span data-quick="再来一题">▶️ 开始</span></div>`;
+  else if(q==='错题') html = `你这周还有 <strong>2 道未掌握错题</strong>。要不要先讲第一道（分数化简 3/9）？<div class="hint-pills"><span data-quick="思路">💡 讲第一道</span></div>`;
+  // 关键字分支
+  else if(/答案|结果|等于多少|=/.test(q)) html = `先别急着要答案哦～我们一起想想<strong>第一步要做什么</strong>？<div class="hint-pills"><span data-quick="思路">💡 给思路</span><span data-quick="例子">📝 一个例子</span></div>`;
+  else if(/为什么|怎么|如何|不会/.test(q)) html = `好问题！我用一个<strong>小例子</strong>陪你想：比如把 4 个苹果平均分给 2 个人，每人得到几个？再回到你的题目就好懂了。<div class="hint-pills"><span data-quick="还不懂">😣 还不懂</span><span data-quick="再来一题">▶️ 再练一题</span></div>`;
+  else if(/谢谢|学会|懂了|明白/.test(q)) html = `不客气～<strong>你今天连续学习快 30 分钟了</strong>，记得起来走走再继续 💪`;
+  else html = `嗯嗯，我听到了。可以告诉我<strong>是哪道题</strong>或者把题拍给我看吗？<div class="hint-pills"><span data-quick="拍照">📷 拍照</span><span data-quick="今日复习">📚 今日复习</span></div>`;
+  div.innerHTML = html;
+  wrap.appendChild(div);
+  $('#homeScroll').scrollTop = $('#homeScroll').scrollHeight;
+}
+
+// ============ 倒计时 ============
+(function(){
+  let s = 150;
+  setInterval(()=>{
+    if(s<=0) return;
+    s--;
+    const m = String(Math.floor(s/60)).padStart(2,'0');
+    const ss = String(s%60).padStart(2,'0');
+    const el = $('#classTimer');
+    if(el) el.textContent = m+':'+ss;
+    if(s===0){ el.textContent='时间到'; toast('右屏：时间到，自动提交','info'); }
+  }, 1000);
+})();
+
+// 初次加载：提示
+setTimeout(()=> toast('右屏默认展示手写题；底部可切换其他课堂活动','info', 3600), 600);
+</script>
+</body>
+</html>
