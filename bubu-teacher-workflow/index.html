@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>步步三端原型入口</title>
+<title>步步四端原型入口</title>
 <style>
 :root{
   --bg:#f5f7fa;
@@ -28,7 +28,7 @@ body{
   padding:32px 20px;
 }
 .page{
-  width:min(960px,100%);
+  width:min(1180px,100%);
 }
 .brand{
   display:flex;
@@ -59,7 +59,7 @@ body{
 }
 .entries{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-columns:repeat(4,minmax(0,1fr));
   gap:16px;
 }
 .entry{
@@ -83,6 +83,10 @@ body{
 .entry:nth-child(2):hover{
   border-color:var(--accent);
   box-shadow:0 20px 46px rgba(111,88,217,.12);
+}
+.entry:nth-child(4):hover{
+  border-color:#2563eb;
+  box-shadow:0 20px 46px rgba(37,99,235,.12);
 }
 .label{
   color:var(--muted);
@@ -111,6 +115,9 @@ body{
 .entry:nth-child(2) .open{
   color:var(--accent);
 }
+.entry:nth-child(4) .open{
+  color:#2563eb;
+}
 @media (max-width:760px){
   body{
     place-items:start center;
@@ -137,12 +144,12 @@ body{
   <header class="brand">
     <div class="mark">步</div>
     <div>
-      <h1>步步三端原型</h1>
+      <h1>步步四端原型</h1>
       <p>选择一个入口打开完整交互页面。</p>
     </div>
   </header>
 
-  <section class="entries" aria-label="三端入口">
+  <section class="entries" aria-label="四端入口">
     <a class="entry" href="./步步_教师端_备课工作台.html">
       <span class="label">Teacher Workspace</span>
       <div>
@@ -168,6 +175,15 @@ body{
         <p>教室大屏按课件翻页推进，互动内容随页面自动出现。</p>
       </div>
       <span class="open">进入白板端</span>
+    </a>
+
+    <a class="entry" href="./步步_优化白板端_大屏.html">
+      <span class="label">Optimized Board</span>
+      <div>
+        <h2>优化白板端</h2>
+        <p>参考希沃的授课白板：可拖拽课堂悬浮球、底部工具栏、学生投屏、答题结果和板中板。</p>
+      </div>
+      <span class="open">进入优化白板端</span>
     </a>
   </section>
 </main>
