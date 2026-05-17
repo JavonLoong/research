@@ -1407,20 +1407,22 @@ async function rotateStudentTablet(){
     const targetOrigin = chooseRotationOrigin(targetRect, startRect, -spinAngle);
     frameLayer = mountRotationLayer(frameClone, startRect, oldOrigin, 1, 9999);
     oldLayer = mountRotationLayer(oldClone, startRect, oldOrigin, 1, 10000);
-    targetLayer = mountRotationLayer(targetClone, targetRect, targetOrigin, 0, 10001);
+    targetLayer = mountRotationLayer(targetClone, targetRect, targetOrigin, 1, 10001);
     const frameAnim = frameLayer.animate([
       { transform:'rotate(0deg)' },
       { transform:`rotate(${spinAngle}deg)` }
     ], { duration, easing:spinEase, fill:'forwards' });
     const oldAnim = oldLayer.animate([
-      { transform:'rotate(0deg)', opacity:1, offset:0 },
-      { transform:`rotate(${spinAngle}deg)`, opacity:1, offset:.46 },
-      { transform:`rotate(${spinAngle}deg)`, opacity:0, offset:1 }
+      { transform:'rotate(0deg)', clipPath:'inset(0 0 0 0)', offset:0 },
+      { transform:`rotate(${spinAngle}deg)`, clipPath:'inset(0 0 0 0)', offset:.42 },
+      { transform:`rotate(${spinAngle}deg)`, clipPath:'inset(0 0 0 100%)', offset:.58 },
+      { transform:`rotate(${spinAngle}deg)`, clipPath:'inset(0 0 0 100%)', offset:1 }
     ], { duration, easing:spinEase, fill:'forwards' });
     const targetAnim = targetLayer.animate([
-      { transform:`rotate(${-spinAngle}deg)`, opacity:0, offset:0 },
-      { transform:`rotate(${-spinAngle}deg)`, opacity:0, offset:.32 },
-      { transform:'rotate(0deg)', opacity:1, offset:1 }
+      { transform:`rotate(${-spinAngle}deg)`, clipPath:'inset(0 100% 0 0)', offset:0 },
+      { transform:`rotate(${-spinAngle}deg)`, clipPath:'inset(0 100% 0 0)', offset:.42 },
+      { transform:`rotate(${-spinAngle}deg)`, clipPath:'inset(0 0 0 0)', offset:.58 },
+      { transform:'rotate(0deg)', clipPath:'inset(0 0 0 0)', offset:1 }
     ], { duration, easing:spinEase, fill:'forwards' });
     await Promise.all([frameAnim.finished, oldAnim.finished, targetAnim.finished]);
     frameAnim.cancel();
