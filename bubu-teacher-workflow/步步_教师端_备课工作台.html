@@ -19,16 +19,13 @@
   --shadow-2:0 2px 8px rgba(15,23,42,.06);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;padding:18px 0 48px;overflow-x:auto}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;padding:16px 0 28px;overflow-x:auto}
 
-/* ==== Device shell (替代 macOS 桌面框) ==== */
-.device{max-width:1400px;min-width:1220px;margin:0 auto;background:#1f2937;padding:14px;border-radius:24px;box-shadow:0 24px 64px rgba(15,23,42,.18),0 1px 0 rgba(255,255,255,.04) inset;position:relative}
-.device::before{content:"";position:absolute;left:50%;top:6px;transform:translateX(-50%);width:80px;height:5px;background:#0f172a;border-radius:3px}
-.device::after{content:"";position:absolute;right:18px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#10b981;box-shadow:0 0 6px rgba(16,185,129,.6)}
-.screen{background:var(--bg);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-height:840px;position:relative}
-.desktop-stand{width:320px;height:54px;margin:-2px auto 0;position:relative}
-.desktop-stand::before{content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);width:94px;height:42px;background:linear-gradient(180deg,#374151,#111827);border-radius:0 0 18px 18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
-.desktop-stand::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:320px;height:14px;background:linear-gradient(180deg,#1f2937,#0f172a);border-radius:20px;box-shadow:0 12px 30px rgba(15,23,42,.2)}
+/* App frame */
+.device{width:min(1280px,calc(100vw - 32px));min-width:1180px;margin:0 auto;background:transparent;padding:0;border-radius:12px;position:relative}
+.device::before,.device::after{display:none}
+.screen{background:var(--bg);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;height:780px;min-height:0;position:relative;box-shadow:0 18px 48px rgba(15,23,42,.10)}
+.desktop-stand{display:none}
 
 /* Top app bar (替代深色 sidebar) */
 .appbar{background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 14px;height:54px;gap:10px}
@@ -515,6 +512,41 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .course-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
 .course-meta span{font-size:10px;padding:2px 6px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);font-weight:700}
 .course-actions{display:flex;gap:6px;flex-wrap:wrap}
+.clean-workbench{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
+.focus-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.focus-card h2{font-size:19px;margin-bottom:4px;color:var(--text)}
+.focus-card h3{font-size:14px;margin-bottom:10px;color:var(--text)}
+.focus-card>p{font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.focus-list{display:flex;flex-direction:column;gap:8px}
+.focus-item{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;background:#fff;padding:10px;cursor:pointer;transition:.15s}
+.focus-item:hover{border-color:var(--primary);background:var(--primary-soft-2)}
+.focus-num{width:34px;height:34px;border-radius:9px;background:var(--primary-soft-2);color:var(--primary-dark);display:grid;place-items:center;font-weight:900;font-size:15px}
+.focus-item b{display:block;font-size:13px;color:var(--text);margin-bottom:2px}
+.focus-item span{display:block;font-size:11.5px;color:var(--muted);line-height:1.45}
+.focus-item .btn{justify-self:end}
+.status-list-clean{display:flex;flex-direction:column;gap:8px}
+.status-line{display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid var(--line-soft);padding:8px 0}
+.status-line:last-child{border-bottom:0}
+.status-line b{font-size:12.5px;color:var(--text)}
+.status-line span{font-size:11.5px;color:var(--muted);text-align:right}
+.mini-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.mini-action{border:1px solid var(--line);border-radius:8px;background:#fff;padding:10px;cursor:pointer}
+.mini-action:hover{border-color:var(--primary);background:var(--primary-soft-2)}
+.mini-action b{display:block;font-size:12.5px;color:var(--text);margin-bottom:2px}
+.mini-action span{display:block;font-size:11px;color:var(--muted);line-height:1.4}
+.library-clean{display:grid;grid-template-columns:1fr 320px;gap:14px;align-items:start}
+.library-list{display:flex;flex-direction:column;gap:10px}
+.course-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.course-row h3{font-size:15px;margin-bottom:4px;color:var(--text)}
+.course-row p{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:8px}
+.course-row .course-meta{margin-bottom:0}
+.resource-shelf{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.resource-shelf h3{font-size:14px;margin-bottom:10px;color:var(--text)}
+.resource-chip{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px;background:#fff;cursor:pointer}
+.resource-chip:hover{border-color:var(--primary);background:var(--primary-soft-2)}
+.resource-chip b{display:block;font-size:12.5px;color:var(--text);margin-bottom:2px}
+.resource-chip span{font-size:11px;color:var(--muted)}
+.resource-chip .btn{padding:4px 8px}
 
 /* Toast */
 .toast{position:absolute;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--text);color:#fff;padding:8px 16px;border-radius:6px;font-size:12.5px;font-weight:600;opacity:0;pointer-events:none;z-index:200;transition:.2s;box-shadow:0 8px 24px rgba(15,23,42,.2);display:flex;align-items:center;gap:7px}
@@ -578,74 +610,42 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <!-- Top Panel: Workbench -->
       <div class="panel" id="panel-workbench">
         <div class="pad">
-          <div class="dash-grid">
-            <div class="dash-stack">
-              <div class="dash-card dash-hero">
-                <h2>今天的教学工作台</h2>
-                <p>把课件库、备课、学情和资源入口收在一屏。这里不是说明页，点击下面的任务和快捷动作会直接进入对应工作区。</p>
-                <div class="dash-kpis">
-                  <div class="dash-kpi"><strong>3</strong><span>待备课</span></div>
-                  <div class="dash-kpi"><strong>4</strong><span>待批改</span></div>
-                  <div class="dash-kpi"><strong>8</strong><span>需关注学生</span></div>
-                  <div class="dash-kpi"><strong>35/35</strong><span>平板在线</span></div>
+          <div class="section-h">工作台</div>
+          <div class="section-sub">只保留下一步要做的三件事，其他状态收进各自页面。</div>
+          <div class="clean-workbench">
+            <div class="focus-card">
+              <h2>今天先做这三件事</h2>
+              <p>从当前课件、待批改和补练推送继续，不把管理后台信息堆到首页。</p>
+              <div class="focus-list">
+                <div class="focus-item" data-jump="courseware">
+                  <div class="focus-num">1</div>
+                  <div><b>继续编辑当前课件</b><span>第 1 课时 · 小数的意义和读写，8 页已同步。</span></div>
+                  <button class="btn btn-primary btn-sm">进入</button>
                 </div>
-              </div>
-              <div class="dash-card">
-                <h3>快捷动作</h3>
-                <div class="dash-actions">
-                  <div class="dash-action" data-workbench-act="new"><div class="da-icon">＋</div><b>新建课件</b><span>先选课堂流程，再把互动和题目插成页面。</span></div>
-                  <div class="dash-action" data-jump="resource"><div class="da-icon">🗂</div><b>课件库</b><span>按班级、课时、同步状态继续编辑。</span></div>
-                  <div class="dash-action" data-workbench-act="cloud"><div class="da-icon">☁</div><b>云盘导入</b><span>拖入 PPT/PDF，自动解析页面和题目。</span></div>
-                  <div class="dash-action" data-workbench-act="homework"><div class="da-icon">📮</div><b>发布作业</b><span>选择手写、拍照、视频或普通提交。</span></div>
+                <div class="focus-item" data-jump="grading">
+                  <div class="focus-num">2</div>
+                  <div><b>批阅 4 份订正</b><span>集中在小数点对齐和单位含义解释。</span></div>
+                  <button class="btn btn-sm">处理</button>
                 </div>
-              </div>
-              <div class="dash-card">
-                <h3>最近课件</h3>
-                <div class="todo-row" data-jump="resource"><div class="todo-dot"></div><div class="todo-main"><b>第 1 课时 · 小数的意义和读写</b><span>8 页 · 4 个互动 · 云端已同步。</span></div><button class="btn btn-sm">去课件库</button></div>
-                <div class="todo-row" data-jump="resource"><div class="todo-dot"></div><div class="todo-main"><b>小数比较 · 练习讲评</b><span>12 页 · 6 道题已转互动。</span></div><button class="btn btn-sm">去课件库</button></div>
-              </div>
-              <div class="dash-card">
-                <h3>导入旧课件</h3>
-                <div class="import-drop" id="importDrop">
-                  <b>拖入 PPTX / PDF / 图片 / 文档</b>
-                  <span>自动生成课件页、识别题目、提取目录，并把传统练习转成白板互动页。</span>
+                <div class="focus-item" data-jump="homework">
+                  <div class="focus-num">3</div>
+                  <div><b>推送单位换算补练</b><span>给 8 名学生下发 5 道基础变式题。</span></div>
+                  <button class="btn btn-sm">下发</button>
                 </div>
-              </div>
-              <div class="dash-card">
-                <h3>今日待办</h3>
-                <div class="todo-row" data-jump="courseware"><div class="todo-dot"></div><div class="todo-main"><b>第 1 课时 · 小数的意义和读写</b><span>已导入 8 页课件，建议补 1 道单位换算变式题。</span></div><button class="btn btn-sm">处理</button></div>
-                <div class="todo-row" data-jump="grading"><div class="todo-dot"></div><div class="todo-main"><b>批改 4 份订正</b><span>集中在“小数点对齐”和“单位含义解释”。</span></div><button class="btn btn-sm">去批改</button></div>
-                <div class="todo-row" data-jump="resource"><div class="todo-dot"></div><div class="todo-main"><b>沉淀 1 个优秀课堂片段</b><span>第 3 组“半片药”解释清楚，可收进校本资源。</span></div><button class="btn btn-sm">归档</button></div>
               </div>
             </div>
-            <div class="dash-stack">
-              <div class="dash-card">
-                <h3>下一节课准备</h3>
-                <div class="live-log">
-                  <div><strong>课件</strong>：8 页已导入，4 个互动已绑定。</div>
-                  <div><strong>白板</strong>：已连接，延迟 12ms。</div>
-                  <div><strong>学生平板</strong>：35/35 在线，陈小刚电量 15%。</div>
-                  <div><strong>AI 提醒</strong>：第 6 页后补 `0.8 米 = ___ 厘米`。</div>
-                </div>
+            <div class="focus-card">
+              <h3>上课前检查</h3>
+              <div class="status-list-clean">
+                <div class="status-line"><b>课件</b><span>8 页 · 4 个互动 · 已同步</span></div>
+                <div class="status-line"><b>白板</b><span>已连接 · 延迟 12ms</span></div>
+                <div class="status-line"><b>学生平板</b><span>35/35 在线</span></div>
+                <div class="status-line"><b>AI 提醒</b><span>第 6 页补 1 道换算题</span></div>
               </div>
-              <div class="dash-card">
-                <h3>云端同步</h3>
-                <table class="mini-table">
-                  <thead><tr><th>项目</th><th>状态</th><th>操作</th></tr></thead>
-                  <tbody>
-                    <tr><td><strong>当前课件</strong></td><td><span class="level-pill">已同步</span></td><td><button class="btn btn-sm" data-workbench-act="history">打开</button></td></tr>
-                    <tr><td><strong>旧课件解析</strong></td><td><span class="level-pill warn">可导入</span></td><td><button class="btn btn-sm" data-workbench-act="cloud">导入</button></td></tr>
-                    <tr><td><strong>校本资源库</strong></td><td><span class="level-pill">128G 可用</span></td><td><button class="btn btn-sm" data-jump="resource">管理</button></td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="dash-card">
-                <h3>班级风险</h3>
-                <div class="risk-list">
-                  <div class="risk-row"><div class="risk-avatar">李</div><div><b>李小明</b><span>单位换算连续 2 次错，需课中追问。</span></div></div>
-                  <div class="risk-row"><div class="risk-avatar">陈</div><div><b>陈小刚</b><span>3 天未交作业，建议课后联系家长。</span></div></div>
-                  <div class="risk-row"><div class="risk-avatar">王</div><div><b>王小雨</b><span>小数读写掌握弱，建议推基础补练。</span></div></div>
-                </div>
+              <div class="mini-actions">
+                <div class="mini-action" data-workbench-act="cloud"><b>导入旧课件</b><span>PPT/PDF 自动解析。</span></div>
+                <div class="mini-action" data-jump="resource"><b>课件库</b><span>找已有课件。</span></div>
+                <div class="mini-action" data-workbench-act="history"><b>版本</b><span>查看同步记录。</span></div>
               </div>
             </div>
           </div>
@@ -674,7 +674,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
               <div class="tool" title="文字">𝐓</div>
               <div class="tool" title="形状">▢</div>
               <div class="tool" title="图片">🖼</div>
-              <div class="tool" title="视频">▶</div>
+              <div class="tool" title="预览">▶</div>
               <div class="tool" title="思维导图">🌳</div>
               <div class="tool-sep"></div>
               <div class="tool" title="撤销">↶</div>
@@ -1208,97 +1208,39 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <div class="panel" id="panel-resource">
         <div class="pad">
           <div class="section-h">📚 课件库</div>
-          <div class="section-sub">这里是备课工作台的主入口：先找已有课件、公开示例和本校沉淀，再进入编辑器做互动化改造。题包、错因卡、讲评提纲属于课件库里的可插入资源。</div>
-          <div class="course-lib-grid">
-            <div class="course-card">
-              <div class="course-cover"><span>我的课件 · 云端同步</span><b>第 1 课时 · 小数的意义和读写</b></div>
-              <div class="course-info">
-                <h3>当前正在备课</h3>
-                <p>8 页 · 4 个互动 · 已导入公开示例 PPT，可继续编辑、复制或共享给同备课组。</p>
-                <div class="course-meta"><span>四年级下</span><span>数学</span><span>已同步 v14</span></div>
-                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="edit">继续编辑</button><button class="btn btn-sm" data-course-lib-act="share">共享给教研组</button></div>
+          <div class="section-sub">课件库只放三个入口：继续当前课件、复用同组课件、导入旧课件。</div>
+          <div class="library-clean">
+            <div class="library-list">
+              <div class="course-row">
+                <div>
+                  <h3>当前课件 · 第 1 课时</h3>
+                  <p>小数的意义和读写，8 页，4 个互动，云端已同步 v14。</p>
+                  <div class="course-meta"><span>四年级下</span><span>数学</span><span>我的课件</span></div>
+                </div>
+                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="edit">继续编辑</button><button class="btn btn-sm" data-course-lib-act="share">共享</button></div>
+              </div>
+              <div class="course-row">
+                <div>
+                  <h3>同组课件 · 小数比较</h3>
+                  <p>12 页，6 道题已转互动，含错因讲评页，可先预览再复用。</p>
+                  <div class="course-meta"><span>李老师</span><span>36 次复用</span><span>含学情标签</span></div>
+                </div>
+                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="reuse">复用</button><button class="btn btn-sm" data-course-lib-act="preview">预览</button></div>
+              </div>
+              <div class="course-row">
+                <div>
+                  <h3>导入旧课件 · PPT / PDF / 图片</h3>
+                  <p>上传后自动识别缩略图、题目和互动位置，解析完再进入编辑器。</p>
+                  <div class="course-meta"><span>自动识题</span><span>生成目录</span><span>入课件库</span></div>
+                </div>
+                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="import">导入</button><button class="btn btn-sm" data-course-lib-act="open-cloud">云端</button></div>
               </div>
             </div>
-            <div class="course-card">
-              <div class="course-cover"><span>校本共享 · 高复用</span><b>小数比较 · 练习讲评课</b></div>
-              <div class="course-info">
-                <h3>同组老师沉淀</h3>
-                <p>12 页 · 6 道题已转互动 · 含错因讲评页，新教师可直接复用后微调。</p>
-                <div class="course-meta"><span>李老师</span><span>36 次复用</span><span>含学情标签</span></div>
-                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="reuse">复用为副本</button><button class="btn btn-sm" data-course-lib-act="preview">预览</button></div>
-              </div>
-            </div>
-            <div class="course-card">
-              <div class="course-cover"><span>导入/抓取 · 旧课件转化</span><b>PPT / PDF / 图片课件</b></div>
-              <div class="course-info">
-                <h3>上传后自动解析</h3>
-                <p>识别页缩略图、题目和可互动位置，解析完成后进入编辑器，不在备课流程里打断老师。</p>
-                <div class="course-meta"><span>自动识题</span><span>生成目录</span><span>入课件库</span></div>
-                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="import">导入课件</button><button class="btn btn-sm" data-course-lib-act="open-cloud">云端课件</button></div>
-              </div>
-            </div>
-          </div>
-          <div class="resource-tools">
-            <input id="resourceSearch" value="小数 初步 单位换算" />
-            <button class="btn btn-sm" data-resource-act="search">搜索</button>
-            <button class="btn btn-sm" data-resource-act="upload">上传资源</button>
-            <button class="btn btn-primary btn-sm" data-resource-act="use">把推荐资源加入当前课件</button>
-          </div>
-          <table class="mini-table" style="margin-bottom:12px">
-            <thead><tr><th>课件库资源</th><th>类型</th><th>来源</th><th>操作</th></tr></thead>
-            <tbody>
-              <tr><td><strong>小数初步 · 经典 5 题包</strong></td><td>题包</td><td>张老师 · 89 次</td><td><button class="btn btn-sm" data-resource-insert="quizpack">加入课件</button></td></tr>
-              <tr><td><strong>错因卡：小数点移位</strong></td><td>错因卡</td><td>王老师 · 14 次</td><td><button class="btn btn-sm" data-resource-insert="errorcard">加入课件</button></td></tr>
-              <tr><td><strong>讲评提纲：小数初步</strong></td><td>讲评</td><td>教研组 · 2024-03</td><td><button class="btn btn-sm" data-resource-insert="outline">加入课件</button></td></tr>
-              <tr><td><strong>人教版四下教材资源</strong></td><td>教材</td><td>年级已锁定 · 第六单元</td><td><button class="btn btn-sm" data-resource-insert="textbook">加入课件</button></td></tr>
-            </tbody>
-          </table>
-          <div class="it-grid">
-            <div class="it-card tone-quiz"><div class="it-banner"></div>
-              <div class="it-head"><div class="it-icon">⭐</div><div><div class="it-title">优质题</div><div class="it-sub">486 题 · 加星收藏</div></div></div>
-              <div class="it-meta">
-                <div class="it-meta-row"><strong>来源</strong><span>课堂使用 → 加星 → 学情验证</span></div>
-                <div class="it-meta-row"><strong>指标</strong><span>使用次数 / 正确率 / 区分度</span></div>
-                <div class="it-meta-row"><strong>形态</strong><span>题目卡片 + 解析 + 标签</span></div>
-              </div>
-            </div>
-            <div class="it-card tone-circle"><div class="it-banner"></div>
-              <div class="it-head"><div class="it-icon">📋</div><div><div class="it-title">错因卡</div><div class="it-sub">82 张 · 共性卡点</div></div></div>
-              <div class="it-meta">
-                <div class="it-meta-row"><strong>形态</strong><span>典型错因 + 易错步骤</span></div>
-                <div class="it-meta-row"><strong>用途</strong><span>讲评素材 · AI 学伴模板</span></div>
-                <div class="it-meta-row"><strong>沉淀</strong><span>教研组共享 · 跨届传承</span></div>
-              </div>
-            </div>
-            <div class="it-card tone-lab"><div class="it-banner"></div>
-              <div class="it-head"><div class="it-icon">🎁</div><div><div class="it-title">讲评提纲</div><div class="it-sub">36 份 · 优秀讲评素材</div></div></div>
-              <div class="it-meta">
-                <div class="it-meta-row"><strong>形态</strong><span>错因 + 截图 + 变式题</span></div>
-                <div class="it-meta-row"><strong>用途</strong><span>同类讲评课直接复用</span></div>
-                <div class="it-meta-row"><strong>价值</strong><span>新教师快速上手</span></div>
-              </div>
-            </div>
-            <div class="it-card tone-pick"><div class="it-banner"></div>
-              <div class="it-head"><div class="it-icon">🧩</div><div><div class="it-title">技能包</div><div class="it-sub">12 个 · 教学策略</div></div></div>
-              <div class="it-meta">
-                <div class="it-meta-row"><strong>形态</strong><span>策略 / AI 学伴提示模板</span></div>
-                <div class="it-meta-row"><strong>用途</strong><span>跨学科教学方法迁移</span></div>
-                <div class="it-meta-row"><strong>沉淀</strong><span>苏格拉底式提示等高频范式</span></div>
-              </div>
-            </div>
-            <div class="it-card tone-discuss"><div class="it-banner"></div>
-              <div class="it-head"><div class="it-icon">📁</div><div><div class="it-title">事务资料</div><div class="it-sub">行政办公协同</div></div></div>
-              <div class="it-meta">
-                <div class="it-meta-row"><strong>形态</strong><span>党团 / 通知 / 会议 / 活动</span></div>
-                <div class="it-meta-row"><strong>用途</strong><span>跨部门协作 · 组织记忆</span></div>
-              </div>
-            </div>
-            <div class="it-card tone-listen"><div class="it-banner"></div>
-              <div class="it-head"><div class="it-icon">🎓</div><div><div class="it-title">校本练习册</div><div class="it-sub">学期沉淀产出</div></div></div>
-              <div class="it-meta">
-                <div class="it-meta-row"><strong>形态</strong><span>一学期累积优质题自动汇编</span></div>
-                <div class="it-meta-row"><strong>价值</strong><span>替代外购教辅 · 贴合本校学情</span></div>
-              </div>
+            <div class="resource-shelf">
+              <h3>可插入资源</h3>
+              <div class="resource-chip" data-resource-insert="quizpack"><div><b>经典 5 题包</b><span>小数初步 · 带解析</span></div><button class="btn btn-sm">加入</button></div>
+              <div class="resource-chip" data-resource-insert="errorcard"><div><b>错因卡</b><span>小数点移位讲评</span></div><button class="btn btn-sm">加入</button></div>
+              <div class="resource-chip" data-resource-insert="outline"><div><b>讲评提纲</b><span>同类课直接复用</span></div><button class="btn btn-sm">加入</button></div>
             </div>
           </div>
         </div>
@@ -2293,6 +2235,11 @@ document.querySelectorAll('.canvas-toolbar .tool').forEach(t => {
     if (title === '撤销' || title === '重做') { showToast('✓ ' + title); return; }
     document.querySelectorAll('.canvas-toolbar .tool').forEach(x => x.classList.remove('active'));
     t.classList.add('active');
+    if (title === '预览') {
+      showPanel('teaching');
+      showToast('✓ 已打开投屏预览');
+      return;
+    }
     if (title && title !== '选择') {
       if(!insertCanvasTool(title)) openDemo('tool-' + title);
     }
