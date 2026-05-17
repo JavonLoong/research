@@ -340,6 +340,13 @@ body{
 }
 .live-fastest .lf-l{ font-size:13px; font-weight:700; color:var(--muted); flex:none; }
 .live-fastest .lf-list{ display:flex; gap:14px; flex:1; align-items:center; overflow:hidden; }
+.live-sync-summary{
+  margin-top:10px; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  background:#f8fffc; border:1px solid var(--primary-soft); border-radius:12px; padding:10px 12px;
+  color:var(--text); font-size:12.5px; font-weight:700;
+}
+.live-sync-summary strong{ color:var(--primary-dark); font-size:13px; white-space:nowrap; }
+.live-sync-summary span{ color:var(--muted); font-weight:600; text-align:right; line-height:1.5; }
 .live-avatar{ display:flex; flex-direction:column; align-items:center; gap:3px; flex:none; }
 .live-avatar .av{
   width:36px; height:36px; border-radius:50%;
@@ -761,6 +768,15 @@ function readBubuSync(){
   try { return JSON.parse(localStorage.getItem(BUBU_SYNC_KEY) || '{}') || {}; }
   catch { return {}; }
 }
+function escapeBoardHTML(value=''){
+  return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function writeBubuSync(patch){
+  const next = {...readBubuSync(), ...patch, updatedAt:Date.now()};
+  try { localStorage.setItem(BUBU_SYNC_KEY, JSON.stringify(next)); } catch {}
+  try { bubuSyncChannel?.postMessage(next); } catch {}
+  return next;
+}
 function listenBubuSync(handler){
   window.addEventListener('storage', e => {
     if(e.key === BUBU_SYNC_KEY && e.newValue){
@@ -783,12 +799,129 @@ function setBoardSyncStrip(title, message){
 }
 function applyBoardSyncState(state, flash=false){
   const board = state?.board;
-  if(!board) return;
-  const scene = board.scene || (state.homework ? 'end' : 'teach');
-  if(typeof selectScene === 'function') selectScene(scene, true);
-  else if(typeof renderScene === 'function') renderScene(scene);
-  setBoardSyncStrip(board.title || '三端同步', board.message || '教师端状态已同步');
-  if(flash && state.source === 'teacher') toast(board.message || '教师端状态已同步', 'info', 2000);
+  if(board){
+    const scene = board.scene || (state.homework ? 'end' : 'teach');
+    if(typeof selectScene === 'function') selectScene(scene, true);
+    else if(typeof renderScene === 'function') renderScene(scene);
+    setBoardSyncStrip(board.title || '三端同步', board.message || '教师端状态已同步');
+    if(flash && (state.source === 'teacher' || state.source === 'student')) toast(board.message || '教师端状态已同步', 'info', 2000);
+  }
+  if(state?.classActivity) applyBoardClassActivity(state.classActivity, flash && state.source === 'student');
+  if(state?.drawResponse){
+    setBoardSyncStrip('抽人回答状态', `${state.drawResponse.student || '学生'} 已答完，老师可继续追问或讲评。`);
+    if(flash && state.source === 'student') toast(`${state.drawResponse.student || '学生'} 已答完`, 'info', 1600);
+  }
+  if(state?.drawCall && !board){
+    setBoardSyncStrip('抽人提问同步', `${state.drawCall.target || '同学'} 的平板已进入回答状态`);
+  }
+}
+
+function emptyLiveActivity(){
+  return {
+    type:'live-question',
+    id:'live-' + Date.now(),
+    scene:'mcq',
+    title:'随堂题 · 单选',
+    prompt:'下面哪个分数最接近 1/2？',
+    total:28,
+    answerKey:'C',
+    options:{A:0,B:0,C:0,D:0},
+    submissions:[],
+    status:'collecting'
+  };
+}
+function syncLivePushFromBoard(){
+  const activity = emptyLiveActivity();
+  const state = writeBubuSync({
+    source:'board',
+    classroom:{
+      scene:'mcq',
+      pushId:activity.id,
+      title:'王老师 · 随堂练',
+      desc:'白板端推送了单选题：下面哪个分数最接近 1/2？提交后只给本人反馈。'
+    },
+    board:{
+      scene:'live',
+      title:'随堂题已推送',
+      message:'学生端已进入答题页，白板正在回收提交进度。'
+    },
+    classActivity:activity
+  });
+  applyBoardSyncState(state, false);
+  toast('📨 已推送本题到学生端', 'ok', 1800);
+}
+function syncDrawCallFromBoard(){
+  const call = {
+    id:'draw-' + Date.now(),
+    target:'嘉怡',
+    targetId:'wang-jiayi',
+    question:'说一说：4/9 为什么最接近 1/2？',
+    status:'called',
+    at:Date.now()
+  };
+  const state = writeBubuSync({
+    source:'board',
+    classroom:{
+      scene:'draw',
+      title:'王老师 · 抽人提问',
+      desc:`${call.target}正在回答，其他同学保持旁听。`
+    },
+    board:{
+      scene:'draw',
+      title:'抽人提问已同步',
+      message:`${call.target} 的平板已出现回答提示，其他学生端显示旁听。`
+    },
+    drawCall:call
+  });
+  applyBoardSyncState(state, false);
+}
+function liveActivityCounts(activity){
+  const submissions = Array.isArray(activity?.submissions) ? activity.submissions : [];
+  const options = {...(activity?.options || {})};
+  ['A','B','C','D'].forEach(k => {
+    options[k] = Number(options[k] || 0);
+  });
+  const answered = submissions.length || Number(activity?.answered || 0);
+  const correct = submissions.filter(s => s.correct).length || Number(activity?.correct || 0);
+  return {submissions, options, answered, correct, total:Number(activity?.total || 28)};
+}
+function setLiveSyncSummary(activity){
+  const host = $('.scn-live');
+  if(!host) return;
+  let summary = $('#liveSyncSummary');
+  if(!summary){
+    summary = document.createElement('div');
+    summary.className = 'live-sync-summary';
+    summary.id = 'liveSyncSummary';
+    const actions = $('.live-actions');
+    host.insertBefore(summary, actions || null);
+  }
+  const {options, answered, correct, total} = liveActivityCounts(activity);
+  const distribution = `A ${options.A || 0} · B ${options.B || 0} · C ${options.C || 0} · D ${options.D || 0}`;
+  const rate = answered ? Math.round(correct / answered * 100) : 0;
+  summary.innerHTML = `<strong data-sync-role="live-progress">已提交 ${answered} / ${total}</strong><span data-sync-role="typical-reason">选项分布：${distribution}；正确率 ${rate}%</span>`;
+}
+function applyBoardClassActivity(activity, flash=false){
+  if(!activity || activity.type !== 'live-question') return;
+  if(currentScene !== 'live' && typeof selectScene === 'function') selectScene('live', true);
+  const {options, answered, correct, total} = liveActivityCounts(activity);
+  const ans = $('#liveAns');
+  const fill = $('#liveFill');
+  const pct = $('#livePct');
+  const percent = total ? Math.round(answered / total * 100) : 0;
+  if(ans) ans.textContent = answered;
+  if(fill) fill.style.width = percent + '%';
+  if(pct) pct.textContent = percent + '%';
+  Object.entries(options).forEach(([key, count]) => {
+    const opt = $(`.live-opt[data-k="${key}"]`);
+    const num = opt?.querySelector('.opt-mini-num');
+    const bar = opt?.querySelector('.omb-fill');
+    if(num) num.textContent = `${count} 人选`;
+    if(bar) bar.style.width = total ? Math.max(4, Math.round(count / total * 100)) + '%' : '0%';
+  });
+  setLiveSyncSummary(activity);
+  setBoardSyncStrip('随堂题回收中', `已提交 ${answered}/${total}，正确 ${correct} 人。`);
+  if(flash) toast(`收到学生提交：${answered}/${total}`, 'info', 1400);
 }
 
 const CLASSMATES = ['李小明','陈思雨','张佳怡','王浩然','赵一诺','孙晨','刘安琪','周航','何雨桐','郑嘉豪','钱乐乐','许知远'];
@@ -878,6 +1011,7 @@ const SCENES = {
         <div class="lf-list" id="lfList"></div>
       </div>
       <div class="live-actions">
+        <button class="la-btn pri" data-act="livePush">📨 推送本题</button>
         <button class="la-btn" data-act="liveAdd30">⏱ + 30 秒</button>
         <button class="la-btn" data-act="liveSlow">👀 查看慢答 11 人</button>
         <button class="la-btn" data-act="liveHint">💡 给全班一个提示</button>
@@ -1065,6 +1199,11 @@ function setupSceneEffects(scene){
   }
   // ---- live：进度条 / 最快头像 / 倒计时 / 已答数 ----
   if(scene==='live'){
+    const syncedActivity = readBubuSync().classActivity;
+    if(syncedActivity?.type === 'live-question'){
+      applyBoardClassActivity(syncedActivity, false);
+      return;
+    }
     const lfl = $('#lfList');
     const names = [['嘉怡','1','gold'],['子涵','2',''],['晓彤','3',''],['家豪','4',''],['雨桐','5','']];
     if(lfl){
@@ -1122,6 +1261,7 @@ function setupSceneEffects(scene){
       const wait = $('#drawWaiting'); if(wait) wait.style.display='none';
       const nm = $('#drawName'); if(nm) nm.style.display='block';
       const why = $('#drawWhy'); if(why) why.style.display='block';
+      const acts = $('#drawActions'); if(acts) acts.style.display='flex';
       toast('🎯 抽中：嘉怡', 'info', 1800);
     }, 2700);
   }
@@ -1523,6 +1663,9 @@ document.addEventListener('click', e=>{
       break;
 
     // ===== live =====
+    case 'livePush':
+      syncLivePushFromBoard();
+      break;
     case 'liveOpt': {
       const k = a.dataset.k;
       const data = {
@@ -1608,7 +1751,10 @@ document.addEventListener('click', e=>{
       toast('已切换：' + labels[m], 'info', 2000);
       break;
     }
-    case 'drawAccept': toast('🎤 已点名嘉怡，可以开始回答', 'ok', 2000); break;
+    case 'drawAccept':
+      syncDrawCallFromBoard();
+      toast('🎤 已点名嘉怡，她的平板已进入回答提示', 'ok', 2000);
+      break;
     case 'drawSwap': toast('🔁 跳过嘉怡，重新抽取', 'info', 1400); reSpinDraw(); break;
     case 'drawRespin': reSpinDraw(); break;
 

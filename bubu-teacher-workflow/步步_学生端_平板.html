@@ -500,6 +500,11 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .q-feedback.ok{background:var(--primary-soft-2);border:1px solid var(--primary-soft);color:var(--primary-dark)}
 .q-feedback.no{background:var(--danger-soft);border:1px solid #fecaca;color:#991b1b}
 .q-feedback .qf-ico{font-size:16px;line-height:1}
+.sync-draw-card{border:1.5px solid var(--primary-soft);background:linear-gradient(135deg,#ecfdf5,#fff);box-shadow:0 10px 28px rgba(16,185,129,.1)}
+.sync-draw-card.listen{border-color:var(--line);background:#fff}
+.sync-draw-badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:var(--primary-soft);color:var(--primary-dark);font-size:11px;font-weight:900;padding:4px 9px;margin-bottom:10px}
+.sync-draw-title{font-size:18px;font-weight:900;color:var(--text);line-height:1.35;margin-bottom:8px}
+.sync-draw-sub{font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.7}
 
 /* 课堂状态条：学生只看到老师当前推送 */
 .class-status{padding:9px 14px;background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-shrink:0;cursor:pointer}
@@ -1084,6 +1089,12 @@ function readBubuSync(){
   try { return JSON.parse(localStorage.getItem(BUBU_SYNC_KEY) || '{}') || {}; }
   catch { return {}; }
 }
+function writeBubuSync(patch){
+  const next = {...readBubuSync(), ...patch, updatedAt:Date.now()};
+  try { localStorage.setItem(BUBU_SYNC_KEY, JSON.stringify(next)); } catch {}
+  try { bubuSyncChannel?.postMessage(next); } catch {}
+  return next;
+}
 function listenBubuSync(handler){
   window.addEventListener('storage', e => {
     if(e.key === BUBU_SYNC_KEY && e.newValue){
@@ -1095,6 +1106,62 @@ function listenBubuSync(handler){
 function subjectMark(subject='math'){
   const map = {math:'数', chinese:'语', english:'英', science:'科', art:'美'};
   return map[subject] || '作';
+}
+const CURRENT_STUDENT = {id:'wang-jiayi', name:'嘉怡', fullName:'王嘉怡'};
+function getCurrentClassActivity(){
+  const state = readBubuSync();
+  return state.classActivity || null;
+}
+function mergeStudentSubmission(activity, detail){
+  const next = activity && activity.type === 'live-question' ? {...activity} : {
+    type:'live-question',
+    id:'live-local',
+    scene:detail.scene || 'mcq',
+    title:'随堂题',
+    total:28,
+    answerKey:'C',
+    options:{A:0,B:0,C:0,D:0},
+    submissions:[]
+  };
+  next.options = {...(next.options || {})};
+  ['A','B','C','D'].forEach(k => { next.options[k] = Number(next.options[k] || 0); });
+  next.submissions = Array.isArray(next.submissions) ? next.submissions.filter(s => s.studentId !== CURRENT_STUDENT.id) : [];
+  const submission = {
+    studentId:CURRENT_STUDENT.id,
+    student:CURRENT_STUDENT.fullName,
+    scene:detail.scene || next.scene || 'mcq',
+    answer:detail.answer || '',
+    correct:!!detail.correct,
+    seconds:detail.seconds || 46,
+    at:Date.now()
+  };
+  next.submissions.push(submission);
+  if(submission.answer && Object.prototype.hasOwnProperty.call(next.options, submission.answer)){
+    next.options[submission.answer] += 1;
+  }
+  next.answered = next.submissions.length;
+  next.correct = next.submissions.filter(s => s.correct).length;
+  next.status = 'collecting';
+  return next;
+}
+function reportClassSubmission(detail){
+  const activity = mergeStudentSubmission(getCurrentClassActivity(), detail);
+  writeBubuSync({
+    source:'student',
+    classActivity:activity,
+    lastSubmission:{
+      studentId:CURRENT_STUDENT.id,
+      student:CURRENT_STUDENT.fullName,
+      scene:detail.scene || activity.scene,
+      answer:detail.answer || '',
+      correct:!!detail.correct,
+      at:Date.now()
+    }
+  });
+}
+function isDrawTargetMe(call){
+  const raw = `${call?.targetId || ''} ${call?.target || ''}`.toLowerCase();
+  return raw.includes(CURRENT_STUDENT.id) || raw.includes(CURRENT_STUDENT.name.toLowerCase()) || raw.includes(CURRENT_STUDENT.fullName.toLowerCase());
 }
 function syncedHomeworkId(hw){
   return `synced_${String(hw?.id || 'latest').replace(/[^\w-]/g,'_')}`;
@@ -1182,9 +1249,36 @@ function applySyncedClassroom(cls, flash=false){
     toast('收到老师课堂推送', 'info', 1600, $('#classStatusBar'));
   }
 }
+function applySyncedDrawCall(call, flash=false){
+  if(!call) return;
+  classIndex = Math.max(0, classQueue.indexOf('draw'));
+  renderClassScene('draw');
+  switchStudentTab('classroom');
+  const mine = isDrawTargetMe(call);
+  const target = call.target || '同学';
+  const question = call.question || '请说一说你的想法。';
+  const title = $('#classTitle');
+  const sub = $('#classStatusSub');
+  if(title) title.textContent = mine ? '王老师 · 轮到你回答' : '王老师 · 同学回答中';
+  if(sub) sub.textContent = mine ? '只有你的平板出现回答准备按钮，其他同学只看到旁听状态。' : `正在听${target}回答，认真听同学的思路。`;
+  $('#classStage').innerHTML = mine ? `
+    <div class="q-card sync-draw-card" data-sync-role="draw-call">
+      <span class="sync-draw-badge">抽人提问</span>
+      <div class="sync-draw-title">轮到你回答</div>
+      <div class="sync-draw-sub">王老师点到了你：${escapeSyncHTML(question)}<br>准备好后点下面按钮，老师会在白板端继续追问或讲评。</div>
+      <button class="q-sub-btn" id="drawAccept" style="margin-top:14px">我准备好了 →</button>
+    </div>` : `
+    <div class="q-card sync-draw-card listen" data-sync-role="draw-listen">
+      <span class="sync-draw-badge">旁听中</span>
+      <div class="sync-draw-title">正在听${escapeSyncHTML(target)}回答</div>
+      <div class="sync-draw-sub">请先听同学怎么解释，等老师切到下一题或讲评时你的平板会自动更新。</div>
+    </div>`;
+  if(flash) toast(mine ? '轮到你回答了' : `正在听${target}回答`, 'info', 1600, $('#classStatusBar'));
+}
 function applyBubuSyncState(state, flash=false){
   if(state?.homework) applySyncedHomework(state.homework, flash && state.source === 'teacher');
-  if(state?.classroom) applySyncedClassroom(state.classroom, flash && state.source === 'teacher');
+  if(state?.classroom && state.source !== 'student') applySyncedClassroom(state.classroom, flash && (state.source === 'teacher' || state.source === 'board'));
+  if(state?.drawCall && state.source !== 'student') applySyncedDrawCall(state.drawCall, flash && state.source === 'board');
 }
 
 // ============ 课后模式：Tab 切换 ============
@@ -1454,6 +1548,7 @@ function bindMCQ(){
     const fb=$('#optFB'); fb.classList.remove('ok','no'); fb.classList.add('show', ok?'ok':'no');
     $('#optFB .qf-ico').textContent = ok?'✅':'❌';
     $('#optFBText').innerHTML = ok?'回答正确！老师看到你答得最快的前 5 个。':'答错了。这道题<strong>晚上会自动进你的错题本</strong>。';
+    reportClassSubmission({scene:'mcq', answer:sel.dataset.opt, correct:ok, seconds:46});
   });
 }
 
@@ -1474,6 +1569,7 @@ function bindDict(){
     const fb=$('#dictFB'); fb.classList.add('show', ok?'ok':'no');
     $('#dictFB .qf-ico').textContent = ok?'✅':'❌';
     $('#dictFBText').innerHTML = ok?'写对了！老师正在看全班正确率。':'再听一遍，注意每个字的偏旁。<strong>错的会进错题本</strong>。';
+    reportClassSubmission({scene:'dict', answer:v, correct:ok, seconds:58});
   });
 }
 
@@ -1495,6 +1591,7 @@ function bindCircle(){
     const fb=$('#circleFB'); fb.classList.add('show', ok?'ok':'no');
     $('#circleFB .qf-ico').textContent = ok?'✅':'❌';
     $('#circleFBText').innerHTML = ok?'正确！只有 <strong>1/3</strong> 和 <strong>1/2</strong> 是最简分数。':'再想想——还有哪些分数的分子分母能除以同一个数？';
+    reportClassSubmission({scene:'circle', answer:sels.join(','), correct:ok, seconds:64});
   });
 }
 
@@ -1512,6 +1609,7 @@ function bindVote(){
     s.textContent='已投票'; s.disabled=true; s.classList.add('done');
     const fb=$('#voteFB'); fb.classList.add('show','ok');
     $('#voteFBText').innerHTML = '投票<strong>无对错</strong>。老师正在看全班分布，等下一起讨论。';
+    reportClassSubmission({scene:'vote', answer:sel.dataset.opt, correct:true, seconds:22});
   });
 }
 
@@ -1532,6 +1630,7 @@ function bindRead(){
         btn.textContent = '已上传 · 等评分';
         const fb=$('#readFB'); fb.classList.add('show','ok');
         $('#readFBText').innerHTML = 'AI 给你打分：<strong>流利度 88，发音 92</strong>。老师可以回放你的录音。';
+        reportClassSubmission({scene:'read', answer:'朗读录音', correct:true, seconds:74});
       }
     }, 240);
   });
@@ -1549,6 +1648,7 @@ function bindFill(){
     const fb=$('#fillFB'); fb.classList.add('show', ok?'ok':'no');
     $('#fillFB .qf-ico').textContent = ok?'✅':'❌';
     $('#fillFBText').innerHTML = ok?'答对了！1/2 通分为 2/4，加 1/4 = 3/4。':'再算一遍：1/2 和 1/4 的<strong>公分母</strong>是几？';
+    reportClassSubmission({scene:'fill', answer:`${a}/${b}`, correct:ok, seconds:52});
   });
 }
 function bindHandwrite(){
@@ -1557,6 +1657,7 @@ function bindHandwrite(){
     s.textContent='已提交'; s.disabled=true; s.classList.add('done');
     const fb=$('#handFB'); fb.classList.add('show','ok');
     $('#handFBText').innerHTML='手写过程已提交给王老师，AI 学伴课堂内保持隐藏。';
+    reportClassSubmission({scene:'handwrite', answer:'手写过程', correct:true, seconds:96});
   });
 }
 
@@ -2103,6 +2204,12 @@ function handleAfter(key){
   if(key==='drawDone'){
     const c = $('#drawAccept');
     if(c){ c.textContent='已答完'; c.disabled=true; c.classList.add('done'); }
+    const call = readBubuSync().drawCall || {};
+    writeBubuSync({
+      source:'student',
+      drawCall:{...call, status:'answered'},
+      drawResponse:{studentId:CURRENT_STUDENT.id, student:CURRENT_STUDENT.fullName, status:'answered', at:Date.now()}
+    });
     toast('已告知老师','ok');
   }
 }
