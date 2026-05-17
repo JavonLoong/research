@@ -303,6 +303,10 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .qs-count{font-size:10.5px;color:var(--muted)}
 .qmain{display:flex;flex-direction:column;gap:8px;overflow-y:auto}
 .qmain .qcard{padding:10px 12px}
+.qbank-summary{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.qbank-summary h4{font-size:13px;margin:0 0 3px;color:var(--text)}
+.qbank-summary p{font-size:11.5px;color:var(--muted);line-height:1.55;margin:0}
+.qbank-summary strong{font-size:18px;color:var(--primary-dark)}
 .qcart{background:#fff;border:1px solid var(--primary-soft);border-radius:var(--radius);padding:12px;display:flex;flex-direction:column;background:linear-gradient(180deg,var(--primary-soft-2),#fff)}
 .qcart h4{font-size:13px;color:var(--primary-dark);font-weight:800;margin-bottom:2px}
 .qc-sub{font-size:11.5px;color:var(--muted);margin-bottom:8px}
@@ -358,7 +362,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .error-cluster{margin-top:14px;background:#fff;border:1px solid #fecaca;border-radius:var(--radius);padding:12px;background:linear-gradient(180deg,#fef3f2,#fff)}
 .error-cluster h4{font-size:12.5px;color:var(--danger);font-weight:800;margin-bottom:7px}
 .cluster-list{display:flex;gap:5px;flex-wrap:wrap}
-.cluster-chip{background:#fff;border:1px solid var(--line);padding:3px 9px;border-radius:999px;font-size:11px;color:var(--text-soft)}
+.cluster-chip{background:#fff;border:1px solid var(--line);padding:3px 9px;border-radius:999px;font-size:11px;color:var(--text-soft);cursor:pointer}
+.cluster-chip:hover{border-color:var(--danger);color:var(--danger)}
 .cluster-chip strong{color:var(--danger)}
 
 .wip{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;color:var(--muted);text-align:center}
@@ -2416,29 +2421,144 @@ document.querySelectorAll('.scard').forEach(c => {
   });
 });
 
-// 8. 题库小卡（aside + qbank panel）
-document.querySelectorAll('.qcard').forEach(c => {
-  const collectInfo = () => {
-    const tags = [...c.querySelectorAll('.qtag')].map(t => t.textContent.trim());
-    const text = c.querySelector('.qtext').textContent.trim();
-    const meta = c.querySelector('.qmeta')?.textContent || '';
-    const accMatch = meta.match(/(\d+)\s*%/);
-    const usesMatch = meta.match(/(\d+)\s*次/);
-    return {
-      title: text.slice(0, 28) + (text.length > 28 ? '...' : ''),
-      text,
-      diff: tags[0] || '基础',
-      kp: tags[1] || '通用',
-      source: meta.includes('学科网') ? '学科网' : meta.includes('AI') ? 'AI 变式' : '校本题库',
-      uses: usesMatch ? +usesMatch[1] : 12,
-      acc: accMatch ? +accMatch[1] : 80,
-      answer: '（详见解析）',
-      solution: '建议结合本课时知识点讲解，先示范再让学生独立尝试。'
+// 8. 题库小卡（aside + qbank panel）：左侧每个分类都会切换为不同题池
+const QBANK_POOLS = {
+  '校本题库': {
+    desc:'本校教师课堂使用后沉淀的题，带有真实正确率和错因标签。',
+    total:'486',
+    questions:[
+      {diff:'基础', kp:'小数读写', source:'校本题库', uses:23, acc:88, tag:'客观', text:'读出下列小数：0.3、2.5、10.08，并写出每个小数表示的意义。', answer:'0.3 读作零点三；2.5 读作二点五；10.08 读作十点零八。', solution:'先读整数部分，再读小数点，最后逐位读小数部分。'},
+      {diff:'中档', kp:'单位换算', source:'校本题库', uses:41, acc:64, tag:'高错', text:'0.8 米 =（ ）厘米；3.05 元 =（ ）元（ ）角（ ）分。', answer:'80 厘米；3 元 0 角 5 分。', solution:'米到厘米乘 100；元角分要先看小数位分别表示角和分。'},
+      {diff:'提高', kp:'实际应用', source:'校本题库', uses:17, acc:72, tag:'主观', text:'小明买文具花了 2.5 元，付 5 元，应找回多少元？说明小数点位置的含义。', answer:'2.5 元。', solution:'列式 5.0 - 2.5 = 2.5；小数点左边表示元，右边第一位表示角。'}
+    ]
+  },
+  '学科网': {
+    desc:'第三方题源，只进入临时篮；教师确认后才沉淀到校本。',
+    total:'12k',
+    questions:[
+      {diff:'基础', kp:'小数意义', source:'学科网', uses:9, acc:81, tag:'待校验', text:'把 1 米平均分成 10 份，每份是（ ）米，也就是（ ）分米。', answer:'0.1 米；1 分米。', solution:'1 米 = 10 分米，平均分成 10 份，每份就是 1 分米。'},
+      {diff:'中档', kp:'小数比较', source:'学科网', uses:15, acc:69, tag:'可改编', text:'在 ○ 里填 >、< 或 =：0.30 ○ 0.3；1.05 ○ 1.5；0.9 ○ 0.89。', answer:'=；<；>。', solution:'比较小数时先比整数部分，再逐位比较小数部分，末尾补 0 大小不变。'},
+      {diff:'提高', kp:'小数运算', source:'学科网', uses:6, acc:58, tag:'高错', text:'妈妈买苹果 3.6 元，买橙子比苹果多 1.8 元，一共花了多少元？', answer:'9.0 元。', solution:'橙子 3.6 + 1.8 = 5.4 元；总价 3.6 + 5.4 = 9.0 元。'}
+    ]
+  },
+  'AI 变式': {
+    desc:'AI 根据当前课件、错因和分层目标生成，默认需要教师确认。',
+    total:'152',
+    questions:[
+      {diff:'基础', kp:'单位换算', source:'AI 变式', uses:0, acc:0, tag:'新生成', text:'把 0.6 米、0.06 米、6 厘米按从大到小排序，并说明理由。', answer:'0.6 米 > 0.06 米 = 6 厘米。', solution:'统一单位到厘米：0.6 米=60 厘米，0.06 米=6 厘米。'},
+      {diff:'中档', kp:'小数比较', source:'AI 变式', uses:0, acc:0, tag:'针对错因', text:'0.40 和 0.4 谁更大？请用“十分之几/百分之几”解释。', answer:'一样大。', solution:'0.40 是 40 个百分之一，也就是 4 个十分之一，与 0.4 相等。'},
+      {diff:'提高', kp:'讲评变式', source:'AI 变式', uses:0, acc:0, tag:'讲评用', text:'同样是 2.5，为什么 2.5 元和 2.5 米的小数点含义不完全一样？', answer:'数值结构相同，单位语境不同。', solution:'2.5 的 2 表示 2 个单位，0.5 表示半个单位；换成元或米时，解释要落回具体单位。'}
+    ]
+  },
+  '我收藏': {
+    desc:'王老师收藏过、准备长期复用的题，适合快速组卷。',
+    total:'23',
+    questions:[
+      {diff:'基础', kp:'小数读写', source:'我收藏', uses:31, acc:92, tag:'收藏', text:'用小数表示下面的价格：3 元 5 角、8 角、12 元 6 分。', answer:'3.5 元；0.8 元；12.06 元。', solution:'角对应小数第一位，分对应小数第二位。'},
+      {diff:'中档', kp:'单位换算', source:'我收藏', uses:22, acc:67, tag:'收藏', text:'在括号里填合适的小数：35 厘米 =（ ）米；7 角 =（ ）元。', answer:'0.35 米；0.7 元。', solution:'厘米到米除以 100；角到元除以 10。'},
+      {diff:'提高', kp:'应用题', source:'我收藏', uses:18, acc:75, tag:'收藏', text:'超市价格牌写着 4.08 元，解释 4、0、8 分别表示什么。', answer:'4 表示 4 元，0 表示 0 角，8 表示 8 分。', solution:'从小数点向右第一位是角，第二位是分。'}
+    ]
+  },
+  '小数初步': {
+    desc:'本单元总览题池，覆盖读写、意义、比较、单位和简单应用。',
+    total:'117',
+    questions:[
+      {diff:'基础', kp:'小数意义', source:'单元题池', uses:26, acc:83, tag:'概念', text:'0.1、0.01 分别表示把一个整体平均分成几份后的一份？', answer:'10 份；100 份。', solution:'一位小数对应十分之一，两位小数对应百分之一。'},
+      {diff:'中档', kp:'小数读写', source:'单元题池', uses:19, acc:78, tag:'混合', text:'写出“三点零六”和“十二点五零”，并说明末尾 0 是否影响大小。', answer:'3.06；12.50，末尾 0 不影响大小。', solution:'小数末尾添 0 或去 0，大小不变。'},
+      {diff:'提高', kp:'综合应用', source:'单元题池', uses:11, acc:62, tag:'综合', text:'用 0、3、5 和小数点组成三个不同的一位小数，并从小到大排序。', answer:'3.5、5.0、5.3 等按实际组合排序。', solution:'先保证是一位小数，再比较整数部分。'}
+    ]
+  },
+  '小数读写': {
+    desc:'聚焦读法、写法、数位和价格语境。',
+    total:'28',
+    questions:[
+      {diff:'基础', kp:'小数读写', source:'知识点题池', uses:23, acc:88, tag:'读法', text:'读出 0.07、6.30、12.005。', answer:'零点零七；六点三零；十二点零零五。', solution:'小数部分逐位读，0 也要读出来。'},
+      {diff:'基础', kp:'小数写法', source:'知识点题池', uses:18, acc:84, tag:'写法', text:'写出：零点八、三点零四、二十点零零六。', answer:'0.8；3.04；20.006。', solution:'按读法逐位落到小数位上。'},
+      {diff:'中档', kp:'价格读写', source:'知识点题池', uses:16, acc:76, tag:'情境', text:'价格 7.09 元应怎样读？它表示几元几角几分？', answer:'七点零九元；7 元 0 角 9 分。', solution:'元角分语境下，第一位小数是角，第二位是分。'}
+    ]
+  },
+  '单位换算': {
+    desc:'当前班级薄弱点，重点看小数点移动方向和单位含义。',
+    total:'42',
+    questions:[
+      {diff:'基础', kp:'长度单位', source:'知识点题池', uses:29, acc:66, tag:'高错', text:'0.8 米 =（ ）厘米；0.08 米 =（ ）厘米。', answer:'80；8。', solution:'米到厘米乘 100，小数点向右移动两位。'},
+      {diff:'中档', kp:'人民币单位', source:'知识点题池', uses:21, acc:71, tag:'情境', text:'4.05 元 =（ ）元（ ）角（ ）分；6 角 =（ ）元。', answer:'4 元 0 角 5 分；0.6 元。', solution:'角是十分位，分是百分位。'},
+      {diff:'提高', kp:'单位综合', source:'知识点题池', uses:12, acc:55, tag:'讲评优先', text:'比较 0.7 米、65 厘米、0.08 千米的大小。', answer:'0.08 千米 > 0.7 米 > 65 厘米。', solution:'统一成米：0.7 米、0.65 米、80 米。'}
+    ]
+  },
+  '小数比较': {
+    desc:'针对“末尾 0”和“位数多就大”的典型误区。',
+    total:'19',
+    questions:[
+      {diff:'基础', kp:'大小比较', source:'知识点题池', uses:20, acc:82, tag:'基础', text:'比较：0.5 ○ 0.8；1.2 ○ 1.02；0.30 ○ 0.3。', answer:'<；>；=。', solution:'逐位比较，末尾补 0 不改变大小。'},
+      {diff:'中档', kp:'排序', source:'知识点题池', uses:14, acc:69, tag:'易错', text:'把 0.9、0.89、0.909、0.99 从小到大排序。', answer:'0.89 < 0.9 < 0.909 < 0.99。', solution:'可以补齐位数：0.890、0.900、0.909、0.990。'},
+      {diff:'提高', kp:'解释理由', source:'知识点题池', uses:8, acc:61, tag:'表达', text:'为什么 1.05 比 1.5 小？请用数位表说明。', answer:'1.05 < 1.50。', solution:'十分位比较：0 小于 5，所以 1.05 小于 1.5。'}
+    ]
+  },
+  '小数运算': {
+    desc:'承接下一阶段，先放少量预备题和诊断题。',
+    total:'31',
+    questions:[
+      {diff:'基础', kp:'小数加法', source:'预备题池', uses:10, acc:74, tag:'预习', text:'2.3 + 1.4 =（ ）；0.6 + 0.2 =（ ）。', answer:'3.7；0.8。', solution:'相同数位对齐后计算。'},
+      {diff:'中档', kp:'小数减法', source:'预备题池', uses:9, acc:63, tag:'诊断', text:'5 - 2.5 =（ ），请写成竖式。', answer:'2.5。', solution:'把 5 写成 5.0，再与 2.5 对齐相减。'},
+      {diff:'提高', kp:'应用', source:'预备题池', uses:7, acc:57, tag:'综合', text:'一根绳子长 3.2 米，剪去 0.85 米，还剩多少米？', answer:'2.35 米。', solution:'3.20 - 0.85 = 2.35。'}
+    ]
+  }
+};
+function normalizeQBankLabel(text=''){
+  return text.replace(/[📍🌐🤖⭐└]/g,'').replace(/\b\d+\s*k?\b/gi,'').replace(/\d+/g,'').replace(/\s+/g,' ').trim();
+}
+function qDiffClass(diff=''){
+  if(diff.includes('提高')) return 'diff-hard';
+  if(diff.includes('中')) return 'diff-mid';
+  return 'diff-easy';
+}
+function renderQBank(label){
+  const data = QBANK_POOLS[label] || QBANK_POOLS['校本题库'];
+  const main = document.querySelector('#panel-qbank .qmain');
+  if(!main) return;
+  main.innerHTML = `
+    <div class="qbank-summary">
+      <div><h4>${escapeHTML(label)}</h4><p>${escapeHTML(data.desc)}</p></div>
+      <strong>${escapeHTML(data.total)}</strong>
+    </div>
+    ${data.questions.map(q => `
+      <div class="qcard" data-answer="${escapeHTML(q.answer)}" data-solution="${escapeHTML(q.solution)}" data-source="${escapeHTML(q.source)}" data-uses="${q.uses}" data-acc="${q.acc}">
+        <div class="qtags"><span class="qtag ${qDiffClass(q.diff)}">${escapeHTML(q.diff)}</span><span class="qtag kp">${escapeHTML(q.kp)}</span><span class="qtag" style="background:#e0f2fe;color:#0369a1">${escapeHTML(q.tag)}</span></div>
+        <div class="qtext">${escapeHTML(q.text)}</div>
+        <div class="qmeta"><span>📍 ${escapeHTML(q.source)}</span><span>👁 用过 ${q.uses} 次</span><span>📊 正确率 ${q.acc}%</span></div>
+      </div>
+    `).join('')}`;
+  bindQuestionCards(main);
+  showToast('▸ 已切换题池：' + label);
+}
+function bindQuestionCards(root=document){
+  root.querySelectorAll('.qcard').forEach(c => {
+    if(c.dataset.qBound === '1') return;
+    c.dataset.qBound = '1';
+    const collectInfo = () => {
+      const tags = [...c.querySelectorAll('.qtag')].map(t => t.textContent.trim());
+      const text = c.querySelector('.qtext').textContent.trim();
+      const meta = c.querySelector('.qmeta')?.textContent || '';
+      const accMatch = meta.match(/(\d+)\s*%/);
+      const usesMatch = meta.match(/(\d+)\s*次/);
+      return {
+        title: text.slice(0, 28) + (text.length > 28 ? '...' : ''),
+        text,
+        diff: tags[0] || '基础',
+        kp: tags[1] || '通用',
+        source: c.dataset.source || (meta.includes('学科网') ? '学科网' : meta.includes('AI') ? 'AI 变式' : '校本题库'),
+        uses: c.dataset.uses ? +c.dataset.uses : usesMatch ? +usesMatch[1] : 12,
+        acc: c.dataset.acc ? +c.dataset.acc : accMatch ? +accMatch[1] : 80,
+        answer: c.dataset.answer || '（详见解析）',
+        solution: c.dataset.solution || '建议结合本课时知识点讲解，先示范再让学生独立尝试。'
+      };
     };
-  };
-  setDragPayload(c, () => ({kind:'question', info:collectInfo()}));
-  c.addEventListener('click', () => addQuestionPage(collectInfo()));
-});
+    setDragPayload(c, () => ({kind:'question', info:collectInfo()}));
+    c.addEventListener('click', () => addQuestionPage(collectInfo()));
+  });
+}
+bindQuestionCards();
 
 // 9. 校本资源行（aside 内）
 document.querySelectorAll('.repo-row').forEach(r => {
@@ -2478,7 +2598,7 @@ document.querySelectorAll('#panel-interaction .it-card').forEach(c => {
   });
 });
 
-// 11. 题库 panel 左侧筛选 + 知识图谱（同组单选 toggle）
+// 11. 题库 panel 左侧筛选 + 知识图谱（每项切换独立题池）
 document.querySelectorAll('#panel-qbank .qside').forEach(side => {
   side.querySelectorAll('.qs-item').forEach(item => {
     item.addEventListener('click', () => {
@@ -2494,7 +2614,7 @@ document.querySelectorAll('#panel-qbank .qside').forEach(side => {
       }
       group.forEach(x => x.classList.remove('active'));
       item.classList.add('active');
-      showToast('▸ 切换：' + item.textContent.replace(/\d+/g, '').replace(/[└k]/g, '').trim());
+      renderQBank(normalizeQBankLabel(item.textContent));
     });
   });
 });
@@ -2527,41 +2647,168 @@ document.querySelectorAll('#panel-qbank .cart-actions .btn').forEach(b => {
   });
 });
 
-// 14. 批阅 panel 学生列表 toggle
-document.querySelectorAll('#panel-grading .stu-row').forEach(r => {
-  r.addEventListener('click', () => {
-    document.querySelectorAll('#panel-grading .stu-row').forEach(x => x.classList.remove('active'));
-    r.classList.add('active');
-    const name = r.querySelector('.stu-name').textContent.trim();
-    showToast('▸ 切换到 ' + name + ' 的作答');
+// 14. 批阅 panel：每个学生都有独立作答过程、错因和推荐动作
+const STUDENT_GRADING_DATA = {
+  '张小红': {
+    avatar:'张', tone:'linear-gradient(135deg,#34d399,#10b981)', title:'张小红 · 第 1 题', meta:'小数读写 · 客观题 · 用时 8 分 04 秒',
+    stats:[['100%','正确率'],['0','AI 提示'],['0','擦改']],
+    question:'读出下列小数：0.3、2.5、10.08，并写出每个小数表示的意义。',
+    steps:[
+      ['00:00','01:20','审题','标出 0.3 / 2.5 / 10.08 三个小数。','正常',30,''],
+      ['01:20','03:10','逐位读数','零点三；二点五；十点零八。','正确',45,''],
+      ['03:10','06:40','解释意义','0.3 是 3 个十分之一；2.5 是 2 个一和 5 个十分之一。','优秀表达',70,''],
+      ['06:40','08:04','检查提交','补充 10.08 的 8 表示 8 个百分之一。','可作样例',35,'']
+    ],
+    clusters:[{count:1,title:'优秀表达样例',examples:['张小红能同时说清读法和数位意义，可放入讲评页作正例']}],
+    action:'把正例加入讲评'
+  },
+  '李小明': {
+    avatar:'李', tone:'linear-gradient(135deg,#fbbf24,#f59e0b)', title:'李小明 · 第 3 题', meta:'单位换算 · 主观题 · 用时 6 分 18 秒',
+    stats:[['80%','正确率'],['3','AI 提示'],['2','擦改']],
+    question:'小明买文具花了 2.5 元，付了 5 元，应找回多少元？（用小数计算并说明小数点位置的含义）',
+    steps:[
+      ['00:00','00:42','列式','5 - 2.5 = ?','正常',30,''],
+      ['00:42','03:50','计算（擦改 2 次）','5 - 2.5 = 3.5 → 2.5 → 2.5','需看步骤',75,'warn'],
+      ['03:50','05:10','AI 提示后修正','小数点对齐：5.0 − 2.5 = 2.5（元）','AI 介入',50,'danger'],
+      ['05:10','06:18','解释含义','小数点表示元和角的分界，2 是元，5 是角。','正确',40,'']
+    ],
+    clusters:[
+      {count:5,title:'小数点位移方向反',examples:['李小明 5-2.5 一度写成 3.5', '王小华 单位换算漏乘 ×100', '赵小丽 初稿把 0.8 米写成 8 厘米']},
+      {count:2,title:'单位含义解释不完整',examples:['李小明第一次只写答案，没有解释元角分含义', '刘小芳解释了结果但没有说小数位']}
+    ],
+    action:'生成个人订正卡'
+  },
+  '王小华': {
+    avatar:'王', tone:'linear-gradient(135deg,#f87171,#ef4444)', title:'王小华 · 第 2 题', meta:'单位换算 · 手写题 · 用时 22 分 11 秒',
+    stats:[['60%','正确率'],['5','AI 提示'],['4','擦改']],
+    question:'0.8 米 =（ ）厘米；3.5 千米 =（ ）米，并说明小数点移动方向。',
+    steps:[
+      ['00:00','02:30','审题停留','反复圈出“米”和“厘米”。','读题慢',40,'warn'],
+      ['02:30','08:20','第一次作答','0.8 米 = 8 厘米；3.5 千米 = 350 米。','方向反',85,'danger'],
+      ['08:20','16:40','多次 AI 提示','AI 连续提示：先写单位进率，再移动小数点。','依赖提示',78,'danger'],
+      ['16:40','22:11','部分修正','0.8 米 = 80 厘米；3.5 千米仍写 350 米。','需补练',60,'warn']
+    ],
+    clusters:[
+      {count:4,title:'单位进率未先判断',examples:['王小华没有先写 1 米=100 厘米', '陈小刚把千米到米按 ×100 处理']},
+      {count:3,title:'AI 提示依赖过高',examples:['王小华 5 次提示后仍需教师追问', '陈小刚 7 次提示后步骤断裂']}
+    ],
+    action:'推单位换算基础补练'
+  },
+  '赵小丽': {
+    avatar:'赵', tone:'linear-gradient(135deg,#34d399,#10b981)', title:'赵小丽 · 第 4 题', meta:'小数比较 · 解释题 · 用时 10 分 02 秒',
+    stats:[['100%','正确率'],['1','AI 提示'],['1','擦改']],
+    question:'比较 0.30 和 0.3 的大小，并用“十分之一/百分之一”解释。',
+    steps:[
+      ['00:00','01:10','直接判断','0.30 = 0.3。','正确',26,''],
+      ['01:10','04:40','写解释','0.30 是 30 个百分之一，0.3 是 3 个十分之一。','表达完整',58,''],
+      ['04:40','07:10','AI 提示优化','AI 提醒补充“3 个十分之一 = 30 个百分之一”。','轻提示',45,'warn'],
+      ['07:10','10:02','提交','补充数位图解释。','可复用',38,'']
+    ],
+    clusters:[{count:2,title:'可沉淀讲评正例',examples:['赵小丽用百分之一解释 0.30=0.3', '张小红用数位表解释小数末尾 0']}],
+    action:'加入优秀作答库'
+  },
+  '陈小刚': {
+    avatar:'陈', tone:'linear-gradient(135deg,#f87171,#ef4444)', title:'陈小刚 · 第 5 题', meta:'综合应用 · 主观题 · 用时 25 分 36 秒',
+    stats:[['33%','正确率'],['7','AI 提示'],['6','擦改']],
+    question:'一根绳子长 3.2 米，剪去 0.85 米，还剩多少米？请写出竖式。',
+    steps:[
+      ['00:00','04:50','未能列式','只写“3.2 - 85”，没有补 0。','概念断点',65,'danger'],
+      ['04:50','12:20','反复擦改','3.2 - 0.85 = 2.45 → 2.35 → 3.15。','计算不稳',92,'danger'],
+      ['12:20','21:10','AI 提示 7 次','提示后能写 3.20 - 0.85，但借位错误。','强依赖 AI',88,'danger'],
+      ['21:10','25:36','提交不完整','答案写 2.35，竖式解释缺失。','需面批',50,'warn']
+    ],
+    clusters:[
+      {count:3,title:'整数/小数补 0 不熟',examples:['陈小刚 3.2 未写成 3.20', '王小华 5 未写成 5.0', '李小明初稿漏对齐']},
+      {count:1,title:'需要线下面批',examples:['陈小刚连续 7 次 AI 提示后仍无法稳定说明借位过程']}
+    ],
+    action:'标记重点跟进'
+  },
+  '刘小芳': {
+    avatar:'刘', tone:'linear-gradient(135deg,#60a5fa,#a78bfa)', title:'刘小芳 · 第 6 题', meta:'小数意义 · 主观题 · 用时 15 分 08 秒',
+    stats:[['80%','正确率'],['2','AI 提示'],['1','擦改']],
+    question:'把 1 元平均分成 10 份，每份是多少元？用分数和小数各表示一次。',
+    steps:[
+      ['00:00','02:10','列出分数','1/10 元。','正确',34,''],
+      ['02:10','05:30','写小数','0.01 元 → 改为 0.1 元。','自我修正',62,'warn'],
+      ['05:30','10:50','解释意义','把 1 元平均分成 10 份，每份是 1 角。','正确',52,''],
+      ['10:50','15:08','AI 提示补充','AI 提醒补上“0.1 元 = 1 角”。','良好',45,'']
+    ],
+    clusters:[
+      {count:2,title:'十分之一和百分之一混淆',examples:['刘小芳初稿把 1/10 写成 0.01', '孙小宇把 0.1 元说成 1 分']},
+      {count:2,title:'单位解释需要补一句',examples:['刘小芳后补 0.1 元 = 1 角', '黄小飞只写了分数没有写单位']}
+    ],
+    action:'推两题巩固'
+  }
+};
+function renderStepRow(step){
+  const [start,end,label,hand,result,width,tone] = step;
+  const rowTone = tone ? ` flag-${tone}` : '';
+  const fillTone = tone ? ` ${tone}` : '';
+  const resultClass = tone === 'danger' ? 'step-anomaly danger' : tone === 'warn' ? 'step-anomaly' : '';
+  const resultHTML = resultClass ? `<span class="${resultClass}">${escapeHTML(result)}</span>` : `<span style="color:var(--primary-dark)">✓ ${escapeHTML(result)}</span>`;
+  return `<div class="step-row${rowTone}">
+    <div class="step-time">${escapeHTML(start)}<br>${escapeHTML(end)}</div>
+    <div><div class="sc-label">${escapeHTML(label)}</div><div class="sc-handwriting">${escapeHTML(hand)}</div></div>
+    <div class="step-duration"><span>过程记录</span><div class="step-bar"><div class="step-bar-fill${fillTone}" style="width:${width}%"></div></div>${resultHTML}</div>
+  </div>`;
+}
+function renderStudentDetail(name, silent=false){
+  const data = STUDENT_GRADING_DATA[name] || STUDENT_GRADING_DATA['李小明'];
+  const panel = document.querySelector('#panel-grading .gd');
+  if(!panel) return;
+  panel.innerHTML = `
+    <div class="gd-head">
+      <div class="gh-avatar" style="background:${data.tone}">${escapeHTML(data.avatar)}</div>
+      <div><div class="gh-name">${escapeHTML(data.title)}</div><div class="gh-meta">${escapeHTML(data.meta)}</div></div>
+      <div class="gh-stats">
+        ${data.stats.map(s => `<div class="gh-stat"><strong>${escapeHTML(s[0])}</strong>${escapeHTML(s[1])}</div>`).join('')}
+      </div>
+    </div>
+    <div class="gd-q"><div class="gq-l">题目</div><div class="gq-t">${escapeHTML(data.question)}</div></div>
+    ${data.steps.map(renderStepRow).join('')}
+    <div class="error-cluster">
+      <h4>🔍 ${escapeHTML(name)} 的作答诊断</h4>
+      <div class="cluster-list">
+        ${data.clusters.map(c => `<span class="cluster-chip" data-title="${escapeHTML(c.title)}" data-count="${c.count}" data-examples="${escapeHTML(c.examples.join('|'))}"><strong>${c.count} 条</strong> · ${escapeHTML(c.title)}</span>`).join('')}
+      </div>
+      <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" data-grading-action="outline">🤖 AI 生成讲评提纲</button>
+        <button class="btn btn-sm" data-grading-action="card">📋 加入错因卡</button>
+        <button class="btn btn-sm" data-grading-action="variant">📤 ${escapeHTML(data.action)}</button>
+      </div>
+    </div>`;
+  if(!silent) showToast('▸ 已打开 ' + name + ' 的独立作答详情');
+}
+const gradingPanel = document.getElementById('panel-grading');
+if(gradingPanel){
+  gradingPanel.addEventListener('click', e => {
+    const row = e.target.closest('.stu-row');
+    if(row){
+      gradingPanel.querySelectorAll('.stu-row').forEach(x => x.classList.remove('active'));
+      row.classList.add('active');
+      renderStudentDetail(row.querySelector('.stu-name').textContent.trim());
+      return;
+    }
+    const btn = e.target.closest('[data-grading-action]');
+    if(btn){
+      const activeName = gradingPanel.querySelector('.stu-row.active .stu-name')?.textContent.trim() || '学生';
+      const action = btn.dataset.gradingAction;
+      if(action === 'outline') addOutlineSlide();
+      else if(action === 'card') addResourcePage({title:'错因卡：' + activeName + ' 作答诊断', desc:'由个人作答过程自动生成，含步骤、耗时、擦改和 AI 提示记录。', author:'AI + 王老师', uses:1, related:'小数初步', preview:'自动提取该生最需要讲评的关键步骤。'});
+      else if(action === 'variant') openDemo('push-variant');
+      return;
+    }
+    const chip = e.target.closest('.cluster-chip');
+    if(chip){
+      openDemo('cluster-detail', {
+        title: chip.dataset.title,
+        count: +(chip.dataset.count || 1),
+        examples: (chip.dataset.examples || '').split('|').filter(Boolean)
+      });
+    }
   });
-});
-
-// 15. 批阅 panel 错因聚类按钮
-document.querySelectorAll('#panel-grading .error-cluster .btn').forEach(b => {
-  const text = b.textContent.trim();
-  b.addEventListener('click', () => {
-    if (text.includes('讲评')) addOutlineSlide();
-    else if (text.includes('错因卡')) addResourcePage({title:'错因卡：整数减小数对齐错', desc:'典型错因 + 易错步骤 + 讲评素材', author:'王老师', uses:1, related:'小数初步', preview:'整数减小数时先补 0，再对齐小数点。'});
-    else if (text.includes('变式')) openDemo('push-variant');
-  });
-});
-
-// 16. 批阅 panel cluster chip
-document.querySelectorAll('#panel-grading .cluster-chip').forEach(c => {
-  c.addEventListener('click', () => {
-    const text = c.textContent.trim();
-    const m = text.match(/(\d+)\s*人[\s·]*(.+)/);
-    const title = m ? m[2] : text;
-    openDemo('cluster-detail', {
-      title, count: m ? +m[1] : 5,
-      examples: title.includes('位移') ? ['李小明 5-2.5=3.5（位移方向反）', '王小华 单位忘乘 ×10', '赵小丽 0.8米=8厘米（错）', '刘小芳 漏除以 10', '孙小宇 答错单位'] :
-                title.includes('对齐') ? ['李小明 5-2.5 列式时未对齐小数点', '陈小刚 整数相减后忘加小数点', '钱小娜 进位错'] :
-                title.includes('未解释') ? ['张小红 只写了答案 2.5', '黄小飞 没说明 2 是元 / 5 是角'] :
-                ['陈小刚 答案与解析过程矛盾']
-    });
-  });
-});
+  renderStudentDetail('李小明', true);
+}
 
 // 17. 校本资源 panel - 6 张 it-card
 const REPO_TYPES = {
