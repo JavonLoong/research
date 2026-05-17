@@ -25,12 +25,18 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 /* ===== Stage (two tablets) ===== */
 .stage{max-width:1400px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start}
 .stage-col{display:flex;flex-direction:column;gap:14px}
+.stage-note{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:800;padding:0 6px}
+.stage-note strong{font-size:14px;color:var(--text)}
 
 /* ===== Tablet shell ===== */
 .tablet{background:#0f172a;border-radius:38px;padding:13px;box-shadow:0 30px 60px rgba(15,23,42,.18),0 1px 0 rgba(255,255,255,.04) inset;position:relative}
 .tablet::before{content:"";position:absolute;left:50%;top:18px;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:#1e293b}
 .tablet::after{content:"";position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:60px;height:4px;border-radius:2px;background:#1e293b}
 .tablet-screen{background:#fff;border-radius:26px;overflow:hidden;width:100%;aspect-ratio:3/4.05;display:flex;flex-direction:column;position:relative;min-height:660px}
+.tablet.landscape{border-radius:32px}
+.tablet.landscape::before{left:18px;top:50%;transform:translateY(-50%)}
+.tablet.landscape::after{left:auto;right:7px;bottom:50%;transform:translateY(50%);width:4px;height:60px}
+.tablet.landscape .tablet-screen{aspect-ratio:4.2/3;min-height:520px;border-radius:22px}
 
 /* iOS-like statusbar */
 .statusbar{display:flex;justify-content:space-between;padding:9px 26px 4px;font-size:11px;font-weight:700;color:var(--text);flex-shrink:0}
@@ -105,6 +111,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
 /* === Student four-app workspace === */
 .app-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.s-panel[data-pane="knowledge"]>.app-grid{display:none}
 .app-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;box-shadow:var(--shadow-2);transition:.15s;min-height:104px;display:flex;flex-direction:column;justify-content:space-between}
 .app-card:hover{border-color:var(--primary);transform:translateY(-1px)}
 .app-card .app-top{display:flex;align-items:center;gap:9px}
@@ -129,6 +136,88 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .knowledge-card h4,.classroom-card h4,.repair-card h4{font-size:13px;font-weight:900;color:var(--text);line-height:1.35}
 .knowledge-card p,.classroom-card p,.repair-card p{font-size:10.8px;color:var(--muted);line-height:1.5;margin-top:4px;font-weight:600}
 .classroom-card.live{background:linear-gradient(135deg,#ecfdf5,#fff);border-color:var(--primary-soft)}
+.knowledge-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.knowledge-tab{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:900;color:var(--muted);cursor:pointer;font-family:inherit}
+.knowledge-tab.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.ebook-view{display:none}
+.ebook-view.active{display:block}
+.hidden{display:none!important}
+.bookshelf{background:linear-gradient(180deg,#f8fafc,#fff);border:1px solid var(--line);border-radius:14px;padding:12px}
+.bookshelf-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.bookshelf-head h3{font-size:15px;font-weight:900;color:var(--text)}
+.bookshelf-head span{font-size:10px;color:var(--muted);font-weight:800}
+.book-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.book-card{border:0;background:transparent;text-align:left;cursor:pointer;font-family:inherit;padding:0}
+.book-cover{height:122px;border-radius:8px 12px 12px 8px;padding:12px 10px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 10px 22px rgba(15,23,42,.16);position:relative;overflow:hidden}
+.book-cover::before{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;background:rgba(0,0,0,.18)}
+.book-cover::after{content:"";position:absolute;right:-28px;bottom:-28px;width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.16)}
+.book-cover.math,.book-mini-cover.math{background:linear-gradient(135deg,#168f7a,#10b981)}
+.book-cover.chinese,.book-mini-cover.chinese{background:linear-gradient(135deg,#b91c1c,#ef4444)}
+.book-cover.english,.book-mini-cover.english{background:linear-gradient(135deg,#3730a3,#6366f1)}
+.book-cover.science,.book-mini-cover.science{background:linear-gradient(135deg,#0369a1,#0ea5e9)}
+.book-cover .bc-sub{font-size:10px;font-weight:800;opacity:.9}
+.book-cover .bc-title{font-size:15px;font-weight:900;line-height:1.25;letter-spacing:0}
+.book-cover .bc-pub{font-size:9px;font-weight:800;opacity:.85}
+.book-card strong{display:block;font-size:11px;color:var(--text);margin-top:6px;line-height:1.3}
+.book-card span{font-size:9.5px;color:var(--muted);font-weight:700}
+.book-detail{display:none;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px}
+.book-detail.active{display:block}
+.book-detail-head{display:flex;gap:11px;align-items:center;margin-bottom:10px}
+.book-mini-cover{width:54px;height:72px;border-radius:6px 9px 9px 6px;flex:none;box-shadow:var(--shadow-2)}
+.book-detail h3{font-size:15px;font-weight:900;color:var(--text)}
+.book-detail p{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:2px}
+.book-actions{display:flex;gap:6px;margin-top:7px}
+.book-actions button,.reader-tool{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 9px;font-size:10.5px;font-weight:900;color:var(--text);cursor:pointer;font-family:inherit}
+.book-actions button.primary,.reader-tool.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.article-list{display:flex;flex-direction:column;gap:7px}
+.article-row{border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:#fff;cursor:pointer}
+.article-row:hover{border-color:var(--primary);box-shadow:var(--shadow-2)}
+.article-row strong{font-size:12.5px;color:var(--text)}
+.article-row span{display:block;font-size:10.5px;color:var(--muted);font-weight:700;margin-top:2px}
+.ebook-reader{display:none;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ebook-reader.active{display:block}
+.reader-head{display:flex;align-items:center;gap:7px;justify-content:space-between;padding:10px 11px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.reader-head strong{font-size:12.5px;color:var(--text)}
+.reader-tools{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.reader-pages{display:grid;grid-template-columns:1fr;gap:10px;padding:12px;background:#f8fafc}
+.ebook-reader.landscape .reader-pages{grid-template-columns:1fr 1fr}
+.book-page{min-height:318px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px 16px 28px;box-shadow:0 4px 14px rgba(15,23,42,.05);position:relative;overflow:hidden}
+.book-page h4{font-size:17px;line-height:1.35;color:var(--text);margin-bottom:10px}
+.book-page p{font-size:12.5px;line-height:1.8;color:var(--text-soft);margin-bottom:8px}
+.page-num{position:absolute;right:14px;bottom:8px;font-size:10px;color:var(--muted);font-weight:800}
+.ink-layer{position:absolute;inset:0;pointer-events:none}
+.ink-line{position:absolute;height:3px;border-radius:999px;background:#ef4444;opacity:.75;transform-origin:left center}
+.note-workspace{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;grid-template-columns:1fr;gap:10px}
+.note-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.note-top h3{font-size:15px;font-weight:900;color:var(--text)}
+.note-page{min-height:330px;border:1px dashed #cbd5e1;border-radius:12px;background:repeating-linear-gradient(#fff 0,#fff 31px,#edf2f7 32px);padding:14px;font-size:13px;line-height:32px;color:var(--text);outline:none}
+.note-page:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+.note-split{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.note-source{border:1px solid var(--line);border-radius:12px;background:var(--surface-2);padding:12px}
+.note-source h4{font-size:13px;color:var(--text);font-weight:900;margin-bottom:8px}
+.note-source p{font-size:11px;color:var(--muted);font-weight:700;line-height:1.6}
+.classroom-live-panel{background:linear-gradient(135deg,#ecfdf5,#fff);border:1px solid var(--primary-soft);border-radius:13px;padding:12px;cursor:pointer;box-shadow:var(--shadow-1)}
+.classroom-live-panel:hover{border-color:var(--primary);box-shadow:var(--shadow-2)}
+.classroom-live-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+.classroom-live-panel h4{font-size:14px;font-weight:900;color:var(--text);line-height:1.35}
+.classroom-live-panel p{font-size:10.8px;color:var(--muted);font-weight:600;line-height:1.55;margin-top:4px}
+.classroom-mini-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.classroom-mini-row span{font-size:9.8px;font-weight:800;border-radius:999px;padding:2px 7px;background:#fff;color:var(--primary-dark);border:1px solid var(--primary-soft)}
+.class-mode-switch{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.class-mode-chip{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 8px;font-size:11px;color:var(--muted);font-weight:900;cursor:pointer;font-family:inherit}
+.class-mode-chip.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.class-record-list{display:flex;flex-direction:column;gap:7px}
+.class-scene-card{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px;cursor:pointer;transition:.15s}
+.class-scene-card:hover{border-color:var(--primary);box-shadow:var(--shadow-2)}
+.class-scene-card.hidden{display:none}
+.class-scene-card.live{background:linear-gradient(135deg,#ecfdf5,#fff);border-color:var(--primary-soft)}
+.class-scene-card.done{background:#f8fafc}
+.class-scene-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--primary-soft-2);color:var(--primary-dark);font-size:12px;font-weight:900}
+.class-scene-card.done .class-scene-icon{background:var(--surface-3);color:var(--muted)}
+.class-scene-main strong{display:block;font-size:12.5px;color:var(--text);line-height:1.35}
+.class-scene-main span{display:block;font-size:10.4px;color:var(--muted);font-weight:600;line-height:1.45;margin-top:2px}
+.class-scene-state{font-size:9.5px;font-weight:900;border-radius:999px;padding:2px 7px;background:var(--surface-3);color:var(--muted);white-space:nowrap}
+.class-scene-card.live .class-scene-state{background:var(--primary-soft);color:var(--primary-dark)}
 .repair-card.warn{background:#fffafa;border-color:#fecaca}
 
 /* === Student home + homework center === */
@@ -151,8 +240,13 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .agenda-main strong{font-size:12.5px;color:var(--text)}
 .agenda-main p{font-size:10.5px;color:var(--muted);line-height:1.45;margin-top:2px}
 .agenda-action{font-size:10.5px;color:var(--primary-dark);font-weight:800;white-space:nowrap}
-.hw-shell{display:flex;flex-direction:column;gap:10px}
-.hw-summary{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px}
+.hw-shell{display:flex;flex-direction:column;gap:10px;--hw-theme:var(--primary);--hw-theme-dark:var(--primary-dark);--hw-theme-soft:var(--primary-soft)}
+.hw-shell.hw-subject-math{--hw-theme:#10b981;--hw-theme-dark:#047857;--hw-theme-soft:#d1fae5}
+.hw-shell.hw-subject-chinese{--hw-theme:#ef4444;--hw-theme-dark:#b91c1c;--hw-theme-soft:#fee2e2}
+.hw-shell.hw-subject-english{--hw-theme:#6366f1;--hw-theme-dark:#4338ca;--hw-theme-soft:#e0e7ff}
+.hw-shell.hw-subject-science{--hw-theme:#0ea5e9;--hw-theme-dark:#0369a1;--hw-theme-soft:#e0f2fe}
+.hw-shell.hw-subject-art{--hw-theme:#f59e0b;--hw-theme-dark:#92400e;--hw-theme-soft:#fef3c7}
+.hw-summary{background:#fff;border:1px solid var(--hw-theme-soft);border-radius:12px;padding:11px}
 .hw-summary-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px}
 .hw-summary h4{font-size:14px;font-weight:900;color:var(--text)}
 .hw-summary p{font-size:11px;color:var(--muted);line-height:1.45}
@@ -161,6 +255,10 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .filter-row::-webkit-scrollbar{display:none}
 .filter-chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;font-size:10.5px;color:var(--muted);font-weight:800;white-space:nowrap;cursor:pointer;font-family:inherit}
 .filter-chip.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.hw-shell .filter-chip.active{background:var(--hw-theme);border-color:var(--hw-theme);color:#fff}
+.hw-shell .filter-chip:hover{border-color:var(--hw-theme);color:var(--hw-theme-dark)}
+.hw-shell .filter-chip.active:hover{color:#fff}
+.hw-date-row .filter-chip.active{background:#111827;border-color:#111827;color:#fff}
 .hw-list{display:flex;flex-direction:column;gap:8px}
 .hw-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 11px;cursor:pointer;transition:.15s}
 .hw-card:hover{border-color:var(--primary);box-shadow:var(--shadow-2)}
@@ -483,26 +581,61 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
               </div>
             </div>
 
-            <div class="module-head">
-              <div class="mh-row"><h3>知识内容</h3><span class="module-pill">四年级下 · 小数初步认识</span></div>
-              <p>像一个独立的知识软件：孩子不是看一堆资料，而是按“本课要点、例题、课堂保存、相关练习”进入。</p>
+            <div class="knowledge-tabs">
+              <button class="knowledge-tab active" data-knowledge-view="books">电子课本</button>
+              <button class="knowledge-tab" data-knowledge-view="notes">课堂笔记</button>
             </div>
 
-            <div class="knowledge-list">
-              <div class="knowledge-card" data-act="knowledgeDecimal">
-                <span class="kc-tag">本课核心</span>
-                <h4>小数表示十分之几、百分之几</h4>
-                <p>0.1 元 = 1 角，0.8 米 = 80 厘米；从生活单位进入概念。</p>
+            <div class="ebook-view active" data-ebook-view="books">
+              <div class="bookshelf" id="bookshelf">
+                <div class="bookshelf-head">
+                  <h3>我的书架</h3>
+                  <span>六年级常用教材 · 可翻页批注</span>
+                </div>
+                <div class="book-grid">
+                  <button class="book-card" data-book="math6a">
+                    <div class="book-cover math"><span class="bc-sub">义务教育教科书</span><span class="bc-title">数学<br>六年级上册</span><span class="bc-pub">人民教育出版社</span></div>
+                    <strong>数学 六年级上册</strong><span>分数乘除法 · 圆</span>
+                  </button>
+                  <button class="book-card" data-book="chinese6a">
+                    <div class="book-cover chinese"><span class="bc-sub">统编版</span><span class="bc-title">语文<br>六年级上册</span><span class="bc-pub">人民教育出版社</span></div>
+                    <strong>语文 六年级上册</strong><span>草原 · 狼牙山五壮士</span>
+                  </button>
+                  <button class="book-card" data-book="english6a">
+                    <div class="book-cover english"><span class="bc-sub">义务教育教科书</span><span class="bc-title">英语<br>六年级上册</span><span class="bc-pub">人民教育出版社</span></div>
+                    <strong>英语 六年级上册</strong><span>Unit 1 · Unit 2</span>
+                  </button>
+                  <button class="book-card" data-book="science6a">
+                    <div class="book-cover science"><span class="bc-sub">义务教育教科书</span><span class="bc-title">科学<br>六年级上册</span><span class="bc-pub">教育科学出版社</span></div>
+                    <strong>科学 六年级上册</strong><span>工具与技术</span>
+                  </button>
+                </div>
               </div>
-              <div class="knowledge-card" data-act="knowledgeBoard">
-                <span class="kc-tag">课堂沉淀</span>
-                <h4>王老师板书：1 米 = 100 厘米</h4>
-                <p>保存课堂手写题过程，课后复看时只显示自己的作答和老师讲评。</p>
-              </div>
-              <div class="knowledge-card" data-hw="math_basic">
-                <span class="kc-tag">关联练习</span>
-                <h4>分数加减法基础 5 题</h4>
-                <p>知识内容不是单独孤岛，能直接连到作业提交里的同一项练习。</p>
+
+              <div class="book-detail" id="bookDetail"></div>
+              <div class="ebook-reader" id="ebookReader"></div>
+            </div>
+
+            <div class="ebook-view" data-ebook-view="notes">
+              <div class="note-workspace">
+                <div class="note-top">
+                  <h3>课堂笔记</h3>
+                  <span class="module-pill">和电子课本同步使用</span>
+                </div>
+                <div class="note-split">
+                  <div class="note-source">
+                    <h4>当前课本位置</h4>
+                    <p id="noteSourceText">数学六上 · 分数乘法。课本页可直接画线，笔记页留给自己的整理。</p>
+                  </div>
+                  <div class="note-source">
+                    <h4>今日板书</h4>
+                    <p>单位 1 先找清楚；分数乘整数可以表示几个相同分数相加。</p>
+                  </div>
+                </div>
+                <div class="note-page" id="classNotePage" contenteditable="true" spellcheck="false">我的笔记：
+1. 先找单位 1。
+2. 画图时平均分要标清楚。
+3. 课后再看例 1。</div>
               </div>
             </div>
           </div>
@@ -515,61 +648,59 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
             </div>
 
             <div class="classroom-list">
-              <div class="classroom-card live" data-act="classReplay">
-                <span class="cc-tag">当前课堂</span>
-                <h4>第 1 次推送 · 手写题</h4>
-                <p>右侧课堂屏正在展示老师推送。提交后等待老师下一次推送。</p>
+              <div class="classroom-live-panel" data-class-current>
+                <div class="classroom-live-top">
+                  <span class="cc-tag">课上当前</span>
+                  <span class="class-scene-state" data-class-current-time>14:21</span>
+                </div>
+                <h4 data-class-current-title>第 1 次推送 · 手写题</h4>
+                <p data-class-current-desc>右侧课堂屏正在展示老师推送，提交后等待老师下一次推送。</p>
+                <div class="classroom-mini-row">
+                  <span>老师推送</span><span>AI 学伴禁用</span><span>只回收本人作答</span>
+                </div>
               </div>
-              <div class="classroom-card" data-act="classReplay">
-                <span class="cc-tag">已提交</span>
-                <h4>0.8 米 = 80 厘米 · 手写过程</h4>
-                <p>保存学生自己的手写轨迹，老师可回收，课后可进入自主订正。</p>
+
+              <div class="class-mode-switch" id="classModeSwitch">
+                <button class="class-mode-chip active" data-class-mode="live">课上当前</button>
+                <button class="class-mode-chip" data-class-mode="record">课后记录</button>
               </div>
-              <div class="classroom-card" data-hw="chn_makeup">
-                <span class="cc-tag">转作业</span>
-                <h4>听写订正被退回</h4>
-                <p>课堂听写的订正结果进入“作业提交”，少拍一页所以现在需要补交。</p>
-              </div>
-              <div class="classroom-card" data-tab-go="repair">
-                <span class="cc-tag">转订正</span>
-                <h4>随堂练错题进入自主订正</h4>
-                <p>有对错的题不在大屏公开个人错误，回到学生端自己订正。</p>
-              </div>
+
+              <div class="class-record-list" id="classRecordList"></div>
             </div>
           </div>
 
           <!-- ===== App 3: 作业提交 ===== -->
           <div class="s-panel" data-pane="homework">
-            <div class="hw-shell">
+            <div class="hw-shell" id="homeworkShell">
               <div class="hw-summary">
                 <div class="hw-summary-top">
-                  <h4>作业中心</h4>
-                  <span class="priority-pill ok">5 科 · 7 项</span>
+                  <h4 id="homeworkTitle">今天作业</h4>
+                  <span class="priority-pill ok" id="homeworkCount">先选学科</span>
                 </div>
-                <p>按科目和状态看任务：补交、待完成、待批改、已完成分开处理。</p>
+                <p id="homeworkSummary">先选学科，再看今天对应老师布置的任务；可切换日期翻找每天作业。</p>
               </div>
 
               <div class="hw-filter-block">
+                <div class="filter-row hw-date-row" data-filter-kind="date">
+                  <button class="filter-chip active" data-hw-date="today">今天作业</button>
+                  <button class="filter-chip" data-hw-date="yesterday">昨天</button>
+                  <button class="filter-chip" data-hw-date="monday">周一</button>
+                  <button class="filter-chip" data-hw-date="sunday">周日</button>
+                </div>
                 <div class="filter-row" data-filter-kind="subject">
-                  <button class="filter-chip active" data-hw-subject="all">全部科目</button>
                   <button class="filter-chip" data-hw-subject="math">数学</button>
                   <button class="filter-chip" data-hw-subject="chinese">语文</button>
                   <button class="filter-chip" data-hw-subject="english">英语</button>
                   <button class="filter-chip" data-hw-subject="science">科学</button>
                   <button class="filter-chip" data-hw-subject="art">美术</button>
                 </div>
-                <div class="filter-row" data-filter-kind="status">
-                  <button class="filter-chip active" data-hw-status="all">全部状态</button>
-                  <button class="filter-chip" data-hw-status="late">需补交</button>
-                  <button class="filter-chip" data-hw-status="todo">待完成</button>
-                  <button class="filter-chip" data-hw-status="doing">进行中</button>
-                  <button class="filter-chip" data-hw-status="pending">待批改</button>
-                  <button class="filter-chip" data-hw-status="done">已完成</button>
+                <div class="filter-row" id="hwKindRow" data-filter-kind="kind">
+                  <button class="filter-chip active" data-hw-kind="all">全部任务</button>
                 </div>
               </div>
 
               <div class="hw-list" id="homeworkList">
-                <div class="hw-card late" data-hw="chn_makeup" data-subject="chinese" data-status="late">
+                <div class="hw-card late" data-hw="chn_makeup" data-date="yesterday" data-subject="chinese" data-kind="photo" data-status="late">
                   <div class="hw-top">
                     <div class="subject-mark chinese">语</div>
                     <div class="hw-main">
@@ -579,7 +710,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
                     </div>
                   </div>
                 </div>
-                <div class="hw-card" data-hw="math_basic" data-subject="math" data-status="doing">
+                <div class="hw-card" data-hw="math_basic" data-date="today" data-subject="math" data-kind="online" data-status="doing">
                   <div class="hw-top">
                     <div class="subject-mark math">数</div>
                     <div class="hw-main">
@@ -590,7 +721,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
                     </div>
                   </div>
                 </div>
-                <div class="hw-card" data-hw="math_word" data-subject="math" data-status="todo">
+                <div class="hw-card" data-hw="math_word" data-date="today" data-subject="math" data-kind="word" data-status="todo">
                   <div class="hw-top">
                     <div class="subject-mark math">数</div>
                     <div class="hw-main">
@@ -600,7 +731,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
                     </div>
                   </div>
                 </div>
-                <div class="hw-card" data-hw="eng_read" data-subject="english" data-status="todo">
+                <div class="hw-card" data-hw="eng_read" data-date="today" data-subject="english" data-kind="audio" data-status="todo">
                   <div class="hw-top">
                     <div class="subject-mark english">英</div>
                     <div class="hw-main">
@@ -610,7 +741,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
                     </div>
                   </div>
                 </div>
-                <div class="hw-card pending" data-hw="sci_photo" data-subject="science" data-status="pending">
+                <div class="hw-card pending" data-hw="sci_photo" data-date="today" data-subject="science" data-kind="record" data-status="pending">
                   <div class="hw-top">
                     <div class="subject-mark science">科</div>
                     <div class="hw-main">
@@ -620,7 +751,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
                     </div>
                   </div>
                 </div>
-                <div class="hw-card" data-hw="art_poster" data-subject="art" data-status="todo">
+                <div class="hw-card" data-hw="art_poster" data-date="sunday" data-subject="art" data-kind="artwork" data-status="todo">
                   <div class="hw-top">
                     <div class="subject-mark art">美</div>
                     <div class="hw-main">
@@ -630,7 +761,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
                     </div>
                   </div>
                 </div>
-                <div class="hw-card" data-hw="chn_recite_done" data-subject="chinese" data-status="done">
+                <div class="hw-card" data-hw="chn_recite_done" data-date="yesterday" data-subject="chinese" data-kind="audio" data-status="done">
                   <div class="hw-top">
                     <div class="subject-mark chinese">语</div>
                     <div class="hw-main">
@@ -858,7 +989,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
               <strong id="classStep">第 1 / 4 次推送 · 手写题</strong>
               <span id="classStatusSub">课堂接管中，提交后等待老师推送</span>
             </div>
-            <div class="class-dots" id="classDots"><i class="on"></i><i></i><i></i><i></i></div>
+            <div class="class-dots" id="classDots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
           </div>
 
         </div><!-- /class-cover -->
@@ -1072,22 +1203,68 @@ const SCENES = {
   }
 };
 
-const classQueue = ['handwrite','mcq','dict','done'];
+const classQueue = ['handwrite','mcq','dict','draw','read','fill','done'];
 const classLabels = {
   handwrite:'手写题',
-  mcq:'随堂练',
+  mcq:'单选题',
   dict:'听写',
+  draw:'抽人',
+  read:'朗读',
+  fill:'填空',
   done:'已提交'
 };
 let classIndex = 0;
+let classMode = 'live';
+
+const CLASS_PUSH_RECORDS = [
+  { scene:'handwrite', icon:'写', time:'14:21', title:'第 1 次推送 · 手写题', desc:'0.8 米 = 80 厘米，回收本人的手写过程。', state:'进行中' },
+  { scene:'mcq', icon:'选', time:'14:24', title:'第 2 次推送 · 单选题', desc:'选出最接近 1/2 的分数，提交后只给本人反馈。', state:'待推送' },
+  { scene:'dict', icon:'听', time:'14:28', title:'第 3 次推送 · 听写', desc:'播放老师录音，课堂内限听次数。', state:'待推送' },
+  { scene:'draw', icon:'抽', time:'14:31', title:'第 4 次推送 · 抽人提问', desc:'老师点名后自动进入回答界面，不开放学生自选。', state:'待推送' },
+  { scene:'read', icon:'读', time:'14:35', title:'第 5 次推送 · 朗读', desc:'按老师指定段落录音，记录只保留给本人和老师。', state:'待推送' },
+  { scene:'fill', icon:'填', time:'14:39', title:'第 6 次推送 · 填空题', desc:'填写通分结果，错题课后进入自主订正。', state:'待推送' }
+];
+
+function ensureClassDots(){
+  const dots = $('#classDots');
+  if(!dots) return;
+  const html = classQueue.map(()=>'<i></i>').join('');
+  if(dots.children.length !== classQueue.length) dots.innerHTML = html;
+}
+
+function updateClassroomPanel(scene){
+  const current = CLASS_PUSH_RECORDS.find(x => x.scene === scene) || CLASS_PUSH_RECORDS[0];
+  const currentIndex = CLASS_PUSH_RECORDS.findIndex(x => x.scene === scene);
+  const title = $('[data-class-current-title]');
+  const desc = $('[data-class-current-desc]');
+  const time = $('[data-class-current-time]');
+  if(title) title.textContent = current.title;
+  if(desc) desc.textContent = current.desc;
+  if(time) time.textContent = current.time;
+
+  const list = $('#classRecordList');
+  if(!list) return;
+  list.innerHTML = CLASS_PUSH_RECORDS.map((item, idx)=>{
+    const state = idx < currentIndex ? '已记录' : idx === currentIndex ? '课上当前' : '等待老师';
+    const statusClass = idx < currentIndex ? 'done' : idx === currentIndex ? 'live' : 'future';
+    const hidden = classMode === 'live' && idx !== currentIndex ? ' hidden' : '';
+    return `<div class="class-scene-card ${statusClass}${hidden}" data-class-scene="${item.scene}">
+      <div class="class-scene-icon">${item.icon}</div>
+      <div class="class-scene-main"><strong>${item.title}</strong><span>${item.desc}</span></div>
+      <span class="class-scene-state">${state}</span>
+    </div>`;
+  }).join('');
+}
 
 function updateClassStatus(scene){
+  ensureClassDots();
   const idx = Math.max(0, classQueue.indexOf(scene));
   const step = $('#classStep');
   const sub = $('#classStatusSub');
   if(step) step.textContent = `第 ${idx + 1} / ${classQueue.length} 次推送 · ${classLabels[scene] || '课堂任务'}`;
   if(sub) sub.textContent = scene === 'done' ? '已提交，等待老师讲评或继续推送' : '课堂接管中，提交后等待老师推送';
   $$('#classDots i').forEach((dot, i)=> dot.classList.toggle('on', i <= idx));
+  updateClassroomPanel(scene);
 }
 
 function renderClassScene(scene){
@@ -1232,8 +1409,160 @@ $('#classStatusBar')?.addEventListener('click', ()=>{
 });
 renderClassScene(classQueue[classIndex]);
 
+// ============ 知识内容：电子课本 / 课堂笔记 ============
+const EBOOKS = {
+  math6a:{
+    cls:'math',
+    title:'数学 六年级上册',
+    meta:'人民教育出版社 · 分数乘除法 / 圆',
+    cover:['义务教育教科书','数学<br>六年级上册','人民教育出版社'],
+    articles:[
+      {id:'m1', title:'第 1 单元 · 分数乘法', sub:'例 1：几个相同分数相加', pages:[
+        {h:'分数乘整数', p:['小新、爸爸、妈妈一起吃一个蛋糕，每人吃 2/9 个。3 人一共吃多少个？','可以把 2/9 + 2/9 + 2/9 写成 2/9 × 3。分子和整数相乘，分母不变。']},
+        {h:'例题批注', p:['2/9 × 3 = 6/9 = 2/3。','在课本上可以直接画线、圈“每人”和“3 人”，课堂笔记页再写自己的整理。']}
+      ]},
+      {id:'m2', title:'第 2 单元 · 位置与方向', sub:'用方向和距离描述位置', pages:[
+        {h:'位置与方向', p:['确定物体的位置，需要方向和距离两个条件。','先找观测点，再读角度，最后标出距离。']},
+        {h:'课堂练习', p:['学校在公园东偏北 30° 方向 600 米处。请在图上标出学校的位置。']}
+      ]},
+      {id:'m3', title:'第 5 单元 · 圆', sub:'圆心、半径和直径', pages:[
+        {h:'认识圆', p:['圆心决定圆的位置，半径决定圆的大小。','同一个圆里，直径是半径的 2 倍。']},
+        {h:'动手画一画', p:['用圆规画一个半径 3 厘米的圆，并标出圆心、半径、直径。']}
+      ]}
+    ]
+  },
+  chinese6a:{
+    cls:'chinese',
+    title:'语文 六年级上册',
+    meta:'统编版 · 第一单元 / 第二单元',
+    cover:['统编版','语文<br>六年级上册','人民教育出版社'],
+    articles:[
+      {id:'c1', title:'草原', sub:'老舍 · 第一课', pages:[
+        {h:'草原', p:['这次，我看到了草原。那里的天比别处的更可爱，空气是那么清鲜，天空是那么明朗。','在天底下，一碧千里，而并不茫茫。']},
+        {h:'批注提示', p:['圈出写颜色、写感受的词语。课堂笔记里写下：作者为什么反复写“可爱”？']}
+      ]},
+      {id:'c2', title:'狼牙山五壮士', sub:'第二单元 · 革命故事', pages:[
+        {h:'课文片段', p:['五位壮士一面向顶峰攀登，一面依托大树和岩石向敌人射击。','班长马宝玉沉着地指挥战斗，让敌人一步步走近。']},
+        {h:'课堂笔记', p:['按“接受任务、痛击敌人、引上绝路、顶峰歼敌、英勇跳崖”梳理文章。']}
+      ]}
+    ]
+  },
+  english6a:{
+    cls:'english',
+    title:'英语 六年级上册',
+    meta:'PEP · Unit 1 / Unit 2',
+    cover:['义务教育教科书','英语<br>六年级上册','人民教育出版社'],
+    articles:[
+      {id:'e1', title:'Unit 1 How can I get there?', sub:'Part A Let’s talk', pages:[
+        {h:'How can I get there?', p:['Where is the museum shop? It is near the door.','How can we get there? Turn left at the bookstore.']},
+        {h:'My notes', p:['near, next to, behind, in front of. Ask for directions politely.']}
+      ]},
+      {id:'e2', title:'Unit 2 Ways to go to school', sub:'交通方式', pages:[
+        {h:'Ways to go to school', p:['How do you come to school? Usually, I come on foot. Sometimes I come by bus.','Pay attention to traffic lights.']}
+      ]}
+    ]
+  },
+  science6a:{
+    cls:'science',
+    title:'科学 六年级上册',
+    meta:'教科版 · 工具与技术',
+    cover:['义务教育教科书','科学<br>六年级上册','教育科学出版社'],
+    articles:[
+      {id:'s1', title:'工具与技术', sub:'第一单元', pages:[
+        {h:'工具和技术', p:['工具可以帮助人们完成一些任务。不同工具有不同结构，也适合不同的使用场景。','技术常常随着人们的需要不断改进。']},
+        {h:'记录表', p:['观察：剪刀、螺丝刀、放大镜分别解决了什么问题？把发现写到课堂笔记里。']}
+      ]}
+    ]
+  }
+};
+let currentBook = 'math6a';
+let currentArticle = null;
+
+function switchKnowledgeView(view){
+  $$('.knowledge-tab').forEach(t => t.classList.toggle('active', t.dataset.knowledgeView === view));
+  $$('[data-ebook-view]').forEach(v => v.classList.toggle('active', v.dataset.ebookView === view));
+}
+function coverHTML(book, mini=false){
+  const [sub,title,pub] = book.cover;
+  return `<div class="${mini?'book-mini-cover':'book-cover'} ${book.cls}"${mini?'':' aria-hidden="true"'}>${mini?'':`<span class="bc-sub">${sub}</span><span class="bc-title">${title}</span><span class="bc-pub">${pub}</span>`}</div>`;
+}
+function openBook(bookId){
+  const book = EBOOKS[bookId] || EBOOKS.math6a;
+  currentBook = bookId;
+  currentArticle = null;
+  $('#bookshelf')?.classList.add('hidden');
+  const detail = $('#bookDetail');
+  detail.classList.add('active');
+  $('#ebookReader')?.classList.remove('active');
+  detail.innerHTML = `
+    <div class="book-detail-head">
+      ${coverHTML(book, true)}
+      <div>
+        <h3>${book.title}</h3>
+        <p>${book.meta}</p>
+        <div class="book-actions">
+          <button data-act="readerBack">返回书架</button>
+          <button class="primary" data-open-article="${book.articles[0].id}">继续阅读</button>
+        </div>
+      </div>
+    </div>
+    <div class="article-list">
+      ${book.articles.map(a => `<div class="article-row" data-open-article="${a.id}"><strong>${a.title}</strong><span>${a.sub}</span></div>`).join('')}
+    </div>`;
+  const src = $('#noteSourceText');
+  if(src) src.textContent = `${book.title} · ${book.articles[0].title}。课本页可批注，课堂笔记同步保留。`;
+}
+function openArticle(articleId, mode='portrait'){
+  const book = EBOOKS[currentBook] || EBOOKS.math6a;
+  const article = book.articles.find(a => a.id === articleId) || book.articles[0];
+  currentArticle = article.id;
+  $('#bookDetail')?.classList.remove('active');
+  const reader = $('#ebookReader');
+  reader.className = `ebook-reader active ${mode === 'landscape' ? 'landscape' : ''}`;
+  reader.innerHTML = `
+    <div class="reader-head">
+      <button class="reader-tool" data-act="readerBack">书架</button>
+      <strong>${article.title}</strong>
+      <div class="reader-tools">
+        <button class="reader-tool ${mode === 'portrait' ? 'active' : ''}" data-reader-mode="portrait">竖屏一页</button>
+        <button class="reader-tool ${mode === 'landscape' ? 'active' : ''}" data-reader-mode="landscape">横屏双页</button>
+      </div>
+    </div>
+    <div class="reader-pages">
+      ${article.pages.map((pg, idx)=>`<section class="book-page ink-area" data-ink-area>
+        <h4>${pg.h}</h4>
+        ${pg.p.map(x=>`<p>${x}</p>`).join('')}
+        <div class="ink-layer"></div>
+        <span class="page-num">${idx + 1}</span>
+      </section>`).join('')}
+    </div>`;
+  const src = $('#noteSourceText');
+  if(src) src.textContent = `${book.title} · ${article.title}。当前阅读器支持竖屏一页、横屏双页和课本批注。`;
+}
+function backToBookshelf(){
+  $('#ebookReader')?.classList.remove('active','landscape');
+  $('#bookDetail')?.classList.remove('active');
+  $('#bookshelf')?.classList.remove('hidden');
+}
+let inkStart = null;
+function drawInkLine(area, start, end){
+  const layer = area.querySelector('.ink-layer');
+  if(!layer) return;
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const len = Math.max(18, Math.hypot(dx, dy));
+  const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+  const line = document.createElement('span');
+  line.className = 'ink-line';
+  line.style.left = start.x + 'px';
+  line.style.top = start.y + 'px';
+  line.style.width = len + 'px';
+  line.style.transform = `rotate(${angle}deg)`;
+  layer.appendChild(line);
+}
+
 // ============ 作业中心：科目 / 状态 / 补交流程 ============
-const hwState = { subject:'all', status:'all' };
+const hwState = { date:'today', subject:'math', kind:'all', status:'all' };
 const HOMEWORKS = {
   chn_makeup: {
     tag:'语文 · 需补交',
@@ -1330,23 +1659,55 @@ const HOMEWORKS = {
 
 function setHomeworkFilter(kind, value){
   hwState[kind] = value || 'all';
-  const attr = kind === 'subject' ? 'data-hw-subject' : 'data-hw-status';
+  if(kind === 'subject') hwState.kind = 'all';
+  const attrMap = {date:'data-hw-date', subject:'data-hw-subject', kind:'data-hw-kind', status:'data-hw-status'};
+  const attr = attrMap[kind];
+  if(!attr) return;
   $$(`.filter-row [${attr}]`).forEach(btn => btn.classList.toggle('active', btn.getAttribute(attr) === hwState[kind]));
+  if(kind === 'subject') renderHomeworkKinds();
   filterHomeworkCards();
 }
 
+const SUBJECT_INFO = {
+  math:{name:'数学', teacher:'王老师', summary:'今天数学作业：在线题和应用题分开处理，错题会进入订正。', kinds:[['all','全部任务'],['online','在线作答'],['word','应用题']]},
+  chinese:{name:'语文', teacher:'刘老师', summary:'语文作业包含背诵、听写订正和拍照补交。', kinds:[['all','全部任务'],['audio','朗读/背诵'],['photo','拍照补交']]},
+  english:{name:'英语', teacher:'林老师', summary:'英语作业以跟读录音和短句练习为主，可重录后提交。', kinds:[['all','全部任务'],['audio','录音任务']]},
+  science:{name:'科学', teacher:'陈老师', summary:'科学作业保留观察记录、照片和实验数据。', kinds:[['all','全部任务'],['record','观察记录']]},
+  art:{name:'美术', teacher:'秦老师', summary:'美术作业以作品草稿、拍照或平板绘图提交。', kinds:[['all','全部任务'],['artwork','作品']]},
+};
+function renderHomeworkKinds(){
+  const row = $('#hwKindRow');
+  if(!row) return;
+  const info = SUBJECT_INFO[hwState.subject] || SUBJECT_INFO.math;
+  row.innerHTML = info.kinds.map(([key,label], idx)=>`<button class="filter-chip ${idx===0?'active':''}" data-hw-kind="${key}">${label}</button>`).join('');
+  const shell = $('#homeworkShell');
+  if(shell){
+    shell.classList.remove('hw-subject-math','hw-subject-chinese','hw-subject-english','hw-subject-science','hw-subject-art');
+    shell.classList.add('hw-subject-' + (hwState.subject || 'math'));
+  }
+}
 function filterHomeworkCards(){
   const cards = $$('#homeworkList .hw-card');
   let shown = 0;
   cards.forEach(card=>{
+    const dateOK = hwState.date === 'all' || card.dataset.date === hwState.date;
     const subjectOK = hwState.subject === 'all' || card.dataset.subject === hwState.subject;
+    const kindOK = hwState.kind === 'all' || card.dataset.kind === hwState.kind;
     const statusOK = hwState.status === 'all' || card.dataset.status === hwState.status;
-    const visible = subjectOK && statusOK;
+    const visible = dateOK && subjectOK && kindOK && statusOK;
     card.classList.toggle('hidden', !visible);
     if(visible) shown++;
   });
   const empty = $('#homeworkEmpty');
   if(empty) empty.classList.toggle('show', shown === 0);
+  const info = SUBJECT_INFO[hwState.subject] || SUBJECT_INFO.math;
+  const dateLabel = ($(`[data-hw-date="${hwState.date}"]`)?.textContent || '今天作业').trim();
+  const title = $('#homeworkTitle');
+  const summary = $('#homeworkSummary');
+  const count = $('#homeworkCount');
+  if(title) title.textContent = `${dateLabel} · ${info.name}`;
+  if(summary) summary.textContent = `${info.teacher}布置：${info.summary}`;
+  if(count) count.textContent = shown ? `${shown} 项` : '无任务';
 }
 
 function openHomework(id, anchor=null){
@@ -1541,10 +1902,66 @@ document.addEventListener('click', e=>{
     setTimeout(()=> aiReply(t), 500);
     return;
   }
-  // 3. 作业中心筛选 / 跳转 / 详情
+  // 3. 知识内容：课本 / 笔记 / 阅读器
+  const kv = e.target.closest('[data-knowledge-view]');
+  if(kv){
+    switchKnowledgeView(kv.dataset.knowledgeView);
+    return;
+  }
+  const book = e.target.closest('[data-book]');
+  if(book){
+    openBook(book.dataset.book);
+    return;
+  }
+  const article = e.target.closest('[data-open-article]');
+  if(article){
+    openArticle(article.dataset.openArticle);
+    return;
+  }
+  const readerMode = e.target.closest('[data-reader-mode]');
+  if(readerMode){
+    if(currentArticle) openArticle(currentArticle, readerMode.dataset.readerMode);
+    return;
+  }
+  const inkArea = e.target.closest('[data-ink-area]');
+  if(inkArea && e.type === 'click'){
+    const r = inkArea.getBoundingClientRect();
+    const x = Math.max(20, Math.min(e.clientX - r.left - 30, r.width - 70));
+    const y = Math.max(80, Math.min(e.clientY - r.top, r.height - 55));
+    drawInkLine(inkArea, {x, y}, {x:x+74, y:y+3});
+    return;
+  }
+  // 4. 课堂互动记录
+  const cm = e.target.closest('[data-class-mode]');
+  if(cm){
+    classMode = cm.dataset.classMode || 'live';
+    $$('#classModeSwitch .class-mode-chip').forEach(x=>x.classList.toggle('active', x===cm));
+    updateClassroomPanel(classQueue[classIndex]);
+    return;
+  }
+  const cs = e.target.closest('[data-class-scene]');
+  if(cs){
+    const idx = classQueue.indexOf(cs.dataset.classScene);
+    if(idx >= 0){
+      classIndex = idx;
+      renderClassScene(classQueue[classIndex]);
+    }
+    return;
+  }
+  // 5. 作业中心筛选 / 跳转 / 详情
+  const dateFilter = e.target.closest('[data-hw-date]');
+  if(dateFilter){
+    setHomeworkFilter('date', dateFilter.dataset.hwDate);
+    return;
+  }
   const subjectFilter = e.target.closest('[data-hw-subject]');
   if(subjectFilter){
     setHomeworkFilter('subject', subjectFilter.dataset.hwSubject);
+    return;
+  }
+  const kindFilter = e.target.closest('[data-hw-kind]');
+  if(kindFilter){
+    setHomeworkFilter('kind', kindFilter.dataset.hwKind);
     return;
   }
   const statusFilter = e.target.closest('[data-hw-status]');
@@ -1556,7 +1973,7 @@ document.addEventListener('click', e=>{
   if(jump){
     switchStudentTab(jump.dataset.tabGo);
     if(jump.dataset.hwFilter){
-      setHomeworkFilter('subject', 'all');
+      setHomeworkFilter('date', 'all');
       setHomeworkFilter('status', jump.dataset.hwFilter);
     }
     return;
@@ -1577,6 +1994,7 @@ document.addEventListener('click', e=>{
   const act = a.dataset.act;
   switch(act){
     case 'modalClose': closeModal(); break;
+    case 'readerBack': backToBookshelf(); break;
     case 'liveBarSwitch': showDemo('liveBarSwitch', a); break;
     case 'search': showDemo('search', a); break;
     case 'notify': showDemo('notify', a); break;
@@ -1672,7 +2090,9 @@ function aiReply(q){
 })();
 
 // 初次加载：提示
-setTimeout(()=> toast('右屏默认展示手写题；底部可切换其他课堂活动','info', 3600), 600);
+setHomeworkFilter('subject','math');
+openBook('math6a');
+backToBookshelf();
 </script>
 </body>
 </html>
