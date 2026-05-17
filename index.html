@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>步步教师工作流与三端原型</title>
+<style>
+:root{
+  --bg:#f4f6f8;
+  --surface:#ffffff;
+  --surface-soft:#f9fafb;
+  --text:#172033;
+  --muted:#647084;
+  --line:#dde3ea;
+  --primary:#12a87c;
+  --primary-dark:#08765c;
+  --primary-soft:#e5f7f1;
+  --accent:#6f58d9;
+  --accent-soft:#f0edff;
+  --warn:#d98a11;
+  --warn-soft:#fff3dc;
+  --shadow:0 14px 34px rgba(23,32,51,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+a{color:inherit}
+.site-header{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:rgba(255,255,255,.9);
+  border-bottom:1px solid rgba(221,227,234,.85);
+  backdrop-filter:blur(14px);
+}
+.bar{
+  max-width:1180px;
+  margin:0 auto;
+  padding:12px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.brand-mark{
+  width:34px;
+  height:34px;
+  border-radius:8px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--primary),#0b8f8a);
+  flex:none;
+}
+.brand strong{
+  display:block;
+  font-size:15px;
+  line-height:1.2;
+}
+.brand span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  white-space:nowrap;
+}
+.nav{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.nav a{
+  text-decoration:none;
+  border:1px solid transparent;
+  padding:6px 10px;
+  border-radius:8px;
+  color:var(--muted);
+  font-size:13px;
+  font-weight:700;
+}
+.nav a:hover{
+  color:var(--primary-dark);
+  background:var(--primary-soft);
+}
+.hero{
+  max-width:1180px;
+  margin:0 auto;
+  padding:42px 22px 18px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 340px;
+  gap:26px;
+  align-items:end;
+}
+.eyebrow{
+  margin:0 0 10px;
+  color:var(--primary-dark);
+  font-size:13px;
+  font-weight:900;
+}
+h1{
+  margin:0;
+  font-size:34px;
+  line-height:1.18;
+  letter-spacing:0;
+}
+.lead{
+  margin:16px 0 0;
+  max-width:760px;
+  color:var(--muted);
+  font-size:15px;
+}
+.quick-actions{
+  margin-top:22px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.btn{
+  min-height:40px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:8px 13px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--text);
+  text-decoration:none;
+  font-size:13px;
+  font-weight:800;
+}
+.btn.primary{
+  background:var(--primary);
+  border-color:var(--primary);
+  color:#fff;
+}
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 20px rgba(23,32,51,.08);
+}
+.status-panel{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:16px;
+  box-shadow:var(--shadow);
+}
+.status-panel h2{
+  margin:0 0 12px;
+  font-size:15px;
+}
+.status-list{
+  display:grid;
+  gap:10px;
+}
+.status-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px;
+  border-radius:8px;
+  background:var(--surface-soft);
+  border:1px solid #eef1f4;
+}
+.status-item span{
+  color:var(--muted);
+  font-size:12px;
+}
+.status-item strong{
+  font-size:13px;
+  white-space:nowrap;
+}
+.section{
+  max-width:1180px;
+  margin:0 auto;
+  padding:28px 22px;
+}
+.section-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:14px;
+}
+.section-head h2{
+  margin:0;
+  font-size:22px;
+}
+.section-head p{
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:13px;
+}
+.prototype-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+}
+.card{
+  min-width:0;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+}
+.preview{
+  height:230px;
+  background:linear-gradient(135deg,#e9f7f2,#f2efff 55%,#fff5e3);
+  border-bottom:1px solid var(--line);
+  overflow:hidden;
+  position:relative;
+}
+.preview::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  box-shadow:inset 0 -34px 44px rgba(244,246,248,.7);
+  pointer-events:none;
+}
+.preview iframe{
+  position:absolute;
+  left:0;
+  top:0;
+  width:1320px;
+  height:940px;
+  border:0;
+  transform:scale(.235);
+  transform-origin:left top;
+  pointer-events:none;
+  background:#fff;
+}
+.preview.student iframe{
+  transform:scale(.24);
+}
+.preview.board iframe{
+  transform:scale(.24);
+}
+.card-body{
+  padding:16px;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+.kicker{
+  margin:0 0 6px;
+  color:var(--primary-dark);
+  font-size:12px;
+  font-weight:900;
+}
+.card h3{
+  margin:0 0 8px;
+  font-size:18px;
+  line-height:1.25;
+}
+.card p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+}
+.card-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:auto;
+  padding-top:16px;
+}
+.doc-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.doc-link{
+  text-decoration:none;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:14px;
+  min-height:118px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.doc-link:hover{
+  border-color:var(--accent);
+  box-shadow:0 10px 24px rgba(111,88,217,.09);
+}
+.doc-type{
+  width:max-content;
+  padding:3px 8px;
+  border-radius:999px;
+  background:var(--accent-soft);
+  color:var(--accent);
+  font-size:11px;
+  font-weight:900;
+}
+.doc-link strong{
+  font-size:15px;
+  line-height:1.35;
+}
+.doc-link span{
+  color:var(--muted);
+  font-size:12px;
+}
+.deploy{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:16px;
+}
+.deploy-box{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:16px;
+}
+.deploy-box h3{
+  margin:0 0 8px;
+  font-size:16px;
+}
+.deploy-box p,
+.deploy-box li{
+  color:var(--muted);
+  font-size:13px;
+}
+.deploy-box ol{
+  margin:10px 0 0;
+  padding-left:20px;
+}
+code{
+  border:1px solid #dbe2ea;
+  background:#f8fafc;
+  border-radius:6px;
+  padding:1px 5px;
+  color:#334155;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:.92em;
+}
+.site-footer{
+  max-width:1180px;
+  margin:10px auto 0;
+  padding:20px 22px 34px;
+  color:var(--muted);
+  font-size:12px;
+}
+@media (max-width:980px){
+  .hero{
+    grid-template-columns:1fr;
+    padding-top:30px;
+  }
+  .prototype-grid,
+  .doc-grid,
+  .deploy{
+    grid-template-columns:1fr;
+  }
+  .preview iframe{
+    transform:scale(.23);
+  }
+}
+@media (max-width:680px){
+  .bar{
+    align-items:flex-start;
+    flex-direction:column;
+    max-width:100%;
+  }
+  .nav{
+    justify-content:flex-start;
+  }
+  h1{
+    font-size:26px;
+  }
+  .section-head{
+    display:block;
+  }
+  .hero,
+  .section,
+  .site-footer{
+    max-width:100%;
+    overflow:hidden;
+  }
+  .lead,
+  .section-head p,
+  .card p,
+  .deploy-box p,
+  .deploy-box li,
+  code{
+    overflow-wrap:anywhere;
+  }
+  .status-panel,
+  .card,
+  .doc-link,
+  .deploy-box{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+  }
+  .status-item{
+    display:grid;
+    grid-template-columns:1fr;
+    align-items:start;
+    justify-content:start;
+    gap:4px;
+  }
+  .status-item strong{
+    white-space:normal;
+  }
+  .preview{
+    height:190px;
+  }
+  .preview iframe{
+    transform:scale(.19);
+  }
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="./" aria-label="返回首页">
+      <span class="brand-mark">步</span>
+      <span>
+        <strong>步步教师工作流</strong>
+        <span>GitHub Pages 展示站</span>
+      </span>
+    </a>
+    <nav class="nav" aria-label="页面导航">
+      <a href="#prototypes">三端原型</a>
+      <a href="#documents">配套文档</a>
+      <a href="#deploy">发布说明</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <p class="eyebrow">2026-05-17 · 静态网页交付包</p>
+      <h1>步步教师工作流与三端产品原型</h1>
+      <p class="lead">把教师端备课工作台、学生端平板和白板端大屏集中为一个可直接托管的静态展示站。页面不依赖构建工具，放到 GitHub Pages 后即可访问。</p>
+      <div class="quick-actions" aria-label="快速打开原型">
+        <a class="btn primary" href="./步步_教师端_备课工作台.html" target="_blank" rel="noreferrer">打开教师端</a>
+        <a class="btn" href="./步步_学生端_平板.html" target="_blank" rel="noreferrer">打开学生端</a>
+        <a class="btn" href="./步步_白板端_大屏.html" target="_blank" rel="noreferrer">打开白板端</a>
+      </div>
+    </div>
+
+    <aside class="status-panel" aria-label="交付内容概览">
+      <h2>交付内容</h2>
+      <div class="status-list">
+        <div class="status-item"><span>可交互原型</span><strong>3 个 HTML</strong></div>
+        <div class="status-item"><span>产品设计文档</span><strong>MD / TXT / TeX</strong></div>
+        <div class="status-item"><span>托管方式</span><strong>GitHub Pages</strong></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="section" id="prototypes">
+    <div class="section-head">
+      <div>
+        <h2>三端原型</h2>
+        <p>每张预览直接读取对应 HTML 页面，点击按钮打开完整交互界面。</p>
+      </div>
+    </div>
+
+    <div class="prototype-grid">
+      <article class="card">
+        <div class="preview">
+          <iframe src="./步步_教师端_备课工作台.html" title="教师端备课工作台预览" loading="lazy" tabindex="-1"></iframe>
+        </div>
+        <div class="card-body">
+          <p class="kicker">Teacher Workspace</p>
+          <h3>教师端 · 备课工作台</h3>
+          <p>围绕当前课件、互动卡片、题库、批阅和课堂反馈形成教师的一站式工作区。</p>
+          <div class="card-actions">
+            <a class="btn primary" href="./步步_教师端_备课工作台.html" target="_blank" rel="noreferrer">进入页面</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="preview student">
+          <iframe src="./步步_学生端_平板.html" title="学生端平板预览" loading="lazy" tabindex="-1"></iframe>
+        </div>
+        <div class="card-body">
+          <p class="kicker">Student Tablet</p>
+          <h3>学生端 · 平板双模式</h3>
+          <p>呈现课堂中任务推送与课后订正、错题本、AI 学伴、复习挑战之间的状态切换。</p>
+          <div class="card-actions">
+            <a class="btn primary" href="./步步_学生端_平板.html" target="_blank" rel="noreferrer">进入页面</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="preview board">
+          <iframe src="./步步_白板端_大屏.html" title="白板端大屏预览" loading="lazy" tabindex="-1"></iframe>
+        </div>
+        <div class="card-body">
+          <p class="kicker">Classroom Board</p>
+          <h3>白板端 · 教室大屏</h3>
+          <p>面向全班公共屏展示讲解、实时答题、抽人、小组讨论和下课总结等课堂环节。</p>
+          <div class="card-actions">
+            <a class="btn primary" href="./步步_白板端_大屏.html" target="_blank" rel="noreferrer">进入页面</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" id="documents">
+    <div class="section-head">
+      <div>
+        <h2>配套文档</h2>
+        <p>保留原始设计稿，便于从网页继续追溯产品逻辑和推演过程。</p>
+      </div>
+    </div>
+
+    <div class="doc-grid">
+      <a class="doc-link" href="./步步教师新版产品设计_对抗式分析版.md" target="_blank" rel="noreferrer">
+        <span class="doc-type">Markdown</span>
+        <strong>步步教师新版产品设计</strong>
+        <span>一页看懂产品定义、工作流闭环和三端关系。</span>
+      </a>
+      <a class="doc-link" href="./步步教师工作流与产品嵌入设计.txt" target="_blank" rel="noreferrer">
+        <span class="doc-type">TXT</span>
+        <strong>教师工作流与产品嵌入设计</strong>
+        <span>从备课、授课到课后回流的完整工作流文本版。</span>
+      </a>
+      <a class="doc-link" href="./步步教师工作流与产品嵌入设计.tex" target="_blank" rel="noreferrer">
+        <span class="doc-type">TeX</span>
+        <strong>LaTeX 源文件</strong>
+        <span>用于后续重新排版、生成 PDF 或继续精修报告。</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section" id="deploy">
+    <div class="section-head">
+      <div>
+        <h2>发布说明</h2>
+        <p>这是纯静态站点，适合直接放进 GitHub Pages 的发布目录。</p>
+      </div>
+    </div>
+
+    <div class="deploy">
+      <div class="deploy-box">
+        <h3>推荐发布方式</h3>
+        <ol>
+          <li>把本文件夹内所有文件放到 GitHub Pages 仓库根目录，或放到仓库的 <code>docs/</code> 目录。</li>
+          <li>在 GitHub 仓库的 <code>Settings / Pages</code> 中选择对应分支与目录。</li>
+          <li>发布后访问 <code>https://用户名.github.io/仓库名/</code>。</li>
+        </ol>
+      </div>
+      <div class="deploy-box">
+        <h3>当前文件清单</h3>
+        <p><code>index.html</code> 是入口页；三个 <code>步步_*.html</code> 是原型页；<code>.nojekyll</code> 用于让 GitHub Pages 按静态文件原样发布。</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <span>步步教师工作流 · 静态网页交付包</span>
+</footer>
+</body>
+</html>
