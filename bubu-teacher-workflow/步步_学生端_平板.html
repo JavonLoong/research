@@ -30,7 +30,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 #col-class{display:none}
 
 /* ===== Tablet shell ===== */
-.tablet{--tablet-long:1000px;--tablet-short:700px;background:#0f172a;border-radius:38px;padding:13px;box-shadow:0 30px 60px rgba(15,23,42,.18),0 1px 0 rgba(255,255,255,.04) inset;position:relative;width:var(--tablet-short);height:var(--tablet-long);margin:0 auto;transition:width .28s ease,height .28s ease,border-radius .28s ease}
+.tablet{--tablet-long:1000px;--tablet-short:700px;background:#0f172a;border-radius:38px;padding:13px;box-shadow:0 30px 60px rgba(15,23,42,.18),0 1px 0 rgba(255,255,255,.04) inset;position:relative;width:var(--tablet-short);height:var(--tablet-long);margin:0 auto;transform-origin:center center;will-change:transform;transition:box-shadow .2s ease}
+.tablet.rotating{z-index:30;pointer-events:none;box-shadow:0 42px 80px rgba(15,23,42,.22)}
 .tablet::before{content:"";position:absolute;left:50%;top:18px;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:#1e293b}
 .tablet::after{content:"";position:absolute;left:50%;bottom:6px;transform:translateX(-50%);width:60px;height:4px;border-radius:2px;background:#1e293b}
 .tablet-screen{background:#fff;border-radius:26px;overflow:hidden;width:100%;height:100%;display:flex;flex-direction:column;position:relative;min-height:0}
@@ -1299,18 +1300,56 @@ function updateRotateTabletButton(){
   const txt = $('#rotateTabletText');
   if(txt) txt.textContent = isTabletLandscape() ? '竖屏' : '横屏';
 }
-function setStudentTabletOrientation(mode){
+function setStudentTabletOrientation(mode, opts={}){
   const tablet = $('#col-home .tablet');
   if(!tablet) return;
   tablet.classList.toggle('landscape', mode !== 'portrait');
   updateRotateTabletButton();
-  if(currentArticle) openArticle(currentArticle, 'auto');
+  if(opts.syncReader !== false && currentArticle) openArticle(currentArticle, 'auto');
 }
-function rotateStudentTablet(){
+let tabletRotating = false;
+async function rotateStudentTablet(){
   const tablet = $('#col-home .tablet');
-  if(!tablet) return;
-  setStudentTabletOrientation(isTabletLandscape() ? 'portrait' : 'landscape');
-  toast(isTabletLandscape() ? '已切换为横屏双页' : '已切换为竖屏一页', 'ok', 1200, $('#rotateTabletText'));
+  if(!tablet || tabletRotating) return;
+  tabletRotating = true;
+  tablet.classList.add('rotating');
+  const toLandscape = !isTabletLandscape();
+  const firstAngle = toLandscape ? -86 : 86;
+  const settleAngle = toLandscape ? 5 : -5;
+  try{
+    tablet.style.transform = '';
+    const first = tablet.animate([
+      { transform:'rotate(0deg) scale(1)' },
+      { transform:`rotate(${firstAngle}deg) scale(.985)` }
+    ], { duration:360, easing:'cubic-bezier(.18,.82,.22,1)', fill:'forwards' });
+    await first.finished;
+    const before = tablet.getBoundingClientRect();
+    first.cancel();
+
+    setStudentTabletOrientation(toLandscape ? 'landscape' : 'portrait', {syncReader:false});
+    tablet.style.transform = `rotate(${settleAngle}deg) scale(.985)`;
+    const after = tablet.getBoundingClientRect();
+    const dx = (before.left + before.width / 2) - (after.left + after.width / 2);
+    const dy = (before.top + before.height / 2) - (after.top + after.height / 2);
+    const from = `translate(${dx}px, ${dy}px) rotate(${settleAngle}deg) scale(.985)`;
+    tablet.style.transform = from;
+    tablet.getBoundingClientRect();
+
+    const second = tablet.animate([
+      { transform:from },
+      { transform:'translate(0,0) rotate(0deg) scale(1)' }
+    ], { duration:320, easing:'cubic-bezier(.2,.8,.2,1)', fill:'forwards' });
+    await second.finished;
+    second.cancel();
+    tablet.style.transform = '';
+    if(currentArticle) openArticle(currentArticle, 'auto');
+    toast(isTabletLandscape() ? '已旋转为横屏双页' : '已旋转为竖屏一页', 'ok', 1200, $('#rotateTabletText'));
+  }catch(err){
+    tablet.style.transform = '';
+  }finally{
+    tablet.classList.remove('rotating');
+    tabletRotating = false;
+  }
 }
 
 // ============ 课堂：单选题逻辑 ============
