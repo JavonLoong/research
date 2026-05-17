@@ -1350,18 +1350,27 @@ function initFloatingBall(){
   if(!ball || !main || !screen) return;
   let dragging = false;
   let moved = false;
+  let suppressClick = false;
+  let startX = 0;
+  let startY = 0;
   let offsetX = 0;
   let offsetY = 0;
+  const dragThreshold = 6;
 
   main.addEventListener('click', e=>{
     e.stopPropagation();
-    if(moved){ moved = false; return; }
+    if(suppressClick){
+      suppressClick = false;
+      return;
+    }
     toggleFloatingPanel();
   });
 
   function startDrag(e){
     dragging = true;
     moved = false;
+    startX = e.clientX;
+    startY = e.clientY;
     ball.classList.add('dragging');
     const b = ball.getBoundingClientRect();
     offsetX = e.clientX - b.left;
@@ -1372,6 +1381,8 @@ function initFloatingBall(){
 
   function dragMove(e){
     if(!dragging) return;
+    const distance = Math.hypot(e.clientX - startX, e.clientY - startY);
+    if(!moved && distance < dragThreshold) return;
     moved = true;
     const s = screen.getBoundingClientRect();
     const x = Math.max(12, Math.min(e.clientX - s.left - offsetX, s.width - ball.offsetWidth - 12));
@@ -1381,17 +1392,26 @@ function initFloatingBall(){
 
   function endDrag(e){
     if(!dragging) return;
+    const wasMoved = moved;
     dragging = false;
     ball.classList.remove('dragging');
     if(e.pointerId !== undefined) ball.releasePointerCapture?.(e.pointerId);
+    if(!wasMoved){
+      suppressClick = true;
+      toggleFloatingPanel();
+      setTimeout(()=>{ suppressClick = false; }, 0);
+    }
   }
 
-  ball.addEventListener('pointerdown', startDrag);
-  ball.addEventListener('pointermove', dragMove);
-  ball.addEventListener('pointerup', endDrag);
-  ball.addEventListener('mousedown', startDrag);
-  document.addEventListener('mousemove', dragMove);
-  document.addEventListener('mouseup', endDrag);
+  if(window.PointerEvent){
+    ball.addEventListener('pointerdown', startDrag);
+    ball.addEventListener('pointermove', dragMove);
+    ball.addEventListener('pointerup', endDrag);
+  }else{
+    ball.addEventListener('mousedown', startDrag);
+    document.addEventListener('mousemove', dragMove);
+    document.addEventListener('mouseup', endDrag);
+  }
 }
 
 // 切换 tab
