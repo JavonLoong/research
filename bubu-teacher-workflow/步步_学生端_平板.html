@@ -149,14 +149,14 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .bookshelf-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
 .bookshelf-head h3{font-size:15px;font-weight:900;color:var(--text)}
 .bookshelf-head span{font-size:10px;color:var(--muted);font-weight:800}
-.book-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.book-card{border:0;background:transparent;text-align:left;cursor:pointer;font-family:inherit;padding:0}
-.book-cover{height:122px;border-radius:8px 12px 12px 8px;padding:12px 10px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 10px 22px rgba(15,23,42,.16);position:relative;overflow:hidden}
+.book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,128px));justify-content:start;gap:14px 18px}
+.book-card{border:0;background:transparent;text-align:left;cursor:pointer;font-family:inherit;padding:0;width:100%;max-width:128px}
+.book-cover{width:100%;aspect-ratio:3/4.25;border-radius:7px 11px 11px 7px;padding:12px 10px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 10px 22px rgba(15,23,42,.16);position:relative;overflow:hidden}
 .book-cover::before{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;background:rgba(0,0,0,.18)}
 .book-cover::after{content:"";position:absolute;right:-28px;bottom:-28px;width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.16)}
-.book-cover.has-img{padding:0;background:#fff}
+.book-cover.has-img{padding:0;background:#fff;display:grid;place-items:center}
 .book-cover.has-img::before,.book-cover.has-img::after{display:none}
-.book-cover.has-img img{width:100%;height:100%;object-fit:cover;display:block}
+.book-cover.has-img img{width:100%;height:100%;object-fit:contain;display:block;background:#fff}
 .book-cover.math,.book-mini-cover.math{background:linear-gradient(135deg,#168f7a,#10b981)}
 .book-cover.chinese,.book-mini-cover.chinese{background:linear-gradient(135deg,#b91c1c,#ef4444)}
 .book-cover.english,.book-mini-cover.english{background:linear-gradient(135deg,#3730a3,#6366f1)}
@@ -170,7 +170,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .book-detail.active{display:block}
 .book-detail-head{display:flex;gap:11px;align-items:center;margin-bottom:10px}
 .book-mini-cover{width:54px;height:72px;border-radius:6px 9px 9px 6px;flex:none;box-shadow:var(--shadow-2);overflow:hidden}
-.book-mini-cover.has-img img{width:100%;height:100%;object-fit:cover;display:block}
+.book-mini-cover.has-img{background:#fff;display:grid;place-items:center}
+.book-mini-cover.has-img img{width:100%;height:100%;object-fit:contain;display:block;background:#fff}
 .book-detail h3{font-size:15px;font-weight:900;color:var(--text)}
 .book-detail p{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:2px}
 .book-actions{display:flex;gap:6px;margin-top:7px}
@@ -608,11 +609,11 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
                       <strong>语文 六年级上册</strong><span>草原 · 狼牙山五壮士</span>
                     </button>
                     <button class="book-card" data-book="english6a">
-                      <div class="book-cover english"><span class="bc-sub">义务教育教科书</span><span class="bc-title">英语<br>六年级上册</span><span class="bc-pub">人民教育出版社</span></div>
+                      <div class="book-cover has-img"><img src="https://dl2.keben.app/63/%E5%B0%8F%E5%AD%A6/%E8%8B%B1%E8%AF%AD/%E8%8B%B1%E8%AF%AD%20%E4%BA%BA%E6%95%99%E7%89%88%EF%BC%88PEP%EF%BC%89%EF%BC%88%E4%B8%BB%E7%BC%96%EF%BC%9A%E5%90%B4%E6%AC%A3%EF%BC%89%20%E5%85%AD%E5%B9%B4%E7%BA%A7%E4%B8%8A%E5%86%8C%20%E5%85%AD%E4%B8%89%E5%88%B6%202013%E7%89%88_512w.webp" alt="英语六年级上册封面"></div>
                       <strong>英语 六年级上册</strong><span>Unit 1 · Unit 2</span>
                     </button>
                     <button class="book-card" data-book="science6a">
-                      <div class="book-cover science"><span class="bc-sub">义务教育教科书</span><span class="bc-title">科学<br>六年级上册</span><span class="bc-pub">教育科学出版社</span></div>
+                      <div class="book-cover has-img"><img src="https://www.esph.com.cn/images/2023-06/ebf648f588d94cbc9ff3b86eb21d4058.png" alt="科学六年级上册封面"></div>
                       <strong>科学 六年级上册</strong><span>工具与技术</span>
                     </button>
                   </div>
@@ -1461,6 +1462,7 @@ const EBOOKS = {
     cls:'english',
     title:'英语 六年级上册',
     meta:'PEP · Unit 1 / Unit 2',
+    coverImg:'https://dl2.keben.app/63/%E5%B0%8F%E5%AD%A6/%E8%8B%B1%E8%AF%AD/%E8%8B%B1%E8%AF%AD%20%E4%BA%BA%E6%95%99%E7%89%88%EF%BC%88PEP%EF%BC%89%EF%BC%88%E4%B8%BB%E7%BC%96%EF%BC%9A%E5%90%B4%E6%AC%A3%EF%BC%89%20%E5%85%AD%E5%B9%B4%E7%BA%A7%E4%B8%8A%E5%86%8C%20%E5%85%AD%E4%B8%89%E5%88%B6%202013%E7%89%88_512w.webp',
     cover:['义务教育教科书','英语<br>六年级上册','人民教育出版社'],
     articles:[
       {id:'e1', title:'Unit 1 How can I get there?', sub:'Part A Let’s talk', pages:[
@@ -1476,6 +1478,7 @@ const EBOOKS = {
     cls:'science',
     title:'科学 六年级上册',
     meta:'教科版 · 工具与技术',
+    coverImg:'https://www.esph.com.cn/images/2023-06/ebf648f588d94cbc9ff3b86eb21d4058.png',
     cover:['义务教育教科书','科学<br>六年级上册','教育科学出版社'],
     articles:[
       {id:'s1', title:'工具与技术', sub:'第一单元', pages:[
