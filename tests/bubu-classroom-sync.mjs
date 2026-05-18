@@ -161,6 +161,24 @@ async function main() {
     await evalIn(student, "localStorage.clear(); true");
     await waitFor(board, "document.querySelector('#sceneRoot')?.children.length > 0", "whiteboard initial render");
     await waitFor(student, "document.querySelector('#classStage')?.children.length > 0", "student initial render");
+    await waitFor(board, "!!document.querySelector('#whiteboardBoot:not(.hidden)')", "whiteboard desktop boot");
+    await evalIn(
+      board,
+      "document.querySelector('[data-boot-act=\"open-bubu\"]').dispatchEvent(new MouseEvent('dblclick', {bubbles:true})); true",
+    );
+    await waitFor(board, "document.querySelector('#whiteboardBoot')?.classList.contains('login')", "whiteboard login screen");
+    await evalIn(board, "document.querySelector('[data-boot-act=\"login\"]').click(); true");
+    await waitFor(
+      board,
+      "document.querySelector('#whiteboardBoot')?.classList.contains('hidden') && document.querySelector('#pageLabel')?.textContent.includes('1 / 8') && document.querySelector('#sceneRoot')?.innerText.includes('小数的意义')",
+      "logged in courseware page",
+    );
+    await evalIn(board, "renderLessonPage(4); true");
+    await waitFor(
+      board,
+      "document.querySelector('#pageLabel')?.textContent.includes('5 / 8') && document.querySelector('#sceneRoot')?.innerText.includes('第 5 页互动') && !!document.querySelector('[data-act=\"livePush\"]')",
+      "courseware page 5 bound interaction",
+    );
 
     await evalIn(board, "selectScene('live', true); true");
     await waitFor(board, "!!document.querySelector('[data-act=\"livePush\"]')", "live push button");

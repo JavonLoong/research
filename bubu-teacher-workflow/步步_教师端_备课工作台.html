@@ -1333,94 +1333,65 @@ if (teacherScreen && teacherModalMask && teacherModalMask.parentElement !== teac
 if (teacherScreen && teacherToast && teacherToast.parentElement !== teacherScreen) teacherScreen.appendChild(teacherToast);
 
 const SLIDES = [
-  { num:1, name:"封面", time:"2'", body:"小数的初步认识", caption:"<strong>封面页：</strong>第一印象很重要。建议加一段 30 秒情境导入视频，激活学生兴趣。",
+  { num:1, name:"封面", time:"2'", body:"小数的意义", caption:"<strong>示例课件：</strong>参考公开课件《人教版四年级下册 小数的意义（共19张PPT）》的教学主线，压缩为 8 页演示版，白板端打开的是同一份课件。",
     bind:null,
     render:`<div class="cover-deco"></div><div class="cover-num">0.1</div>
-      <div class="slide-content"><span class="slide-tag">人教版 · 四年级下 · 第六单元</span>
-      <div class="slide-title" style="font-size:38px">小数的初步认识</div>
-      <div class="slide-subtitle">第 1 课时 · 小数的意义和读写</div>
-      <div style="flex:1"></div>
-      <div class="slide-subtitle" style="font-size:13px">主讲：王老师 · 四年级2班</div></div>` },
-
-  { num:2, name:"复习：什么是分数", time:"5'", body:"听写复习", caption:"<strong>互动绑定中：</strong>翻到此页自动触发<strong>听写</strong>。乱序下发到 35 台学生平板，5 个分数，预计 5 分钟。回收数据将作为新课导入参考。",
-    bind:{ type:"listen", label:"听写" },
-    render:`<div class="slide-content"><span class="slide-tag warn">⏱ 复习导入 · 5 分钟</span>
-      <div class="slide-title">复习：什么是分数？</div>
-      <div class="slide-subtitle">下面我们听写 5 个分数，准备好了吗？</div>
-      <div class="interact-placeholder" data-config-type="listen" style="left:48px;right:48px;bottom:42px">
-        <div class="ip-header">🎧 <span>听写互动 已绑定</span><span class="ip-tag">PAGE-TRIGGER</span></div>
-        <div class="ip-body">5 个分数 · 汉义模式 · 乱序防抄 · 实时统计</div>
-        <div class="ip-trigger">⚡ 翻到此页自动下发到 35 台平板</div>
-      </div></div>` },
-
-  { num:3, name:"情境导入", time:"5'", body:"价格中的小数", caption:"<strong>情境导入：</strong>从生活中的小数（价格标签）切入，让学生先<strong>认识</strong>，再<strong>抽象</strong>。建议在右上角放一张商品图。",
+      <div class="slide-content"><span class="slide-tag">示例PPT · 人教版 · 四年级下</span>
+      <div class="slide-title" style="font-size:38px">小数的意义</div>
+      <div class="slide-subtitle">同一份课件：教师端备课编辑，白板端授课翻页。</div>
+      <div class="rule-board"><div class="rule-card"><b>1</b><span>数数引入</span></div><div class="rule-card"><b>2</b><span>分而有数</span></div><div class="rule-card"><b>3</b><span>扩充数系</span></div></div></div>` },
+  { num:2, name:"数数引入", time:"4'", body:"唤醒计数经验", caption:"<strong>导入：</strong>先用整数计数经验引出“满十进一，分十退一”，不要直接给小数定义。",
     bind:null,
-    render:`<div class="slide-content"><span class="slide-tag info">情境导入</span>
-      <div class="slide-title">超市里的小数</div>
-      <div class="price-row">
-        <div class="price-card"><b>面包</b><strong>3.5 元</strong><span>三元五角</span></div>
-        <div class="price-card"><b>铅笔</b><strong>0.8 元</strong><span>八角</span></div>
-        <div class="price-card"><b>橡皮</b><strong>0.5 元</strong><span>五角</span></div>
-      </div>
-      <div class="slide-bullet">这些价格有什么共同特点？</div>
-      <div style="margin-top:auto;font-size:12px;color:var(--muted)">提示：先让学生说出“小数点”这个特征</div></div>` },
-
-  { num:4, name:"0.1 是怎么来的", time:"6'", body:"分数与小数", caption:"<strong>核心概念：</strong>把 1 元平均分成 10 份，每份 0.1 元 = 1/10 元。这是小数意义的<strong>第一根支柱</strong>。绑定<strong>圈选提问</strong>。",
-    bind:{ type:"circle", label:"圈选提问" },
+    render:`<div class="slide-content"><span class="slide-tag info">导入</span>
+      <div class="slide-title">数数引入：唤醒计数经验</div>
+      <div class="slide-bullet">10 个一是 <strong>十</strong>，10 个十是 <strong>一百</strong>。</div>
+      <div class="slide-bullet">整数可以往左扩展，那么 1 不够分时，数还能往右扩展吗？</div>
+      <div class="formula-box">满十进一，分十退一</div></div>` },
+  { num:3, name:"0.1", time:"6'", body:"十分之一", caption:"<strong>核心概念：</strong>把一个整体平均分成 10 份，其中 1 份就是十分之一，也就是 0.1。",
+    bind:null,
     render:`<div class="slide-content"><span class="slide-tag danger">核心概念</span>
-      <div class="slide-title">0.1 是怎么来的？</div>
-      <div class="slide-bullet">把 <strong>1 元</strong> 平均分成 <strong>10 份</strong></div>
-      <div class="slide-bullet">每份是 <strong>1/10 元 = 0.1 元 = 1 角</strong></div>
+      <div class="slide-title">分而有数：深入理解 0.1</div>
+      <div class="slide-subtitle">把 <strong>1 米</strong> 平均分成 <strong>10 份</strong>。</div>
       <div class="fraction-strip"><span class="active"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-      <div class="formula-box">1 元 ÷ 10 = 0.1 元</div>
-      <div class="interact-placeholder" data-config-type="circle" style="left:48px;right:48px;bottom:30px;min-width:auto">
-        <div class="ip-header">⭕ <span>圈选提问 已绑定</span><span class="ip-tag">ON-DEMAND</span></div>
-        <div class="ip-body">教师圈选 1 元的图 → AI 自动讲解 → 可推送学生平板</div>
-      </div></div>` },
-
-  { num:5, name:"小数读写", time:"6'", body:"读写规则", caption:"<strong>知识点 + 即时巩固：</strong>讲完读写规则马上跟一个<strong>随堂练</strong>（3 题选择题，分层推送）。客观题秒批改，错题自动入错题本。",
+      <div class="formula-box">1/10 = 0.1</div></div>` },
+  { num:4, name:"0.01 与 0.001", time:"6'", body:"分了再分", caption:"<strong>概念推进：</strong>十分之一继续平均分，得到百分之一、千分之一。",
+    bind:null,
+    render:`<div class="slide-content"><span class="slide-tag">概念推进</span>
+      <div class="slide-title">分了再分：0.01 与 0.001</div>
+      <div class="rule-board"><div class="rule-card"><b>0.1</b><span>十分之一</span></div><div class="rule-card"><b>0.01</b><span>百分之一</span></div><div class="rule-card"><b>0.001</b><span>千分之一</span></div></div>
+      <div class="slide-bullet">小数每向右一位，计数单位就缩小到原来的十分之一。</div></div>` },
+  { num:5, name:"扩充数系", time:"7'", body:"0.156", caption:"<strong>关键演示：</strong>本页绑定<strong>随堂练</strong>。白板端打开同一份课件翻到第 5 页时，会自动出现同一个互动入口。",
     bind:{ type:"quiz", label:"随堂练" },
-    render:`<div class="slide-content"><span class="slide-tag">知识点</span>
-      <div class="slide-title">小数怎么读、怎么写</div>
-      <div class="rule-board">
-        <div class="rule-card"><b>0.3</b><span>零点三</span></div>
-        <div class="rule-card"><b>2.5</b><span>二点五</span></div>
-        <div class="rule-card"><b>10.08</b><span>十点零八</span></div>
-      </div>
-      <div class="slide-bullet">小数点读作“点”，后面的数字逐个读。</div>
+    render:`<div class="slide-content"><span class="slide-tag info">随堂互动</span>
+      <div class="slide-title">扩充数系：0.156 怎么数？</div>
+      <div class="slide-subtitle">0.156 里面有几个 0.1、几个 0.01、几个 0.001？</div>
+      <div class="rule-board"><div class="rule-card"><b>1</b><span>十分位：1 个 0.1</span></div><div class="rule-card"><b>5</b><span>百分位：5 个 0.01</span></div><div class="rule-card"><b>6</b><span>千分位：6 个 0.001</span></div></div>
       <div class="interact-placeholder" data-config-type="quiz" style="left:48px;right:48px;bottom:30px;min-width:auto">
-        <div class="ip-header">📝 <span>随堂练 已绑定</span><span class="ip-tag">PAGE-TRIGGER</span></div>
-        <div class="ip-body">3 题选择 · 分 3 档下发 · 秒批改 · 错题自动入复习</div>
+        <div class="ip-header">📝 <span>第 5 页互动：随堂练已绑定</span><span class="ip-tag">教师端同步</span></div>
+        <div class="ip-body">题目：10 个 0.01 是多少？学生提交后白板显示进度、选项分布和正确率。</div>
       </div></div>` },
-
-  { num:6, name:"例题精讲", time:"10'", body:"例题", caption:"<strong>例题精讲：</strong>这页只展示题目和解题步骤，<strong>不绑定互动</strong>。让教师用白板黑板工具自由板演。",
+  { num:6, name:"数位顺序表", time:"6'", body:"位值", caption:"<strong>板书页：</strong>不绑定互动，给老师在白板端自由圈画和补充例子。",
     bind:null,
-    render:`<div class="slide-content"><span class="slide-tag" style="background:#dcfce7;color:#15803d;border-color:#bbf7d0">例题</span>
-      <div class="slide-title">例 1：3.5 千米 = 多少米？</div>
-      <div class="formula-box">3.5 千米 = 3 千米 + 0.5 千米</div>
-      <div class="slide-bullet">已知：1 千米 = 1000 米</div>
-      <div class="slide-bullet">3 千米 = 3000 米</div>
-      <div class="slide-bullet">0.5 千米 = 1/2 千米 = 500 米</div>
-      <div class="slide-bullet">所以 3.5 千米 = <strong>3500 米</strong></div></div>` },
-
-  { num:7, name:"抽人验收", time:"4'", body:"课尾抽人", caption:"<strong>课尾验收：</strong>绑定<strong>抽人回答</strong>。随机抽 2 人，要求口头说出“小数点的意义”。抽中学生平板锁屏 10 秒。",
+    render:`<div class="slide-content"><span class="slide-tag" style="background:#dcfce7;color:#15803d;border-color:#bbf7d0">板书页</span>
+      <div class="slide-title">数位顺序表</div>
+      <div class="rule-board"><div class="rule-card"><b>个位</b><span>1</span></div><div class="rule-card"><b>十分位</b><span>0.1</span></div><div class="rule-card"><b>百分位</b><span>0.01</span></div></div>
+      <div class="slide-bullet">白板笔可以直接在本页圈画和补充例子。</div></div>` },
+  { num:7, name:"独立练习", time:"5'", body:"连一连", caption:"<strong>关键演示：</strong>本页绑定<strong>抽人回答</strong>。白板端翻到第 7 页时，显示同一互动入口；点名后只有该学生平板出现回答提示。",
     bind:{ type:"pick", label:"抽人回答" },
-    render:`<div class="slide-content"><span class="slide-tag warn">课尾验收</span>
-      <div class="slide-title">谁来说说？</div>
-      <div class="slide-subtitle">用一句话总结：什么是小数？</div>
+    render:`<div class="slide-content"><span class="slide-tag warn">抽人互动</span>
+      <div class="slide-title">独立练习：连一连</div>
+      <div class="slide-subtitle">把小数和它表示的意义连起来：0.3、0.07、1.25。</div>
       <div class="interact-placeholder" data-config-type="pick" style="left:48px;right:48px;bottom:30px;min-width:auto">
-        <div class="ip-header">🎲 <span>抽人回答 已绑定</span><span class="ip-tag">PAGE-TRIGGER</span></div>
-        <div class="ip-body">随机抽 2 人 · 名单高亮 · 抽中后该生平板自动解锁麦克风</div>
+        <div class="ip-header">🎲 <span>第 7 页互动：抽人回答已绑定</span><span class="ip-tag">教师端同步</span></div>
+        <div class="ip-body">抽中后，只有该学生平板出现“轮到你回答”，其他学生端显示旁听。</div>
       </div></div>` },
-
-  { num:8, name:"作业预告", time:"2'", body:"作业卡", caption:"<strong>作业预告：</strong>仅展示作业概览。真正的<strong>分层布置</strong>在「作业布置」面板做（已在现有原型实现）。",
+  { num:8, name:"课后任务", time:"2'", body:"标一标", caption:"<strong>收束：</strong>把今天的小数意义落到数轴和生活记录，作业仍在「作业布置」面板里单独发布。",
     bind:null,
-    render:`<div class="slide-content"><span class="slide-tag">课后作业</span>
-      <div class="slide-title">今天的作业</div>
-      <div class="slide-bullet">必做：练习册 P58 第 1-3 题</div>
-      <div class="slide-bullet">选做：观察家里的物品价格，记录 5 个小数</div>
-      <div class="slide-bullet">挑战：1.5 元 + 2.8 元 = ?</div>
-      <div style="margin-top:auto;font-size:12px;color:var(--muted)">📋 作业将自动按学情分层下发到学生平板</div></div>` }
+    render:`<div class="slide-content"><span class="slide-tag">收束</span>
+      <div class="slide-title">标一标与课后任务</div>
+      <div class="slide-bullet">把 0.4、0.08、1.2 标到数轴上。</div>
+      <div class="slide-bullet">记录生活里的 5 个小数，说清它们表示什么。</div>
+      <div class="formula-box">小数 = 更细的计数单位</div></div>` }
 ];
 
 const EXPLAINS = {
@@ -2170,7 +2141,7 @@ const DEMOS = {
     body:`<p>支持上传本地课件，也可以粘贴<strong>公开可访问的 PPT 链接</strong>。系统会抓取文件、转成可编辑页面，再识别知识点和互动位置。</p>
       <h4>公开链接抓取</h4>
       <div class="field"><div class="field-label">示例 PPT 链接</div>
-        <div class="ppt-url-box"><span>🔗</span><code>https://example.edu/open-courseware/四下-小数的初步认识.pptx</code></div></div>
+        <div class="ppt-url-box"><span>🔗</span><code>https://mip.21cnjy.com/P/23388792.html</code></div></div>
       <div class="ppt-import-grid">
         <div class="ppt-import-cell"><strong>8</strong><span>页课件</span></div>
         <div class="ppt-import-cell"><strong>4</strong><span>互动建议</span></div>
