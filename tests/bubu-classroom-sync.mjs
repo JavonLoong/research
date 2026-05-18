@@ -242,6 +242,11 @@ async function main() {
       "document.querySelector('#whiteboardBoot')?.classList.contains('hidden') && !!document.querySelector('[data-prepared-course=\"langyashan\"]')",
       "half-finished chinese course starts",
     );
+    await waitFor(
+      board,
+      "document.body.classList.contains('whiteboard-running') && Math.abs(document.querySelector('#boardScreen').getBoundingClientRect().width - innerWidth) < 2 && Math.abs(document.querySelector('#boardScreen').getBoundingClientRect().height - innerHeight) < 2",
+      "whiteboard course fills full viewport",
+    );
     await evalIn(board, "location.reload(); true");
     await waitFor(board, "document.readyState === 'complete'", "whiteboard reload after chinese course");
     await waitFor(board, "!!document.querySelector('#whiteboardBoot.ready:not(.hidden)')", "whiteboard desktop boot after chinese course");
