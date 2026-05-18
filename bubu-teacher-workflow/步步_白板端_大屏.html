@@ -144,9 +144,12 @@ body{
 .wb-browser-bar input{height:38px;border:1px solid var(--line);border-radius:9px;padding:0 12px;font-size:13px;font-weight:700;color:var(--text)}
 .wb-browser-content{flex:1;background:#eef2f7;padding:16px;display:grid;grid-template-columns:240px 1fr;gap:14px}
 .wb-browser-bookmarks,.wb-browser-view{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto}
+.wb-browser-view{display:flex;flex-direction:column;gap:10px;padding:0;overflow:hidden}.wb-browser-view h3{padding:14px 14px 0;margin:0}
 .wb-browser-bookmarks h3,.wb-browser-view h3{font-size:16px;margin:0 0 10px}.wb-browser-bookmarks button{width:100%;height:38px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;background:#fff;text-align:left;padding:0 10px;font-weight:800;cursor:pointer}
 .wb-browser-bookmarks button:hover{border-color:var(--primary);color:var(--primary-dark)}
-.wb-browser-status{font-size:13px;color:var(--muted);font-weight:700;line-height:1.8}.wb-browser-status a{color:var(--primary-dark);font-weight:900}
+.wb-browser-status{font-size:12px;color:var(--muted);font-weight:700;line-height:1.6;padding:0 14px}.wb-browser-status a{color:var(--primary-dark);font-weight:900}
+.wb-browser-frame-wrap{position:relative;flex:1;border-top:1px solid var(--line);background:#fff}
+.wb-browser-frame-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
 .scene-root{ position:absolute; inset:0; overflow:hidden; }
 .course-slide{position:absolute;inset:0;padding:42px 52px 78px;background:linear-gradient(135deg,#f8fafc,#eef8f3);display:flex;flex-direction:column;color:var(--text)}
 .slide-tag{display:inline-flex;align-self:flex-start;border:1px solid var(--primary-soft);background:#e8f7f0;color:var(--primary-dark);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;margin-bottom:16px}
@@ -856,7 +859,7 @@ body{
   <div class="wb-app-layer wb-browser-app" id="desktopBrowserApp">
     <div class="wb-app-window wb-browser-window">
       <div class="wb-app-titlebar">
-        <div><b>浏览器</b><span>输入网址或关键词后打开真实网页</span></div>
+        <div><b>浏览器</b><span>网页直接在白板桌面内部打开</span></div>
         <div class="wb-window-actions"><button type="button" data-boot-act="browser-close">×</button></div>
       </div>
       <div class="wb-browser-bar">
@@ -877,7 +880,10 @@ body{
         <div class="wb-browser-view">
           <h3>网页打开区</h3>
           <div class="wb-browser-status" id="desktopBrowserStatus">
-            输入网址或关键词，点击“打开网页”。由于很多网站禁止被嵌入课件页，这里会调用真实浏览器新标签页打开。
+            输入网址或关键词，点击“打开网页”。网页会留在这个窗口里；个别网站若拒绝内嵌，会在下方框内显示浏览器拦截提示。
+          </div>
+          <div class="wb-browser-frame-wrap">
+            <iframe id="desktopBrowserFrame" title="桌面浏览器内部页面" referrerpolicy="no-referrer"></iframe>
           </div>
         </div>
       </div>
@@ -2050,11 +2056,12 @@ function closeDesktopBrowserApp(){
 function goDesktopBrowser(raw){
   const input = $('#desktopBrowserInput');
   const status = $('#desktopBrowserStatus');
+  const frame = $('#desktopBrowserFrame');
   const url = normalizeDesktopBrowserTarget(raw ?? input?.value);
   if(input) input.value = url;
-  window.open(url, '_blank', 'noopener,noreferrer');
+  if(frame) frame.src = url;
   if(status){
-    status.innerHTML = `已在真实浏览器新标签页打开：<br><a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a><br>如果白板机拦截弹窗，可直接点这里的链接继续打开。`;
+    status.textContent = `已在内部窗口打开：${url}。如果页面显示“拒绝连接/无法显示”，说明该网站禁止被嵌入白板网页。`;
   }
 }
 

@@ -186,8 +186,8 @@ async function main() {
     );
     await waitFor(
       board,
-      "window.__openedUrls?.includes('https://example.com/') && document.querySelector('#desktopBrowserStatus')?.textContent.includes('https://example.com/')",
-      "desktop browser opens real webpage",
+      "window.__openedUrls?.length === 0 && document.querySelector('#desktopBrowserFrame')?.src === 'https://example.com/' && document.querySelector('#desktopBrowserStatus')?.textContent.includes('已在内部窗口打开')",
+      "desktop browser opens webpage internally",
     );
     await evalIn(board, "document.querySelector('[data-boot-act=\"browser-close\"]').click(); true");
     await waitFor(
