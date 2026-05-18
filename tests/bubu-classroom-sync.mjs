@@ -177,8 +177,8 @@ async function main() {
     );
     await waitFor(
       board,
-      "document.querySelector('#whiteboardBoot')?.classList.contains('browser-app') && !!document.querySelector('#desktopBrowserInput')",
-      "desktop browser app opens",
+      "document.querySelector('#whiteboardBoot')?.classList.contains('browser-app') && !!document.querySelector('#desktopBrowserInput') && !!document.querySelector('#viaHome') && !!document.querySelector('#viaBottomBar') && !!document.querySelector('[data-boot-act=\"browser-tabs\"]') && !!document.querySelector('[data-boot-act=\"browser-menu\"]')",
+      "via-style browser app opens",
     );
     await evalIn(
       board,
@@ -188,6 +188,18 @@ async function main() {
       board,
       "window.__openedUrls?.length === 0 && document.querySelector('#desktopBrowserFrame')?.src === 'https://example.com/' && document.querySelector('#desktopBrowserStatus')?.textContent.includes('已在内部窗口打开')",
       "desktop browser opens webpage internally",
+    );
+    await evalIn(board, "document.querySelector('[data-boot-act=\"browser-tabs\"]').click(); true");
+    await waitFor(
+      board,
+      "document.querySelector('#viaTabsSheet')?.classList.contains('show') && document.querySelector('#viaTabCount')?.textContent.trim() === '1'",
+      "via-style browser tab drawer opens",
+    );
+    await evalIn(board, "document.querySelector('[data-boot-act=\"browser-menu\"]').click(); true");
+    await waitFor(
+      board,
+      "document.querySelector('#viaMenuSheet')?.classList.contains('show') && document.querySelector('#viaMenuSheet')?.innerText.includes('无图模式')",
+      "via-style browser menu opens",
     );
     await evalIn(board, "document.querySelector('[data-boot-act=\"browser-close\"]').click(); true");
     await waitFor(

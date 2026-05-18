@@ -138,18 +138,33 @@ body{
 .wb-pen-toolbar button.active{background:var(--primary-soft);border-color:var(--primary);color:var(--primary-dark)}
 .standalone-pen-stage{position:relative;flex:1;background:#fff}
 #standalonePenCanvas{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair;background:#fff}
-.wb-browser-window{width:min(1060px,88vw);height:min(680px,84vh);display:flex;flex-direction:column}
-.wb-browser-bar{height:58px;background:#fff;border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:0 14px}
-.wb-browser-nav{display:flex;gap:6px}.wb-browser-nav button,.wb-browser-bar button{height:36px;border:1px solid var(--line);border-radius:8px;background:#fff;font-weight:900;padding:0 12px;cursor:pointer}
-.wb-browser-bar input{height:38px;border:1px solid var(--line);border-radius:9px;padding:0 12px;font-size:13px;font-weight:700;color:var(--text)}
-.wb-browser-content{flex:1;background:#eef2f7;padding:16px;display:grid;grid-template-columns:240px 1fr;gap:14px}
-.wb-browser-bookmarks,.wb-browser-view{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto}
-.wb-browser-view{display:flex;flex-direction:column;gap:10px;padding:0;overflow:hidden}.wb-browser-view h3{padding:14px 14px 0;margin:0}
-.wb-browser-bookmarks h3,.wb-browser-view h3{font-size:16px;margin:0 0 10px}.wb-browser-bookmarks button{width:100%;height:38px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;background:#fff;text-align:left;padding:0 10px;font-weight:800;cursor:pointer}
-.wb-browser-bookmarks button:hover{border-color:var(--primary);color:var(--primary-dark)}
-.wb-browser-status{font-size:12px;color:var(--muted);font-weight:700;line-height:1.6;padding:0 14px}.wb-browser-status a{color:var(--primary-dark);font-weight:900}
-.wb-browser-frame-wrap{position:relative;flex:1;border-top:1px solid var(--line);background:#fff}
-.wb-browser-frame-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+.wb-browser-window{width:min(430px,88vw);height:min(760px,86vh);display:flex;flex-direction:column;background:#ffffff;border-radius:18px;position:relative}
+.via-topbar{height:48px;display:grid;grid-template-columns:34px 1fr 34px;gap:8px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line-soft);background:#fff}
+.via-round-btn{width:34px;height:34px;border:0;border-radius:50%;background:#f1f5f9;color:#0f172a;font-weight:900;cursor:pointer;display:grid;place-items:center}
+.via-address{height:34px;border:0;border-radius:999px;background:#f1f5f9;padding:0 14px;font-size:13px;font-weight:750;color:var(--text);outline:none}
+.via-progress{height:2px;background:transparent}.via-progress.run{background:linear-gradient(90deg,var(--primary),#7d6cf2);animation:viaLoad .9s ease}
+@keyframes viaLoad{0%{transform:scaleX(.05);transform-origin:left}100%{transform:scaleX(1);transform-origin:left}}
+.via-body{position:relative;flex:1;min-height:0;background:#fff;overflow:hidden}
+.via-home{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:76px 24px 18px;background:#fff}
+.via-logo{width:58px;height:58px;border-radius:18px;background:#111827;color:#fff;display:grid;place-items:center;font-size:28px;font-weight:900;margin-bottom:26px;box-shadow:0 18px 34px rgba(15,23,42,.18)}
+.via-home-search{width:100%;height:44px;border:1px solid var(--line);border-radius:999px;background:#fff;display:grid;grid-template-columns:1fr 42px;align-items:center;box-shadow:0 10px 24px rgba(15,23,42,.06)}
+.via-home-search input{height:42px;border:0;outline:none;background:transparent;padding:0 0 0 16px;font-size:13px;font-weight:750;color:var(--text)}
+.via-home-search button{width:36px;height:36px;margin-right:4px;border:0;border-radius:50%;background:#111827;color:#fff;font-weight:900;cursor:pointer}
+.via-speed{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%;margin-top:28px}
+.via-speed button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:7px;font-size:11px;color:#475569;font-weight:800;cursor:pointer}
+.via-speed i{width:42px;height:42px;border-radius:14px;background:#f1f5f9;color:#0f172a;display:grid;place-items:center;font-style:normal;font-size:18px;font-weight:900}
+.via-hint{margin-top:auto;color:#94a3b8;font-size:11px;font-weight:800}
+.via-web{position:absolute;inset:0;display:none;background:#fff}.via-web.show{display:block}
+.via-web iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+.via-status{position:absolute;left:10px;right:10px;top:10px;z-index:2;border-radius:10px;background:rgba(255,255,255,.94);border:1px solid var(--line);box-shadow:0 8px 20px rgba(15,23,42,.08);font-size:11px;color:var(--muted);font-weight:800;padding:8px 10px;line-height:1.45}
+.via-bottom{height:50px;border-top:1px solid var(--line-soft);background:#fff;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;padding:4px 8px}
+.via-bottom button{height:40px;border:0;background:transparent;border-radius:12px;font-size:18px;color:#111827;font-weight:900;cursor:pointer;position:relative}
+.via-bottom button:disabled{opacity:.28;cursor:not-allowed}.via-bottom button:hover{background:#f1f5f9}
+.via-tab-count{position:absolute;right:13px;top:5px;min-width:16px;height:16px;border-radius:50%;background:#111827;color:#fff;font-size:10px;display:grid;place-items:center;padding:0 4px}
+.via-sheet{position:absolute;left:10px;right:10px;bottom:58px;z-index:5;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 22px 54px rgba(15,23,42,.22);padding:12px;display:none}
+.via-sheet.show{display:block}.via-sheet h4{font-size:13px;margin:0 0 10px;color:#0f172a}
+.via-tab-list{display:grid;gap:8px}.via-tab-item{border:1px solid var(--line);border-radius:10px;background:#fff;padding:10px;text-align:left;font-size:12px;font-weight:850;color:#0f172a;cursor:pointer}.via-tab-item small{display:block;color:var(--muted);font-weight:700;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.via-menu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.via-menu-grid button{border:1px solid var(--line);border-radius:10px;background:#fff;height:54px;font-size:11px;font-weight:850;color:#0f172a;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.via-menu-grid i{font-style:normal;font-size:17px}
 .scene-root{ position:absolute; inset:0; overflow:hidden; }
 .course-slide{position:absolute;inset:0;padding:42px 52px 78px;background:linear-gradient(135deg,#f8fafc,#eef8f3);display:flex;flex-direction:column;color:var(--text)}
 .slide-tag{display:inline-flex;align-self:flex-start;border:1px solid var(--primary-soft);background:#e8f7f0;color:var(--primary-dark);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;margin-bottom:16px}
@@ -858,34 +873,55 @@ body{
   </div>
   <div class="wb-app-layer wb-browser-app" id="desktopBrowserApp">
     <div class="wb-app-window wb-browser-window">
-      <div class="wb-app-titlebar">
-        <div><b>浏览器</b><span>网页直接在白板桌面内部打开</span></div>
-        <div class="wb-window-actions"><button type="button" data-boot-act="browser-close">×</button></div>
+      <div class="via-topbar">
+        <button class="via-round-btn" type="button" data-boot-act="browser-home" title="主页">⌂</button>
+        <input class="via-address" id="desktopBrowserInput" type="text" value="" placeholder="搜索或输入网址" aria-label="浏览器地址栏">
+        <button class="via-round-btn" type="button" data-boot-act="browser-close" title="关闭">×</button>
       </div>
-      <div class="wb-browser-bar">
-        <div class="wb-browser-nav">
-          <button type="button" data-boot-act="browser-home">主页</button>
+      <div class="via-progress" id="viaProgress"></div>
+      <div class="via-body">
+        <div class="via-home" id="viaHome">
+          <div class="via-logo">V</div>
+          <div class="via-home-search">
+            <input id="viaHomeInput" type="text" placeholder="搜索或输入网址">
+            <button type="button" data-boot-act="browser-go">→</button>
+          </div>
+          <div class="via-speed">
+            <button type="button" data-browser-bookmark="https://www.bing.com/search?q=小学数学小数的意义"><i>数</i><span>小数</span></button>
+            <button type="button" data-browser-bookmark="https://www.bing.com"><i>B</i><span>Bing</span></button>
+            <button type="button" data-browser-bookmark="https://example.com"><i>E</i><span>示例</span></button>
+            <button type="button" data-browser-bookmark="https://www.wikipedia.org"><i>W</i><span>百科</span></button>
+          </div>
+          <div class="via-hint">轻量首页 · 内部打开 · 底部工具栏</div>
         </div>
-        <input id="desktopBrowserInput" type="text" value="https://example.com" aria-label="浏览器地址栏">
-        <button type="button" data-boot-act="browser-go">打开网页</button>
+        <div class="via-web" id="viaWeb">
+          <div class="via-status" id="desktopBrowserStatus">网页会在这里打开；若网站禁止内嵌，浏览区会显示浏览器拦截提示。</div>
+          <iframe id="desktopBrowserFrame" title="桌面浏览器内部页面" referrerpolicy="no-referrer"></iframe>
+        </div>
+        <div class="via-sheet" id="viaTabsSheet">
+          <h4>标签页</h4>
+          <div class="via-tab-list" id="viaTabList"></div>
+        </div>
+        <div class="via-sheet" id="viaMenuSheet">
+          <h4>菜单</h4>
+          <div class="via-menu-grid">
+            <button type="button" data-boot-act="browser-new-tab"><i>＋</i><span>新标签</span></button>
+            <button type="button" data-browser-menu-toast="无图模式已开启"><i>□</i><span>无图模式</span></button>
+            <button type="button" data-browser-menu-toast="夜间模式仅作原型展示"><i>☾</i><span>夜间模式</span></button>
+            <button type="button" data-browser-menu-toast="广告拦截已开启"><i>盾</i><span>广告拦截</span></button>
+            <button type="button" data-browser-menu-toast="已加入书签"><i>☆</i><span>书签</span></button>
+            <button type="button" data-browser-menu-toast="下载列表为空"><i>↓</i><span>下载</span></button>
+            <button type="button" data-browser-menu-toast="查找页面已准备"><i>找</i><span>页内查找</span></button>
+            <button type="button" data-browser-menu-toast="设置面板已打开"><i>⚙</i><span>设置</span></button>
+          </div>
+        </div>
       </div>
-      <div class="wb-browser-content">
-        <div class="wb-browser-bookmarks">
-          <h3>常用</h3>
-          <button type="button" data-browser-bookmark="https://www.bing.com/search?q=小学数学小数的意义">搜小数的意义</button>
-          <button type="button" data-browser-bookmark="https://www.bing.com">Bing</button>
-          <button type="button" data-browser-bookmark="https://www.baidu.com">百度</button>
-          <button type="button" data-browser-bookmark="https://example.com">示例网页</button>
-        </div>
-        <div class="wb-browser-view">
-          <h3>网页打开区</h3>
-          <div class="wb-browser-status" id="desktopBrowserStatus">
-            输入网址或关键词，点击“打开网页”。网页会留在这个窗口里；个别网站若拒绝内嵌，会在下方框内显示浏览器拦截提示。
-          </div>
-          <div class="wb-browser-frame-wrap">
-            <iframe id="desktopBrowserFrame" title="桌面浏览器内部页面" referrerpolicy="no-referrer"></iframe>
-          </div>
-        </div>
+      <div class="via-bottom" id="viaBottomBar">
+        <button type="button" data-boot-act="browser-back" title="后退">‹</button>
+        <button type="button" data-boot-act="browser-forward" title="前进">›</button>
+        <button type="button" data-boot-act="browser-home" title="主页">⌂</button>
+        <button type="button" data-boot-act="browser-tabs" title="标签页">▢<span class="via-tab-count" id="viaTabCount">0</span></button>
+        <button type="button" data-boot-act="browser-menu" title="菜单">☰</button>
       </div>
     </div>
   </div>
@@ -2023,6 +2059,10 @@ function initStandalonePenApp(){
   });
 }
 
+let viaBrowserHistory = [];
+let viaBrowserIndex = -1;
+let viaBrowserTabs = [];
+
 function normalizeDesktopBrowserTarget(raw){
   const value = String(raw || '').trim();
   if(!value) return 'https://www.bing.com';
@@ -2033,6 +2073,76 @@ function normalizeDesktopBrowserTarget(raw){
     catch{ return `https://www.bing.com/search?q=${encodeURIComponent(value)}`; }
   }
   return `https://www.bing.com/search?q=${encodeURIComponent(value)}`;
+}
+
+function closeViaSheets(except){
+  ['viaTabsSheet','viaMenuSheet'].forEach(id=>{
+    if(id !== except) $('#' + id)?.classList.remove('show');
+  });
+}
+
+function setViaHomeMode(home=true){
+  $('#viaHome')?.style && ($('#viaHome').style.display = home ? 'flex' : 'none');
+  $('#viaWeb')?.classList.toggle('show', !home);
+}
+
+function syncViaInputs(value=''){
+  const top = $('#desktopBrowserInput');
+  const home = $('#viaHomeInput');
+  if(top) top.value = value;
+  if(home) home.value = value;
+}
+
+function updateViaNav(){
+  const back = $('[data-boot-act="browser-back"]');
+  const forward = $('[data-boot-act="browser-forward"]');
+  if(back) back.disabled = viaBrowserIndex <= 0;
+  if(forward) forward.disabled = viaBrowserIndex < 0 || viaBrowserIndex >= viaBrowserHistory.length - 1;
+  const count = $('#viaTabCount');
+  if(count) count.textContent = String(Math.max(viaBrowserTabs.length, 0));
+  renderViaTabs();
+}
+
+function renderViaTabs(){
+  const list = $('#viaTabList');
+  if(!list) return;
+  if(!viaBrowserTabs.length){
+    list.innerHTML = '<button class="via-tab-item" type="button" data-boot-act="browser-new-tab">新建标签页<small>搜索或输入网址</small></button>';
+    return;
+  }
+  list.innerHTML = viaBrowserTabs.map((tab, index)=>`
+    <button class="via-tab-item" type="button" data-via-tab-index="${index}">
+      ${tab.title || '网页'}
+      <small>${tab.url || 'about:home'}</small>
+    </button>
+  `).join('');
+}
+
+function activateViaTab(index){
+  const tab = viaBrowserTabs[index];
+  if(!tab) return;
+  viaBrowserIndex = index;
+  syncViaInputs(tab.url || '');
+  if(tab.url){
+    setViaHomeMode(false);
+    const frame = $('#desktopBrowserFrame');
+    if(frame) frame.src = tab.url;
+    const status = $('#desktopBrowserStatus');
+    if(status) status.textContent = `已在内部窗口打开：${tab.url}。如果页面显示“拒绝连接/无法显示”，说明该网站禁止被嵌入白板网页。`;
+  }else{
+    setViaHomeMode(true);
+  }
+  closeViaSheets();
+  updateViaNav();
+}
+
+function runViaProgress(){
+  const bar = $('#viaProgress');
+  if(!bar) return;
+  bar.classList.remove('run');
+  void bar.offsetWidth;
+  bar.classList.add('run');
+  setTimeout(()=> bar.classList.remove('run'), 900);
 }
 
 function openDesktopBrowserApp(){
@@ -2046,28 +2156,81 @@ function openDesktopBrowserApp(){
   toggleFloatingPanel(false);
   boot.classList.remove('hidden','login','course-picker','pen-app');
   boot.classList.add('browser-app');
+  if(!viaBrowserTabs.length){
+    viaBrowserTabs = [{title:'主页', url:''}];
+    viaBrowserIndex = 0;
+  }
+  setViaHomeMode(!viaBrowserTabs[viaBrowserIndex]?.url);
+  updateViaNav();
   setTimeout(()=> $('#desktopBrowserInput')?.focus(), 80);
 }
 
 function closeDesktopBrowserApp(){
   $('#whiteboardBoot')?.classList.remove('browser-app');
+  closeViaSheets();
+}
+
+function showViaHome(){
+  if(viaBrowserIndex < 0){
+    viaBrowserTabs.push({title:'主页', url:''});
+    viaBrowserIndex = 0;
+  }else{
+    viaBrowserTabs[viaBrowserIndex] = {title:'主页', url:''};
+  }
+  syncViaInputs('');
+  setViaHomeMode(true);
+  $('#desktopBrowserFrame')?.removeAttribute('src');
+  closeViaSheets();
+  updateViaNav();
+}
+
+function newViaTab(){
+  viaBrowserTabs.push({title:'主页', url:''});
+  viaBrowserIndex = viaBrowserTabs.length - 1;
+  showViaHome();
+}
+
+function toggleViaSheet(id){
+  const sheet = $('#' + id);
+  if(!sheet) return;
+  const next = !sheet.classList.contains('show');
+  closeViaSheets(id);
+  sheet.classList.toggle('show', next);
+  if(next && id === 'viaTabsSheet') renderViaTabs();
 }
 
 function goDesktopBrowser(raw){
   const input = $('#desktopBrowserInput');
   const status = $('#desktopBrowserStatus');
   const frame = $('#desktopBrowserFrame');
-  const url = normalizeDesktopBrowserTarget(raw ?? input?.value);
-  if(input) input.value = url;
+  const homeInput = $('#viaHomeInput');
+  const typed = raw ?? (input?.value || homeInput?.value || '');
+  const url = normalizeDesktopBrowserTarget(typed);
+  syncViaInputs(url);
+  setViaHomeMode(false);
+  closeViaSheets();
+  runViaProgress();
   if(frame) frame.src = url;
   if(status){
     status.textContent = `已在内部窗口打开：${url}。如果页面显示“拒绝连接/无法显示”，说明该网站禁止被嵌入白板网页。`;
   }
+  if(viaBrowserIndex < 0){
+    viaBrowserTabs.push({title:'网页', url});
+    viaBrowserIndex = viaBrowserTabs.length - 1;
+  }else{
+    viaBrowserTabs[viaBrowserIndex] = {title: new URL(url).hostname.replace(/^www\./,''), url};
+  }
+  viaBrowserHistory = viaBrowserHistory.slice(0, viaBrowserIndex + 1);
+  viaBrowserHistory[viaBrowserIndex] = url;
+  updateViaNav();
 }
 
 function initDesktopBrowserApp(){
   $('#desktopBrowserInput')?.addEventListener('keydown', e=>{
     if(e.key === 'Enter') goDesktopBrowser();
+  });
+  $('#viaHomeInput')?.addEventListener('keydown', e=>{
+    if(e.key === 'Enter') goDesktopBrowser(e.target.value);
   });
   $$('[data-browser-bookmark]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -2076,6 +2239,15 @@ function initDesktopBrowserApp(){
       if(input) input.value = url;
       goDesktopBrowser(url);
     });
+  });
+  document.addEventListener('click', e=>{
+    const tab = e.target.closest('[data-via-tab-index]');
+    if(tab) activateViaTab(Number(tab.dataset.viaTabIndex));
+    const menuToast = e.target.closest('[data-browser-menu-toast]');
+    if(menuToast){
+      toast(menuToast.dataset.browserMenuToast || '已执行', 'info', 1300);
+      closeViaSheets();
+    }
   });
 }
 
@@ -2167,10 +2339,23 @@ function initWhiteboardBoot(){
     btn.addEventListener('click', ()=> goDesktopBrowser());
   });
   boot?.querySelectorAll('[data-boot-act="browser-home"]').forEach(btn=>{
+    btn.addEventListener('click', showViaHome);
+  });
+  boot?.querySelectorAll('[data-boot-act="browser-new-tab"]').forEach(btn=>{
+    btn.addEventListener('click', newViaTab);
+  });
+  boot?.querySelectorAll('[data-boot-act="browser-tabs"]').forEach(btn=>{
+    btn.addEventListener('click', ()=> toggleViaSheet('viaTabsSheet'));
+  });
+  boot?.querySelectorAll('[data-boot-act="browser-menu"]').forEach(btn=>{
+    btn.addEventListener('click', ()=> toggleViaSheet('viaMenuSheet'));
+  });
+  boot?.querySelectorAll('[data-boot-act="browser-back"]').forEach(btn=>{
+    btn.addEventListener('click', showViaHome);
+  });
+  boot?.querySelectorAll('[data-boot-act="browser-forward"]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      const input = $('#desktopBrowserInput');
-      if(input) input.value = 'https://www.bing.com';
-      goDesktopBrowser('https://www.bing.com');
+      if(viaBrowserTabs[viaBrowserIndex]?.url) activateViaTab(viaBrowserIndex);
     });
   });
   boot?.classList.add('ready');
