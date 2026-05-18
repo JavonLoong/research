@@ -812,8 +812,8 @@ body{
       <p>老师到教室后先登录账号，再选择已经备好的课开始授课。</p>
       <div class="wb-login-grid">
         <div class="wb-teacher-list">
-          <div class="wb-teacher" data-boot-act="login"><div class="wb-avatar">王</div><div><b>王老师</b><span>数学 · 最近课件《小数的意义》</span></div><em>进入</em></div>
-          <div class="wb-teacher" data-boot-act="login"><div class="wb-avatar" style="background:#7d6cf2">李</div><div><b>李老师</b><span>语文 · 最近课件《草原》</span></div><em>进入</em></div>
+          <div class="wb-teacher" data-boot-act="login" data-teacher="math"><div class="wb-avatar">王</div><div><b>王老师</b><span>数学 · 最近课件《小数的意义》</span></div><em>进入</em></div>
+          <div class="wb-teacher" data-boot-act="login" data-teacher="chinese"><div class="wb-avatar" style="background:#7d6cf2">李</div><div><b>李老师</b><span>语文 · 最近课件《草原》</span></div><em>进入</em></div>
         </div>
         <div class="wb-qr"><div class="wb-qr-box"></div><span>扫码登录<br>手机确认身份</span></div>
       </div>
@@ -823,32 +823,7 @@ body{
     <div class="wb-course-card">
       <h2>选择备好的课</h2>
       <p>这里展示老师已经在教师端备好的课件，进入后再开始上课。</p>
-      <div class="wb-course-list">
-        <div class="wb-course-item primary">
-          <div class="wb-course-cover"><b>小数的意义</b><span>四年级下 · 数学 · 已同步</span></div>
-          <div class="wb-course-body">
-            <div class="wb-course-meta"><span>8 页课件</span><span>第 5 页随堂练</span><span>第 7 页抽人</span></div>
-            <div class="wb-course-actions">
-              <button class="primary" type="button" data-boot-act="start-course">开始上课</button>
-              <button type="button" data-boot-act="preview-course">预览</button>
-            </div>
-          </div>
-        </div>
-        <div class="wb-course-item">
-          <div class="wb-course-cover" style="background:linear-gradient(135deg,#fff7ed,#ffedd5)"><b>单位换算练习</b><span>四年级下 · 数学 · 草稿</span></div>
-          <div class="wb-course-body">
-            <div class="wb-course-meta"><span>5 页</span><span>待补互动</span></div>
-            <div class="wb-course-actions"><button type="button" data-boot-act="course-disabled">未完成</button></div>
-          </div>
-        </div>
-        <div class="wb-course-item">
-          <div class="wb-course-cover" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff)"><b>分数比较</b><span>四年级下 · 数学 · 明日课</span></div>
-          <div class="wb-course-body">
-            <div class="wb-course-meta"><span>6 页</span><span>已备题库</span></div>
-            <div class="wb-course-actions"><button type="button" data-boot-act="course-disabled">稍后上课</button></div>
-          </div>
-        </div>
-      </div>
+      <div class="wb-course-list" id="whiteboardCourseList"></div>
       <div class="wb-course-actions" style="margin-top:14px">
         <button type="button" data-boot-act="back-login">返回登录</button>
       </div>
@@ -2251,6 +2226,112 @@ function initDesktopBrowserApp(){
   });
 }
 
+let activeBootTeacher = 'math';
+const WHITEBOARD_TEACHERS = {
+  math: {
+    name:'王老师',
+    subject:'数学',
+    courseware:'小数的意义',
+    courses:[
+      {id:'decimal', title:'小数的意义', grade:'四年级下', subject:'数学', state:'已同步', meta:['8 页课件','第 5 页随堂练','第 7 页抽人'], tone:'linear-gradient(135deg,#e8f7f0,#e0f2fe)', primary:true, scene:'cw1'},
+      {id:'unit-conversion', title:'单位换算练习', grade:'四年级下', subject:'数学', state:'草稿可上', meta:['5 页','口算热身','待补互动'], tone:'linear-gradient(135deg,#fff7ed,#ffedd5)'},
+      {id:'fraction-compare', title:'分数比较', grade:'四年级下', subject:'数学', state:'明日课', meta:['6 页','已备题库','随堂判断'], tone:'linear-gradient(135deg,#eef2ff,#e0e7ff)'}
+    ]
+  },
+  chinese: {
+    name:'李老师',
+    subject:'语文',
+    courseware:'草原',
+    courses:[
+      {id:'caoyuan', title:'草原', grade:'六年级上', subject:'语文', state:'已同步', meta:['6 页课件','朗读批注','第 4 页提问'], tone:'linear-gradient(135deg,#f0fdf4,#dcfce7)', primary:true},
+      {id:'langyashan', title:'狼牙山五壮士', grade:'六年级上', subject:'语文', state:'半成品可上', meta:['5 页','段落品读','资料已备'], tone:'linear-gradient(135deg,#fff1f2,#ffe4e6)'},
+      {id:'gushi', title:'古诗三首', grade:'六年级上', subject:'语文', state:'明日课', meta:['4 页','诗意梳理','可直接上'], tone:'linear-gradient(135deg,#f5f3ff,#ede9fe)'}
+    ]
+  }
+};
+
+function getPreparedCourse(courseId){
+  return Object.values(WHITEBOARD_TEACHERS).flatMap(t=>t.courses).find(course => course.id === courseId);
+}
+
+function renderCoursePicker(teacherKey='math'){
+  activeBootTeacher = WHITEBOARD_TEACHERS[teacherKey] ? teacherKey : 'math';
+  const teacher = WHITEBOARD_TEACHERS[activeBootTeacher];
+  const title = $('#whiteboardCoursePicker h2');
+  const note = $('#whiteboardCoursePicker p');
+  const list = $('#whiteboardCourseList');
+  if(title) title.textContent = `选择备好的课 · ${teacher.name}`;
+  if(note) note.textContent = `${teacher.subject}老师已经备好的课都会显示在这里；草稿课也可以直接开始上课。`;
+  if(!list) return;
+  list.innerHTML = teacher.courses.map(course=>`
+    <div class="wb-course-item ${course.primary ? 'primary' : ''}" data-course-card="${escapeBoardHTML(course.id)}" data-subject="${escapeBoardHTML(course.subject)}" data-usable="true">
+      <div class="wb-course-cover" style="background:${course.tone}"><b>${escapeBoardHTML(course.title)}</b><span>${escapeBoardHTML(course.grade)} · ${escapeBoardHTML(course.subject)} · ${escapeBoardHTML(course.state)}</span></div>
+      <div class="wb-course-body">
+        <div class="wb-course-meta">${course.meta.map(item=>`<span>${escapeBoardHTML(item)}</span>`).join('')}</div>
+        <div class="wb-course-actions">
+          <button class="primary" type="button" data-boot-act="start-course" data-course-id="${escapeBoardHTML(course.id)}">开始上课</button>
+          <button type="button" data-boot-act="preview-course" data-course-id="${escapeBoardHTML(course.id)}">预览</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPreparedCourse(course){
+  if(!course) return;
+  currentScene = `prepared-${course.id}`;
+  $$('#sceneTabs .tab').forEach(t=> t.classList.remove('active'));
+  const root = $('#sceneRoot');
+  if(root){
+    root.innerHTML = `
+      <div class="course-slide" data-prepared-course="${escapeBoardHTML(course.id)}">
+        <span class="slide-tag ${course.subject === '语文' ? 'info' : ''}">${escapeBoardHTML(course.subject)} · ${escapeBoardHTML(course.state)}</span>
+        <div class="slide-title">${escapeBoardHTML(course.title)}</div>
+        <div class="slide-subtitle">${escapeBoardHTML(course.grade)} · ${escapeBoardHTML(course.subject)} · 这节课是可授课版本，后续仍可从教师端继续精修。</div>
+        <div class="flow-cards">
+          <div class="flow-card"><b>导入</b><span>${escapeBoardHTML(course.meta[0] || '课件页')}已经可展示。</span></div>
+          <div class="flow-card"><b>互动</b><span>${escapeBoardHTML(course.meta[1] || '课堂互动')}可在白板端继续推进。</span></div>
+          <div class="flow-card"><b>收束</b><span>${escapeBoardHTML(course.meta[2] || '课堂总结')}用于形成最后一眼。</span></div>
+        </div>
+        <div class="interact-placeholder">
+          <div class="ip-header">${escapeBoardHTML(course.title)} · 授课入口 <span class="ip-tag">可用</span></div>
+          <div class="ip-body">半成品不再锁住，老师可以先上课；缺的互动会以占位卡保留，课中仍能打开白板笔批注。</div>
+          <div class="ip-actions"><button class="primary" type="button" data-act="startTeach">打开白板笔</button><button type="button" data-act="startTeach">继续批注</button></div>
+        </div>
+      </div>`;
+  }
+  const label = $('#pageLabel');
+  if(label) label.textContent = `${course.subject} · ${course.title} · 可授课`;
+  const prev = $('[data-act="prevPage"]');
+  const next = $('[data-act="nextPage"]');
+  if(prev) prev.disabled = true;
+  if(next) next.disabled = true;
+  resizeInkCanvas();
+  restorePageInk();
+}
+
+function startPreparedCourse(courseId){
+  const course = getPreparedCourse(courseId) || WHITEBOARD_TEACHERS[activeBootTeacher].courses[0];
+  const boot = $('#whiteboardBoot');
+  boot?.classList.add('hidden');
+  boot?.classList.remove('login','course-picker');
+  if(course.scene === 'cw1'){
+    selectScene('cw1', true);
+  }else{
+    renderPreparedCourse(course);
+  }
+  if(penActive) setPenActive(false);
+  else $('#boardCanvas')?.classList.remove('active');
+  toggleFloatingPanel(false);
+  toast(`已进入《${course.title}》，可以开始上课`, 'ok', 2200);
+}
+
+function previewPreparedCourse(courseId){
+  const course = getPreparedCourse(courseId);
+  if(!course) return;
+  toast(`预览《${course.title}》：${course.meta.join('、')}，可直接开始上课`, 'info', 2200);
+}
+
 function initWhiteboardBoot(){
   const boot = $('#whiteboardBoot');
   const clock = $('#wbClock');
@@ -2292,30 +2373,17 @@ function initWhiteboardBoot(){
   });
   boot?.querySelectorAll('[data-boot-act="login"]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
+      renderCoursePicker(btn.dataset.teacher || 'math');
       boot.classList.remove('login');
       boot.classList.add('course-picker');
       toast('登录成功，请选择要上的课', 'ok', 1600);
     });
   });
-  boot?.querySelectorAll('[data-boot-act="start-course"]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      boot.classList.add('hidden');
-      boot.classList.remove('login','course-picker');
-      selectScene('cw1', true);
-      setPenActive(false);
-      toggleFloatingPanel(false);
-      toast('已进入《小数的意义》，可以开始上课', 'ok', 2200);
-    });
-  });
-  boot?.querySelectorAll('[data-boot-act="preview-course"]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      toast('预览：8 页课件，随堂练绑定在第 5 页，抽人提问绑定在第 7 页', 'info', 2200);
-    });
-  });
-  boot?.querySelectorAll('[data-boot-act="course-disabled"]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      toast('这节课还没有完成备课，先选择《小数的意义》演示', 'warn', 1800);
-    });
+  $('#whiteboardCourseList')?.addEventListener('click', e=>{
+    const btn = e.target.closest('[data-boot-act][data-course-id]');
+    if(!btn) return;
+    if(btn.dataset.bootAct === 'start-course') startPreparedCourse(btn.dataset.courseId);
+    if(btn.dataset.bootAct === 'preview-course') previewPreparedCourse(btn.dataset.courseId);
   });
   boot?.querySelectorAll('[data-boot-act="back-login"]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -2358,6 +2426,7 @@ function initWhiteboardBoot(){
       if(viaBrowserTabs[viaBrowserIndex]?.url) activateViaTab(viaBrowserIndex);
     });
   });
+  renderCoursePicker(activeBootTeacher);
   boot?.classList.add('ready');
 }
 

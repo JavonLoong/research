@@ -230,6 +230,26 @@ async function main() {
       "document.querySelector('[data-boot-act=\"open-bubu\"]').dispatchEvent(new MouseEvent('dblclick', {bubbles:true})); true",
     );
     await waitFor(board, "document.querySelector('#whiteboardBoot')?.classList.contains('login')", "whiteboard login screen");
+    await evalIn(board, "document.querySelector('[data-boot-act=\"login\"][data-teacher=\"chinese\"]').click(); true");
+    await waitFor(
+      board,
+      "document.querySelector('#whiteboardBoot')?.classList.contains('course-picker') && document.querySelectorAll('#whiteboardCourseList [data-subject=\"语文\"]').length === 3 && document.querySelectorAll('#whiteboardCourseList [data-boot-act=\"start-course\"]').length === 3 && !document.querySelector('#whiteboardCourseList [data-boot-act=\"course-disabled\"]')",
+      "chinese teacher sees usable chinese courses",
+    );
+    await evalIn(board, "document.querySelector('[data-course-id=\"langyashan\"][data-boot-act=\"start-course\"]').click(); true");
+    await waitFor(
+      board,
+      "document.querySelector('#whiteboardBoot')?.classList.contains('hidden') && !!document.querySelector('[data-prepared-course=\"langyashan\"]')",
+      "half-finished chinese course starts",
+    );
+    await evalIn(board, "location.reload(); true");
+    await waitFor(board, "document.readyState === 'complete'", "whiteboard reload after chinese course");
+    await waitFor(board, "!!document.querySelector('#whiteboardBoot.ready:not(.hidden)')", "whiteboard desktop boot after chinese course");
+    await evalIn(
+      board,
+      "document.querySelector('[data-boot-act=\"open-bubu\"]').dispatchEvent(new MouseEvent('dblclick', {bubbles:true})); true",
+    );
+    await waitFor(board, "document.querySelector('#whiteboardBoot')?.classList.contains('login')", "whiteboard login screen after chinese course");
     await evalIn(board, "document.querySelector('[data-boot-act=\"login\"]').click(); true");
     await waitFor(
       board,
