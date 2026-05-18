@@ -320,6 +320,26 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .hw-detail-box span{font-size:11.5px;color:var(--text);line-height:1.5}
 .submit-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
 .submit-strip span{font-size:10px;font-weight:800;padding:4px 8px;border-radius:999px;background:var(--primary-soft-2);color:var(--primary-dark);border:1px solid var(--primary-soft)}
+.hw-write{display:flex;flex-direction:column;gap:10px}
+.hw-write-hero{background:linear-gradient(135deg,#ecfdf5,#fff);border:1px solid var(--primary-soft);border-radius:12px;padding:11px 12px}
+.hw-write-hero h4{font-size:14px;font-weight:900;color:var(--text);line-height:1.35;margin-bottom:5px}
+.hw-write-hero p{font-size:11px;color:var(--muted);line-height:1.55;font-weight:600}
+.hw-write-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.hw-write-meta span{font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;background:#fff;border:1px solid var(--primary-soft);color:var(--primary-dark)}
+.hw-question-list{display:flex;flex-direction:column;gap:8px}
+.hw-question-card{border:1px solid var(--line);border-radius:12px;background:#fff;padding:10px}
+.hw-question-card strong{display:block;font-size:11px;color:var(--primary-dark);margin-bottom:6px}
+.hw-question-card p{font-size:12px;color:var(--text);line-height:1.55;margin-bottom:8px}
+.hw-answer-input{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-family:inherit;font-size:12px;color:var(--text);background:#f8fafc;outline:none}
+.hw-answer-input:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(16,185,129,.12)}
+.hw-write-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hw-write-tool{border:1px solid var(--line);border-radius:12px;background:#fff;padding:10px}
+.hw-write-tool strong{display:block;font-size:11px;color:var(--text);margin-bottom:6px}
+.hw-scratch{height:112px;border:1px dashed #cbd5e1;border-radius:10px;background:linear-gradient(#fff,#fff),repeating-linear-gradient(180deg,transparent 0,transparent 27px,#e2e8f0 28px);position:relative;overflow:hidden}
+.hw-scratch span{position:absolute;height:3px;border-radius:999px;background:#334155;opacity:.74;left:30px}
+.hw-upload-box{height:112px;border:1px dashed var(--primary-soft);border-radius:10px;background:var(--primary-soft-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--primary-dark);font-size:11px;font-weight:800;text-align:center}
+.hw-upload-box small{font-size:10px;color:var(--muted);font-weight:600}
+.hw-write-tip{padding:9px 10px;border-radius:10px;background:#f8fafc;border:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.55;font-weight:600}
 
 /* AI chat (Tab 2) === */
 .chat-wrap{display:flex;flex-direction:column;min-height:520px}
@@ -1075,7 +1095,7 @@ function showModal(title, html, tag='演示', priText='我知道了', onPri=null
   $('#modalTag').textContent = tag;
   $('#modalBody').innerHTML = html;
   $('#modalPri').textContent = priText;
-  $('#modalPri').onclick = ()=>{ closeModal(); if(onPri) onPri(); };
+  $('#modalPri').onclick = ev=>{ ev?.stopPropagation?.(); closeModal(); if(onPri) onPri(); };
   modalBg.classList.add('show');
 }
 function closeModal(){ $('#modalBg').classList.remove('show'); }
@@ -2167,6 +2187,63 @@ function filterHomeworkCards(){
   if(count) count.textContent = shown ? `${shown} 项` : '无任务';
 }
 
+function homeworkWritingQuestions(hw){
+  const rawSteps = (hw.steps && hw.steps.length) ? hw.steps : ['完成第 1 题','完成第 2 题','检查后提交'];
+  return rawSteps.slice(0,4).map((step, idx)=>{
+    const clean = String(step).replace(/^题目\s*\d+\s*[：:]\s*/,'');
+    const placeholder = idx === 0 ? '在这里写答案和主要步骤' : '写下你的想法、算式或补充说明';
+    return `
+      <div class="hw-question-card">
+        <strong>第 ${idx + 1} 题</strong>
+        <p>${escapeSyncHTML(clean)}</p>
+        <input class="hw-answer-input" placeholder="${placeholder}" />
+      </div>`;
+  }).join('');
+}
+function openHomeworkWriting(id, anchor=null){
+  const hw = HOMEWORKS[id];
+  if(!hw){ toast('这项作业还没有书写页','warn',1600,anchor); return; }
+  const questions = homeworkWritingQuestions(hw);
+  showModal(`${hw.title} · 作业书写`, `
+    <div class="hw-write">
+      <div class="hw-write-hero">
+        <h4>${escapeSyncHTML(hw.title)}</h4>
+        <p>${escapeSyncHTML(hw.note || '先完成题目，再提交给老师批改。')}</p>
+        <div class="hw-write-meta">
+          <span>${escapeSyncHTML(hw.subject)}</span>
+          <span>${escapeSyncHTML(hw.due)}</span>
+          <span>${escapeSyncHTML(hw.method)}</span>
+        </div>
+      </div>
+      <div class="hw-question-list">${questions}</div>
+      <div class="hw-write-tools">
+        <div class="hw-write-tool">
+          <strong>手写草稿</strong>
+          <div class="hw-scratch">
+            <span style="top:32px;width:142px;transform:rotate(.5deg)"></span>
+            <span style="top:62px;width:190px;transform:rotate(-.4deg)"></span>
+            <span style="top:92px;width:126px;transform:rotate(.8deg)"></span>
+          </div>
+        </div>
+        <div class="hw-write-tool">
+          <strong>图片 / 题目附件</strong>
+          <div class="hw-upload-box">＋ 添加图片或拍照<small>可上传作业本、草稿、题目截图</small></div>
+        </div>
+      </div>
+      <div class="hw-write-tip">AI 学伴只做读题、单位提醒和步骤检查，不直接给最终答案；提交后进入老师批阅。</div>
+    </div>
+  `, hw.tag, '提交作业', ()=>{
+    toast('作业已提交，等待老师批改','ok',2200,anchor);
+    const card = $(`[data-hw="${id}"]`);
+    if(card){
+      card.dataset.status = 'pending';
+      const st = card.querySelector('.hw-status');
+      if(st){ st.className = 'hw-status pending'; st.textContent = '待批改'; }
+      const progress = card.querySelector('.hw-progress i');
+      if(progress) progress.style.width = '100%';
+    }
+  }, anchor);
+}
 function openHomework(id, anchor=null){
   const hw = HOMEWORKS[id];
   if(!hw){ toast('这项作业还没有详情','warn',1600,anchor); return; }
@@ -2181,7 +2258,7 @@ function openHomework(id, anchor=null){
     <div class="note">${hw.note}</div>
     <ul>${steps}</ul>
     <div class="submit-strip"><span>${hw.teacher}</span><span>${hw.method}</span><span>${hw.status}</span></div>
-  `, hw.tag, hw.primary, ()=>toast(hw.toast,'ok',2200,anchor), anchor);
+  `, hw.tag, hw.primary, ()=>openHomeworkWriting(id, anchor), anchor);
 }
 
 // ============ 课后侧 demo 字典 ============
