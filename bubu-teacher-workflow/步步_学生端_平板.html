@@ -1381,13 +1381,15 @@ function prepareScreenContentClone(tablet){
   clone.classList.add('screen-content-clone');
   return clone;
 }
-function mountRotationLayer(clone, rect, origin, opacity=1, zIndex=9999){
+function mountRotationLayer(clone, rect, origin, opacity=1, zIndex=9999, parent=document.body, baseRect=null){
   const layer = document.createElement('div');
   layer.className = 'tablet-rotation-layer';
+  const baseLeft = baseRect?.left || 0;
+  const baseTop = baseRect?.top || 0;
   Object.assign(layer.style, {
-    position:'fixed',
-    left:`${rect.left}px`,
-    top:`${rect.top}px`,
+    position:parent === document.body ? 'fixed' : 'absolute',
+    left:`${rect.left - baseLeft}px`,
+    top:`${rect.top - baseTop}px`,
     width:`${rect.width}px`,
     height:`${rect.height}px`,
     transformOrigin:`${origin.x}px ${origin.y}px`,
@@ -1399,8 +1401,27 @@ function mountRotationLayer(clone, rect, origin, opacity=1, zIndex=9999){
     transformStyle:'preserve-3d'
   });
   layer.appendChild(clone);
-  document.body.appendChild(layer);
+  parent.appendChild(layer);
   return layer;
+}
+function mountRotationMask(rect, zIndex=10000){
+  const mask = document.createElement('div');
+  mask.className = 'tablet-rotation-mask';
+  Object.assign(mask.style, {
+    position:'fixed',
+    left:`${rect.left}px`,
+    top:`${rect.top}px`,
+    width:`${rect.width}px`,
+    height:`${rect.height}px`,
+    overflow:'hidden',
+    borderRadius:getComputedStyle($('#col-home .tablet .tablet-screen')).borderRadius || '24px',
+    pointerEvents:'none',
+    zIndex:String(zIndex),
+    background:'transparent',
+    transform:'translateZ(0)'
+  });
+  document.body.appendChild(mask);
+  return mask;
 }
 function easeRotationProgress(t){
   return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -1480,6 +1501,7 @@ async function rotateStudentTablet(){
   let frameLayer = null;
   let oldLayer = null;
   let targetLayer = null;
+  let contentMask = null;
   const prevVisibility = tablet.style.visibility;
   try{
     tablet.style.transform = '';
@@ -1489,6 +1511,7 @@ async function rotateStudentTablet(){
     tablet.style.visibility = 'hidden';
     setStudentTabletOrientation(toLandscape ? 'landscape' : 'portrait');
     const targetRect = tablet.getBoundingClientRect();
+    const targetScreenRect = tablet.querySelector('.tablet-screen').getBoundingClientRect();
     const targetClone = prepareScreenContentClone(tablet);
     const centerOrigin = rect => ({x:rect.width / 2, y:rect.height / 2});
     const startCenter = rectCenter(startRect);
@@ -1501,9 +1524,10 @@ async function rotateStudentTablet(){
     const oldFrames = frameFrames.map(kf=>({...kf, clipPath:oldRotationClip(kf.offset)}));
     const targetFrames = buildRotationKeyframes(targetRect, startCenter, targetCenter, -spinAngle, 0, offsets)
       .map(kf=>({...kf, clipPath:newRotationClip(kf.offset)}));
+    contentMask = mountRotationMask(targetScreenRect, 10000);
     frameLayer = mountRotationLayer(frameClone, startRect, centerOrigin(startRect), 1, 9999);
-    oldLayer = mountRotationLayer(oldClone, startRect, centerOrigin(startRect), 1, 10000);
-    targetLayer = mountRotationLayer(targetClone, targetRect, centerOrigin(targetRect), 1, 10001);
+    oldLayer = mountRotationLayer(oldClone, startRect, centerOrigin(startRect), 1, 1, contentMask, targetScreenRect);
+    targetLayer = mountRotationLayer(targetClone, targetRect, centerOrigin(targetRect), 1, 2, contentMask, targetScreenRect);
     const frameAnim = frameLayer.animate(frameFrames, { duration, easing:'linear', fill:'forwards' });
     const oldAnim = oldLayer.animate(oldFrames, { duration, easing:'linear', fill:'forwards' });
     const targetAnim = targetLayer.animate(targetFrames, { duration, easing:'linear', fill:'forwards' });
@@ -1522,6 +1546,7 @@ async function rotateStudentTablet(){
     frameLayer?.remove();
     oldLayer?.remove();
     targetLayer?.remove();
+    contentMask?.remove();
     tablet.style.visibility = prevVisibility;
     tablet.classList.remove('rotating');
     tabletRotating = false;

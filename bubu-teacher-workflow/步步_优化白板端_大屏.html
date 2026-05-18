@@ -843,6 +843,39 @@ button{font:inherit}
   background:var(--seewo-green);
   color:#fff;
 }
+.teacher-button{
+  min-width:116px;
+  grid-template-columns:36px 1fr;
+  grid-template-rows:1fr;
+  column-gap:8px;
+  padding:0 12px;
+}
+.teacher-avatar{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#fcd34d,#fb923c);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:19px;
+  box-shadow:0 2px 8px rgba(15,23,42,.16);
+}
+.teacher-name{
+  display:grid;
+  justify-items:start;
+  gap:2px;
+}
+.teacher-name strong{
+  color:#111827;
+  font-size:15px;
+  line-height:1;
+}
+.teacher-name small{
+  color:#6b7280;
+  font-size:11px;
+  line-height:1;
+}
 .toolbar-separator{
   width:1px;
   margin:13px 0;
@@ -868,8 +901,17 @@ button{font:inherit}
   background:transparent;
   cursor:pointer;
   color:#4b5563;
-  font-size:32px;
+  font-size:30px;
   font-weight:900;
+  display:grid;
+  place-items:center;
+  gap:1px;
+}
+.page-nav button small{
+  display:block;
+  color:#6b7280;
+  font-size:12px;
+  line-height:1;
 }
 .page-nav button:disabled{
   opacity:.38;
@@ -1061,6 +1103,7 @@ button{font:inherit}
 }
 .answer-panel,
 .cast-wall,
+.function-panel,
 .mini-board,
 .student-drawer,
 .side-pages{
@@ -1070,6 +1113,7 @@ button{font:inherit}
 }
 .answer-panel.show,
 .cast-wall.show,
+.function-panel.show,
 .mini-board.show,
 .student-drawer.show,
 .side-pages.show{display:block}
@@ -1084,6 +1128,24 @@ button{font:inherit}
   border:1px solid #d9dee8;
   box-shadow:var(--shadow);
 }
+.answer-panel:before{
+  content:"04  查看结果";
+  position:absolute;
+  left:-50px;
+  top:28px;
+  height:52px;
+  min-width:192px;
+  display:flex;
+  align-items:center;
+  padding:0 22px;
+  border-radius:0 10px 10px 0;
+  background:#ffd06b;
+  color:#111827;
+  font-size:26px;
+  font-weight:900;
+  box-shadow:0 8px 18px rgba(245,158,11,.18);
+  z-index:2;
+}
 .panel-titlebar{
   height:54px;
   background:var(--seewo-orange);
@@ -1094,6 +1156,9 @@ button{font:inherit}
   padding:0 20px;
   font-size:20px;
   font-weight:900;
+}
+.answer-panel .panel-titlebar{
+  padding-left:210px;
 }
 .panel-close{
   width:34px;
@@ -1165,6 +1230,23 @@ button{font:inherit}
   border-color:var(--seewo-green);
   color:var(--seewo-green);
   background:#ecfdf5;
+}
+.answer-hand{
+  position:absolute;
+  left:356px;
+  bottom:0;
+  width:98px;
+  height:132px;
+  color:#f6c35d;
+  transform:rotate(-10deg);
+  opacity:.9;
+  pointer-events:none;
+}
+.answer-hand:before{
+  content:"☝";
+  font-size:112px;
+  line-height:1;
+  filter:drop-shadow(0 8px 12px rgba(15,23,42,.18));
 }
 .answer-side{
   border-left:1px solid #eef0f4;
@@ -1337,6 +1419,142 @@ button{font:inherit}
   font-family:"Comic Sans MS","KaiTi",cursive;
   font-size:46px;
   color:#f87171;
+}
+.function-panel{
+  left:8%;
+  right:8%;
+  top:76px;
+  bottom:76px;
+  border-radius:8px;
+  background:#fff;
+  border:1px solid #cfd6df;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.function-head{
+  height:56px;
+  display:grid;
+  grid-template-columns:220px 1fr 80px;
+  align-items:center;
+  padding:0 18px;
+  border-bottom:1px solid #e5e7eb;
+  color:#111827;
+  font-weight:900;
+}
+.function-head strong{
+  justify-self:center;
+  color:#2563eb;
+  font-size:20px;
+}
+.function-body{
+  position:absolute;
+  inset:56px 0 0;
+  display:grid;
+  grid-template-columns:252px 1fr 260px;
+}
+.expr-list{
+  border-right:1px solid #e5e7eb;
+  background:#f8fafc;
+  padding:18px 14px;
+  display:grid;
+  align-content:start;
+  gap:12px;
+}
+.expr-item{
+  min-height:48px;
+  border:1px solid #dbe1eb;
+  border-radius:6px;
+  background:#fff;
+  padding:9px 10px;
+  color:#111827;
+  font-family:"Times New Roman","SimSun",serif;
+  font-size:18px;
+  font-weight:900;
+}
+.expr-item em{
+  color:#2563eb;
+  font-style:normal;
+}
+.graph-stage{
+  position:relative;
+  background:
+    linear-gradient(#e5e7eb 1px,transparent 1px) 0 0/38px 38px,
+    linear-gradient(90deg,#e5e7eb 1px,transparent 1px) 0 0/38px 38px,
+    #fff;
+  overflow:hidden;
+}
+.axis-x,
+.axis-y{
+  position:absolute;
+  background:#94a3b8;
+}
+.axis-x{left:0;right:0;top:50%;height:2px}
+.axis-y{top:0;bottom:0;left:50%;width:2px}
+.curve{
+  position:absolute;
+  left:16%;
+  top:12%;
+  width:68%;
+  height:74%;
+  border-left:4px solid transparent;
+  border-bottom:4px solid transparent;
+  pointer-events:none;
+}
+.curve svg{
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+.graph-toolbelt{
+  position:absolute;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  min-width:480px;
+  height:52px;
+  border-radius:26px;
+  background:rgba(255,255,255,.92);
+  box-shadow:0 8px 22px rgba(15,23,42,.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+}
+.graph-toolbelt button{
+  min-width:36px;
+  height:36px;
+  border:0;
+  border-radius:18px;
+  background:#eef2f7;
+  color:#4b5563;
+  cursor:pointer;
+  font-weight:900;
+}
+.function-side{
+  border-left:1px solid #e5e7eb;
+  padding:18px;
+  display:grid;
+  align-content:start;
+  gap:14px;
+}
+.function-side h4{
+  margin:0;
+  font-size:18px;
+}
+.function-side label{
+  display:grid;
+  gap:6px;
+  color:#4b5563;
+  font-size:14px;
+  font-weight:900;
+}
+.function-side input,
+.function-side select{
+  height:34px;
+  border:1px solid #d1d5db;
+  border-radius:4px;
+  padding:0 8px;
+  font:inherit;
 }
 .mini-board{
   left:7%;
@@ -1615,7 +1833,7 @@ button{font:inherit}
   left:0;
   top:0;
   bottom:84px;
-  width:138px;
+  width:158px;
   max-height:none;
   border-radius:8px;
   background:rgba(248,250,252,.96);
@@ -1627,20 +1845,71 @@ button{font:inherit}
   margin:0 0 10px;
   font-size:15px;
 }
+.side-page-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+  color:#111827;
+  font-weight:900;
+}
+.side-new-page{
+  width:100%;
+  height:34px;
+  border:1px solid #d9dee8;
+  border-radius:4px;
+  background:#fff;
+  color:#111827;
+  cursor:pointer;
+  font-weight:900;
+  margin-bottom:12px;
+}
+.side-menu-actions{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  margin-bottom:12px;
+}
+.side-menu-actions button{
+  height:32px;
+  border:0;
+  border-radius:4px;
+  background:#edf2f7;
+  color:#4b5563;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:900;
+}
 .page-gallery{
   display:grid;
   grid-template-columns:1fr;
   gap:10px;
 }
 .gallery-card{
-  height:58px;
+  height:68px;
   border:1px solid #d9dee8;
   border-radius:5px;
   background:#fff;
   cursor:pointer;
+  position:relative;
+  display:grid;
+  grid-template-columns:24px 1fr;
+  align-items:center;
+  padding:4px;
+  color:#6b7280;
+  font-weight:900;
 }
 .gallery-card.active{
   border:3px solid var(--seewo-green);
+}
+.gallery-card .thumb-mini{
+  width:86px;
+  height:50px;
+}
+.gallery-index{
+  display:grid;
+  place-items:center;
+  font-size:13px;
 }
 .toast{
   position:absolute;
@@ -1870,7 +2139,10 @@ button{font:inherit}
       <div class="toolbar-separator"></div>
       <button class="toolbar-button" type="button"><span class="ico">↙</span>最小化</button>
       <div class="toolbar-separator"></div>
-      <button class="toolbar-button" type="button"><span class="ico">师</span>教师</button>
+      <button class="toolbar-button teacher-button" type="button">
+        <span class="teacher-avatar">师</span>
+        <span class="teacher-name"><strong>张老师</strong><small>教师端</small></span>
+      </button>
     </div>
     <div class="toolbar-group center">
       <button class="toolbar-button active" type="button" data-action="select"><span class="ico">➤</span>选择</button>
@@ -1880,15 +2152,16 @@ button{font:inherit}
       <button class="toolbar-button" type="button" data-action="more"><span class="ico">…</span>更多</button>
     </div>
     <div class="toolbar-group right">
+      <button class="toolbar-button" type="button" data-action="snapshot"><span class="ico">▣</span>截图助手</button>
       <button class="toolbar-button" type="button"><span class="ico">◎</span>录制胶囊</button>
       <button class="toolbar-button" type="button"><span class="ico">▯</span>手机投屏</button>
     </div>
   </section>
 
   <nav class="page-nav" aria-label="底部翻页">
-    <button type="button" id="prevBtn" aria-label="上一页">‹</button>
+    <button type="button" id="prevBtn" aria-label="上一页"><span>‹</span><small>上一页</small></button>
     <div class="page-counter"><span id="pageLabel">22/98</span><small>页码</small></div>
-    <button type="button" id="nextBtn" aria-label="下一页">›</button>
+    <button type="button" id="nextBtn" aria-label="下一页"><span>›</span><small>下一页</small></button>
   </nav>
 
   <nav class="edge-page-rail" aria-label="右侧翻页竖条">
@@ -1977,6 +2250,7 @@ button{font:inherit}
           <span class="answer-choice">D</span>
           <button class="pane-button" type="button">播放解析</button>
         </div>
+        <div class="answer-hand" aria-hidden="true"></div>
       </div>
       <aside class="answer-side">
         <div class="question-chip active">第1题<br>66.7%</div>
@@ -2017,6 +2291,45 @@ button{font:inherit}
         <div class="cast-card"><span>小林</span><div class="chalk" style="color:#5eead4">a b c</div><small>需要老师点拨</small></div>
         <div class="cast-card"><span>小陈</span><div class="chalk" style="color:#facc15">1 2 3</div><small>推到大屏讲解</small></div>
       </div>
+    </div>
+  </section>
+
+  <section class="function-panel" id="functionPanel" aria-label="函数工具">
+    <div class="function-head">
+      <button class="math-back" type="button" data-close="functionPanel">‹ 返回课件</button>
+      <strong>函数</strong>
+      <button class="pane-button" type="button" data-close="functionPanel">插入</button>
+    </div>
+    <div class="function-body">
+      <aside class="expr-list">
+        <div class="expr-item"><em>f(x)</em> = x² - 2x + 1</div>
+        <div class="expr-item"><em>g(x)</em> = 2x - 3</div>
+        <div class="expr-item"><em>h(x)</em> = √(x + 4)</div>
+        <button class="pane-button" type="button">＋ 添加函数</button>
+      </aside>
+      <section class="graph-stage">
+        <div class="axis-x"></div>
+        <div class="axis-y"></div>
+        <div class="curve">
+          <svg viewBox="0 0 520 360" aria-hidden="true">
+            <path d="M20 320 C140 318 170 210 250 190 C342 166 360 62 500 48" fill="none" stroke="#2563eb" stroke-width="6" stroke-linecap="round"/>
+            <path d="M24 284 C126 250 220 240 318 216 C402 196 456 150 508 102" fill="none" stroke="#f97316" stroke-width="5" stroke-linecap="round" stroke-dasharray="10 12"/>
+            <circle cx="250" cy="190" r="8" fill="#07c783"/>
+          </svg>
+        </div>
+        <div class="graph-toolbelt">
+          <button type="button">＋</button><button type="button">－</button><button type="button">↔</button><button type="button">点</button><button type="button">线</button><button type="button">表</button><button type="button">截距</button><button type="button">极值</button>
+        </div>
+      </section>
+      <aside class="function-side">
+        <h4>属性</h4>
+        <label>坐标系 <select><option>直角坐标系</option></select></label>
+        <label>显示范围 <input value="-8 ≤ x ≤ 8" /></label>
+        <label>曲线颜色 <input type="color" value="#2563eb" /></label>
+        <label>采样精度 <select><option>高</option><option>标准</option></select></label>
+        <button class="pane-button" type="button">生成表格</button>
+        <button class="pane-button" type="button">插入当前图像</button>
+      </aside>
     </div>
   </section>
 
@@ -2090,7 +2403,13 @@ button{font:inherit}
   </section>
 
   <section class="side-pages" id="sidePages" aria-label="页面导航">
-    <h3>课件页面</h3>
+    <div class="side-page-head"><span>课件页</span><small id="sidePageTotal">共98页</small></div>
+    <button class="side-new-page" type="button">＋ 新建页面</button>
+    <div class="side-menu-actions">
+      <button type="button">复制</button>
+      <button type="button">批注</button>
+      <button type="button">导出</button>
+    </div>
     <div class="page-gallery" id="pageGallery"></div>
   </section>
 
@@ -2369,7 +2688,8 @@ function renderThumbs() {
   `).join("");
   $("#pageGallery").innerHTML = pages.map((page, index) => `
     <button class="gallery-card ${index === pageIndex ? "active" : ""}" type="button" data-page="${index}">
-      <span class="thumb-mini ${page.thumb || "normal"}" style="margin:auto;display:block;margin-top:16px"></span>
+      <span class="gallery-index">${index + 1}</span>
+      <span class="thumb-mini ${page.thumb || "normal"}"></span>
     </button>
   `).join("");
 }
@@ -2402,7 +2722,7 @@ function handleOptimizedSwipe(dx, dy) {
 window.handleOptimizedSwipe = handleOptimizedSwipe;
 
 function closePanels(exceptId = "") {
-  ["morePanel","answerPanel","castPanel","miniBoard","studentDrawer","sidePages"].forEach((id) => {
+  ["morePanel","answerPanel","castPanel","functionPanel","miniBoard","studentDrawer","sidePages"].forEach((id) => {
     if (id !== exceptId) $(`#${id}`)?.classList.remove("show");
   });
 }
@@ -2573,7 +2893,8 @@ document.addEventListener("click", (event) => {
       toast("已截取当前白板画面");
       break;
     case "function":
-      toast("函数工具已呼出");
+      setPenActive(false);
+      showPanel("functionPanel");
       break;
     case "lock":
       toast("当前显示未锁屏状态");
