@@ -125,6 +125,28 @@ body{
 .wb-course-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px;flex:1}
 .wb-course-meta{display:flex;gap:6px;flex-wrap:wrap}.wb-course-meta span{border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:11px;color:var(--muted);font-weight:800;background:var(--surface-2)}
 .wb-course-actions{margin-top:auto;display:flex;gap:8px}.wb-course-actions button{height:34px;border-radius:8px;border:1px solid var(--line);background:#fff;font-weight:900;padding:0 12px;cursor:pointer}.wb-course-actions .primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.wb-app-layer{position:absolute;inset:0;display:none;place-items:center;background:rgba(2,6,23,.22);backdrop-filter:blur(3px)}
+.whiteboard-boot.pen-app .wb-pen-app,.whiteboard-boot.browser-app .wb-browser-app{display:grid}
+.whiteboard-boot.pen-app .wb-login,.whiteboard-boot.pen-app .wb-course-picker,.whiteboard-boot.browser-app .wb-login,.whiteboard-boot.browser-app .wb-course-picker{display:none}
+.wb-app-window{background:#f8fafc;color:var(--text);border:1px solid rgba(255,255,255,.5);border-radius:12px;box-shadow:0 30px 90px rgba(0,0,0,.36);overflow:hidden}
+.wb-app-titlebar{height:44px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 16px}
+.wb-app-titlebar b{font-size:14px}.wb-app-titlebar span{font-size:12px;color:var(--muted);font-weight:800;margin-left:8px}.wb-window-actions{display:flex;gap:6px}
+.wb-window-actions button{width:30px;height:28px;border:1px solid var(--line);border-radius:7px;background:#fff;font-weight:900;cursor:pointer}
+.wb-pen-window{width:min(1180px,92vw);height:min(720px,86vh);display:flex;flex-direction:column}
+.wb-pen-toolbar{height:54px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 16px}
+.wb-pen-toolbar button{height:34px;border:1px solid var(--line);border-radius:8px;background:#fff;font-weight:900;padding:0 12px;cursor:pointer}
+.wb-pen-toolbar button.active{background:var(--primary-soft);border-color:var(--primary);color:var(--primary-dark)}
+.standalone-pen-stage{position:relative;flex:1;background:#fff}
+#standalonePenCanvas{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair;background:#fff}
+.wb-browser-window{width:min(1060px,88vw);height:min(680px,84vh);display:flex;flex-direction:column}
+.wb-browser-bar{height:58px;background:#fff;border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:0 14px}
+.wb-browser-nav{display:flex;gap:6px}.wb-browser-nav button,.wb-browser-bar button{height:36px;border:1px solid var(--line);border-radius:8px;background:#fff;font-weight:900;padding:0 12px;cursor:pointer}
+.wb-browser-bar input{height:38px;border:1px solid var(--line);border-radius:9px;padding:0 12px;font-size:13px;font-weight:700;color:var(--text)}
+.wb-browser-content{flex:1;background:#eef2f7;padding:16px;display:grid;grid-template-columns:240px 1fr;gap:14px}
+.wb-browser-bookmarks,.wb-browser-view{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto}
+.wb-browser-bookmarks h3,.wb-browser-view h3{font-size:16px;margin:0 0 10px}.wb-browser-bookmarks button{width:100%;height:38px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;background:#fff;text-align:left;padding:0 10px;font-weight:800;cursor:pointer}
+.wb-browser-bookmarks button:hover{border-color:var(--primary);color:var(--primary-dark)}
+.wb-browser-status{font-size:13px;color:var(--muted);font-weight:700;line-height:1.8}.wb-browser-status a{color:var(--primary-dark);font-weight:900}
 .scene-root{ position:absolute; inset:0; overflow:hidden; }
 .course-slide{position:absolute;inset:0;padding:42px 52px 78px;background:linear-gradient(135deg,#f8fafc,#eef8f3);display:flex;flex-direction:column;color:var(--text)}
 .slide-tag{display:inline-flex;align-self:flex-start;border:1px solid var(--primary-soft);background:#e8f7f0;color:var(--primary-dark);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;margin-bottom:16px}
@@ -811,6 +833,53 @@ body{
       </div>
       <div class="wb-course-actions" style="margin-top:14px">
         <button type="button" data-boot-act="back-login">返回登录</button>
+      </div>
+    </div>
+  </div>
+  <div class="wb-app-layer wb-pen-app" id="standalonePenApp">
+    <div class="wb-app-window wb-pen-window">
+      <div class="wb-app-titlebar">
+        <div><b>白板笔</b><span>独立书写软件</span></div>
+        <div class="wb-window-actions"><button type="button" data-boot-act="pen-close">×</button></div>
+      </div>
+      <div class="wb-pen-toolbar">
+        <button class="active" type="button" data-standalone-pen-color="#111827">黑色</button>
+        <button type="button" data-standalone-pen-color="#e11d48">红色</button>
+        <button type="button" data-standalone-pen-color="#2563eb">蓝色</button>
+        <button class="active" type="button" data-standalone-pen-size="4">细笔</button>
+        <button type="button" data-standalone-pen-size="9">粗笔</button>
+        <button type="button" data-boot-act="pen-clear">清空</button>
+      </div>
+      <div class="standalone-pen-stage"><canvas id="standalonePenCanvas"></canvas></div>
+    </div>
+  </div>
+  <div class="wb-app-layer wb-browser-app" id="desktopBrowserApp">
+    <div class="wb-app-window wb-browser-window">
+      <div class="wb-app-titlebar">
+        <div><b>浏览器</b><span>输入网址或关键词后打开真实网页</span></div>
+        <div class="wb-window-actions"><button type="button" data-boot-act="browser-close">×</button></div>
+      </div>
+      <div class="wb-browser-bar">
+        <div class="wb-browser-nav">
+          <button type="button" data-boot-act="browser-home">主页</button>
+        </div>
+        <input id="desktopBrowserInput" type="text" value="https://example.com" aria-label="浏览器地址栏">
+        <button type="button" data-boot-act="browser-go">打开网页</button>
+      </div>
+      <div class="wb-browser-content">
+        <div class="wb-browser-bookmarks">
+          <h3>常用</h3>
+          <button type="button" data-browser-bookmark="https://www.bing.com/search?q=小学数学小数的意义">搜小数的意义</button>
+          <button type="button" data-browser-bookmark="https://www.bing.com">Bing</button>
+          <button type="button" data-browser-bookmark="https://www.baidu.com">百度</button>
+          <button type="button" data-browser-bookmark="https://example.com">示例网页</button>
+        </div>
+        <div class="wb-browser-view">
+          <h3>网页打开区</h3>
+          <div class="wb-browser-status" id="desktopBrowserStatus">
+            输入网址或关键词，点击“打开网页”。由于很多网站禁止被嵌入课件页，这里会调用真实浏览器新标签页打开。
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1838,6 +1907,171 @@ $$('#sceneTabs .tab').forEach(t=>{
   });
 });
 
+let standalonePenColor = '#111827';
+let standalonePenSize = 4;
+let standalonePenDrawing = false;
+
+function resizeStandalonePenCanvas(){
+  const canvas = $('#standalonePenCanvas');
+  if(!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  const ratio = window.devicePixelRatio || 1;
+  canvas.width = Math.max(1, Math.round(rect.width * ratio));
+  canvas.height = Math.max(1, Math.round(rect.height * ratio));
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+}
+
+function getStandalonePenPoint(e){
+  const canvas = $('#standalonePenCanvas');
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches?.[0] || e.changedTouches?.[0];
+  return {
+    x: (touch ? touch.clientX : e.clientX) - rect.left,
+    y: (touch ? touch.clientY : e.clientY) - rect.top
+  };
+}
+
+function startStandalonePen(e){
+  if(e.button !== undefined && e.button !== 0) return;
+  e.preventDefault();
+  standalonePenDrawing = true;
+  const canvas = $('#standalonePenCanvas');
+  const ctx = canvas.getContext('2d');
+  const point = getStandalonePenPoint(e);
+  ctx.strokeStyle = standalonePenColor;
+  ctx.lineWidth = standalonePenSize;
+  ctx.beginPath();
+  ctx.moveTo(point.x, point.y);
+}
+
+function moveStandalonePen(e){
+  if(!standalonePenDrawing) return;
+  e.preventDefault();
+  const canvas = $('#standalonePenCanvas');
+  const ctx = canvas.getContext('2d');
+  const point = getStandalonePenPoint(e);
+  ctx.strokeStyle = standalonePenColor;
+  ctx.lineWidth = standalonePenSize;
+  ctx.lineTo(point.x, point.y);
+  ctx.stroke();
+}
+
+function endStandalonePen(e){
+  if(!standalonePenDrawing) return;
+  moveStandalonePen(e);
+  standalonePenDrawing = false;
+}
+
+function clearStandalonePen(){
+  const canvas = $('#standalonePenCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function openStandalonePenApp(){
+  const boot = $('#whiteboardBoot');
+  if(!boot) return;
+  if(penActive) setPenActive(false);
+  else{
+    $('#boardCanvas')?.classList.remove('active');
+    $('[data-board-tool="pen"]')?.classList.remove('active');
+  }
+  toggleFloatingPanel(false);
+  boot.classList.remove('hidden','login','course-picker','browser-app');
+  boot.classList.add('pen-app');
+  requestAnimationFrame(()=> resizeStandalonePenCanvas());
+  toast('已打开独立白板笔软件，不进入课堂课件', 'ok', 1800);
+}
+
+function closeStandalonePenApp(){
+  $('#whiteboardBoot')?.classList.remove('pen-app');
+}
+
+function initStandalonePenApp(){
+  const canvas = $('#standalonePenCanvas');
+  if(!canvas) return;
+  resizeStandalonePenCanvas();
+  canvas.addEventListener('pointerdown', startStandalonePen);
+  canvas.addEventListener('pointermove', moveStandalonePen);
+  canvas.addEventListener('pointerup', endStandalonePen);
+  canvas.addEventListener('pointerleave', endStandalonePen);
+  canvas.addEventListener('touchstart', startStandalonePen, {passive:false});
+  canvas.addEventListener('touchmove', moveStandalonePen, {passive:false});
+  canvas.addEventListener('touchend', endStandalonePen, {passive:false});
+  window.addEventListener('resize', resizeStandalonePenCanvas);
+  $$('[data-standalone-pen-color]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      standalonePenColor = btn.dataset.standalonePenColor || '#111827';
+      $$('[data-standalone-pen-color]').forEach(item=> item.classList.toggle('active', item === btn));
+    });
+  });
+  $$('[data-standalone-pen-size]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      standalonePenSize = Number(btn.dataset.standalonePenSize) || 4;
+      $$('[data-standalone-pen-size]').forEach(item=> item.classList.toggle('active', item === btn));
+    });
+  });
+}
+
+function normalizeDesktopBrowserTarget(raw){
+  const value = String(raw || '').trim();
+  if(!value) return 'https://www.bing.com';
+  const hasScheme = /^https?:\/\//i.test(value);
+  const looksLikeDomain = /^[\w.-]+\.[a-z]{2,}(\/.*)?$/i.test(value);
+  if(hasScheme || looksLikeDomain){
+    try{ return new URL(hasScheme ? value : `https://${value}`).href; }
+    catch{ return `https://www.bing.com/search?q=${encodeURIComponent(value)}`; }
+  }
+  return `https://www.bing.com/search?q=${encodeURIComponent(value)}`;
+}
+
+function openDesktopBrowserApp(){
+  const boot = $('#whiteboardBoot');
+  if(!boot) return;
+  if(penActive) setPenActive(false);
+  else{
+    $('#boardCanvas')?.classList.remove('active');
+    $('[data-board-tool="pen"]')?.classList.remove('active');
+  }
+  toggleFloatingPanel(false);
+  boot.classList.remove('hidden','login','course-picker','pen-app');
+  boot.classList.add('browser-app');
+  setTimeout(()=> $('#desktopBrowserInput')?.focus(), 80);
+}
+
+function closeDesktopBrowserApp(){
+  $('#whiteboardBoot')?.classList.remove('browser-app');
+}
+
+function goDesktopBrowser(raw){
+  const input = $('#desktopBrowserInput');
+  const status = $('#desktopBrowserStatus');
+  const url = normalizeDesktopBrowserTarget(raw ?? input?.value);
+  if(input) input.value = url;
+  window.open(url, '_blank', 'noopener,noreferrer');
+  if(status){
+    status.innerHTML = `已在真实浏览器新标签页打开：<br><a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a><br>如果白板机拦截弹窗，可直接点这里的链接继续打开。`;
+  }
+}
+
+function initDesktopBrowserApp(){
+  $('#desktopBrowserInput')?.addEventListener('keydown', e=>{
+    if(e.key === 'Enter') goDesktopBrowser();
+  });
+  $$('[data-browser-bookmark]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const url = btn.dataset.browserBookmark || '';
+      const input = $('#desktopBrowserInput');
+      if(input) input.value = url;
+      goDesktopBrowser(url);
+    });
+  });
+}
+
 function initWhiteboardBoot(){
   const boot = $('#whiteboardBoot');
   const clock = $('#wbClock');
@@ -1862,15 +2096,16 @@ function initWhiteboardBoot(){
   boot?.querySelectorAll('[data-boot-act="open-pen"]').forEach(icon=>{
     icon.addEventListener('dblclick', ()=>{
       selectDesktopIcon(icon);
-      boot.classList.add('hidden');
-      boot.classList.remove('login','course-picker');
-      selectScene('cw1', true);
-      setPenActive(true);
-      toggleFloatingPanel(true);
-      toast('白板笔已打开，可以直接在屏幕上书写', 'ok', 1800);
+      openStandalonePenApp();
     });
   });
-  boot?.querySelectorAll('[data-boot-act="open-computer"],[data-boot-act="open-folder"],[data-boot-act="open-recycle"],[data-boot-act="open-browser"],[data-boot-act="open-cloud"]').forEach(icon=>{
+  boot?.querySelectorAll('[data-boot-act="open-browser"]').forEach(icon=>{
+    icon.addEventListener('dblclick', ()=>{
+      selectDesktopIcon(icon);
+      openDesktopBrowserApp();
+    });
+  });
+  boot?.querySelectorAll('[data-boot-act="open-computer"],[data-boot-act="open-folder"],[data-boot-act="open-recycle"],[data-boot-act="open-cloud"]').forEach(icon=>{
     icon.addEventListener('dblclick', ()=>{
       selectDesktopIcon(icon);
       toast('这个桌面入口用于模拟白板机环境，核心授课请打开步步课堂或白板笔', 'info', 1800);
@@ -1907,6 +2142,28 @@ function initWhiteboardBoot(){
     btn.addEventListener('click', ()=>{
       boot.classList.remove('course-picker');
       boot.classList.add('login');
+    });
+  });
+  boot?.querySelectorAll('[data-boot-act="pen-close"]').forEach(btn=>{
+    btn.addEventListener('click', closeStandalonePenApp);
+  });
+  boot?.querySelectorAll('[data-boot-act="pen-clear"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      clearStandalonePen();
+      toast('白板笔画布已清空', 'ok', 1200);
+    });
+  });
+  boot?.querySelectorAll('[data-boot-act="browser-close"]').forEach(btn=>{
+    btn.addEventListener('click', closeDesktopBrowserApp);
+  });
+  boot?.querySelectorAll('[data-boot-act="browser-go"]').forEach(btn=>{
+    btn.addEventListener('click', ()=> goDesktopBrowser());
+  });
+  boot?.querySelectorAll('[data-boot-act="browser-home"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const input = $('#desktopBrowserInput');
+      if(input) input.value = 'https://www.bing.com';
+      goDesktopBrowser('https://www.bing.com');
     });
   });
   boot?.classList.add('ready');
@@ -2153,6 +2410,8 @@ document.addEventListener('keydown', e=>{
 
 // 初次渲染（SCENES 字典由后续 edit 注入后才有内容）
 setTimeout(()=>{
+  initStandalonePenApp();
+  initDesktopBrowserApp();
   initWhiteboardBoot();
   initFloatingBall();
   initBoardInk();

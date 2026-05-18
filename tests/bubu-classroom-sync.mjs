@@ -164,8 +164,36 @@ async function main() {
     await waitFor(board, "!!document.querySelector('#whiteboardBoot.ready:not(.hidden)')", "whiteboard desktop boot");
     await waitFor(
       board,
-      "document.querySelectorAll('#whiteboardBoot .wb-icon').length >= 6 && !!document.querySelector('[data-boot-act=\"open-computer\"]') && !!document.querySelector('[data-boot-act=\"open-pen\"]')",
+      "document.querySelectorAll('#whiteboardBoot .wb-icon').length >= 6 && !!document.querySelector('[data-boot-act=\"open-computer\"]') && !!document.querySelector('[data-boot-act=\"open-pen\"]') && !!document.querySelector('[data-boot-act=\"open-browser\"]')",
       "whiteboard desktop app icons",
+    );
+    await evalIn(
+      board,
+      "window.__openedUrls = []; window.open = url => { window.__openedUrls.push(String(url)); return null; }; true",
+    );
+    await evalIn(
+      board,
+      "document.querySelector('[data-boot-act=\"open-browser\"]').dispatchEvent(new MouseEvent('dblclick', {bubbles:true})); true",
+    );
+    await waitFor(
+      board,
+      "document.querySelector('#whiteboardBoot')?.classList.contains('browser-app') && !!document.querySelector('#desktopBrowserInput')",
+      "desktop browser app opens",
+    );
+    await evalIn(
+      board,
+      "document.querySelector('#desktopBrowserInput').value = 'https://example.com'; document.querySelector('[data-boot-act=\"browser-go\"]').click(); true",
+    );
+    await waitFor(
+      board,
+      "window.__openedUrls?.includes('https://example.com/') && document.querySelector('#desktopBrowserStatus')?.textContent.includes('https://example.com/')",
+      "desktop browser opens real webpage",
+    );
+    await evalIn(board, "document.querySelector('[data-boot-act=\"browser-close\"]').click(); true");
+    await waitFor(
+      board,
+      "!document.querySelector('#whiteboardBoot')?.classList.contains('browser-app')",
+      "desktop browser closes",
     );
     await evalIn(
       board,
@@ -173,8 +201,14 @@ async function main() {
     );
     await waitFor(
       board,
-      "document.querySelector('#whiteboardBoot')?.classList.contains('hidden') && document.querySelector('#boardCanvas')?.classList.contains('active')",
-      "whiteboard pen app opens writable board",
+      "document.querySelector('#whiteboardBoot')?.classList.contains('pen-app') && !document.querySelector('#whiteboardBoot')?.classList.contains('hidden') && !!document.querySelector('#standalonePenCanvas') && !document.querySelector('#boardCanvas')?.classList.contains('active')",
+      "standalone whiteboard pen app opens without classroom",
+    );
+    await evalIn(board, "document.querySelector('[data-boot-act=\"pen-close\"]').click(); true");
+    await waitFor(
+      board,
+      "!document.querySelector('#whiteboardBoot')?.classList.contains('pen-app') && document.querySelector('#whiteboardBoot.ready:not(.hidden)')",
+      "standalone whiteboard pen app closes to desktop",
     );
     await evalIn(board, "location.reload(); true");
     await waitFor(board, "document.readyState === 'complete'", "whiteboard reload after pen app");
