@@ -149,18 +149,45 @@ async function main() {
   let userDataDir;
   let board;
   let student;
+  let teacher;
   try {
     ({ chrome, userDataDir } = await launchChrome(cdpPort));
     const port = server.address().port;
     const boardUrl = `http://127.0.0.1:${port}/${encodeURIComponent("步步_白板端_大屏.html")}`;
     const studentUrl = `http://127.0.0.1:${port}/${encodeURIComponent("步步_学生端_平板.html")}`;
+    const teacherUrl = `http://127.0.0.1:${port}/${encodeURIComponent("步步_教师端_备课工作台.html")}`;
 
     board = await openCdpPage(cdpPort, boardUrl);
     student = await openCdpPage(cdpPort, studentUrl);
+    teacher = await openCdpPage(cdpPort, teacherUrl);
     await evalIn(board, "localStorage.clear(); true");
     await evalIn(student, "localStorage.clear(); true");
     await waitFor(board, "document.querySelector('#sceneRoot')?.children.length > 0", "whiteboard initial render");
     await waitFor(student, "document.querySelector('#classStage')?.children.length > 0", "student initial render");
+    await waitFor(
+      teacher,
+      "[...document.querySelectorAll('.appbar .nav-item')].map(el => el.textContent.trim()).join('|') === '课件库|智能题库|作业布置|作业批阅|学情' && document.querySelector('#panel-resource')?.classList.contains('active') && document.querySelector('.appbar .nav-item.active')?.dataset.nav === 'resource' && document.querySelectorAll('#teacherCourseLibrary .course-card').length >= 10 && document.querySelectorAll('#teacherCourseLibrary [data-course-lib-act=\"delete\"]').length >= 10",
+      "teacher starts from courseware library without top-level editor nav",
+    );
+    await evalIn(
+      teacher,
+      "document.querySelector('#teacherCourseLibrary .course-card[data-course-id=\"gushi\"]')?.click(); true",
+    );
+    await waitFor(
+      teacher,
+      "document.querySelector('#panel-courseware')?.classList.contains('active') && document.querySelector('.appbar .nav-item.active')?.dataset.nav === 'resource' && document.querySelector('#editorCourseName')?.textContent.includes('古诗三首') && document.querySelector('#canvas')?.innerText.includes('古诗三首')",
+      "clicking a course card opens that course in the editor",
+    );
+    await evalIn(teacher, "showPanel('resource'); true");
+    await evalIn(
+      teacher,
+      "document.querySelector('[data-course-lib-act=\"delete\"][data-course-id=\"scratch-reading\"]')?.click(); true",
+    );
+    await waitFor(
+      teacher,
+      "!document.querySelector('#teacherCourseLibrary .course-card[data-course-id=\"scratch-reading\"]') && document.querySelectorAll('#teacherCourseLibrary .course-card').length >= 9",
+      "courseware library card delete removes the card",
+    );
     await waitFor(board, "!!document.querySelector('#whiteboardBoot.ready:not(.hidden)')", "whiteboard desktop boot");
     await waitFor(
       board,
@@ -313,6 +340,7 @@ async function main() {
   } finally {
     board?.close();
     student?.close();
+    teacher?.close();
     server.close();
     if (chrome) chrome.kill();
     if (userDataDir) {

@@ -104,6 +104,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .tool-sep{width:1px;height:18px;background:var(--line);margin:0 4px}
 .tool-label{font-size:11.5px;color:var(--muted);padding:0 6px}
 .canvas-toolbar strong{font-size:12.5px;color:var(--text)}
+.editor-source-pill{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--primary-soft);background:var(--primary-soft-2);color:var(--primary-dark);border-radius:999px;padding:4px 9px;font-size:11px;font-weight:800}
 
 .canvas-pad{padding:18px 24px;flex:1;display:flex;flex-direction:column}
 .canvas{background:#fff;border-radius:var(--radius);border:1px solid var(--line);aspect-ratio:16/9;position:relative;overflow:hidden;width:100%;max-height:480px;align-self:center;max-width:780px;box-shadow:var(--shadow-2)}
@@ -518,7 +519,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .resource-tools{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
 .resource-tools input{height:32px;border:1px solid var(--line);border-radius:7px;padding:0 10px;font-size:12px;flex:1;min-width:220px;font-family:inherit}
 .course-lib-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:2px 0 14px}
-.course-card{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.course-card{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(15,23,42,.04);cursor:pointer;transition:.16s}
+.course-card:hover{border-color:var(--primary);box-shadow:0 10px 26px rgba(15,23,42,.10);transform:translateY(-1px)}
 .course-cover{height:108px;background:linear-gradient(135deg,#ecfdf5,#eff6ff);border-bottom:1px solid var(--line);padding:14px;display:flex;flex-direction:column;justify-content:space-between;color:var(--text)}
 .course-cover b{font-size:18px;line-height:1.25}
 .course-cover span{font-size:11px;color:var(--primary-dark);font-weight:800}
@@ -528,6 +530,9 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .course-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
 .course-meta span{font-size:10px;padding:2px 6px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);font-weight:700}
 .course-actions{display:flex;gap:6px;flex-wrap:wrap}
+.course-actions .btn{position:relative;z-index:2}
+.btn-danger{border-color:#fecaca;color:#b91c1c;background:#fff}
+.btn-danger:hover{background:#fee2e2;border-color:#fca5a5}
 .clean-workbench{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
 .focus-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;box-shadow:0 2px 8px rgba(15,23,42,.04)}
 .focus-card h2{font-size:19px;margin-bottom:4px;color:var(--text)}
@@ -612,8 +617,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
     <!-- App bar -->
     <div class="appbar">
       <nav class="nav">
-        <div class="nav-item active" data-nav="courseware">课件编辑</div>
-        <div class="nav-item" data-nav="resource">课件库</div>
+        <div class="nav-item active" data-nav="resource">课件库</div>
         <div class="nav-item" data-nav="qbank">智能题库</div>
         <div class="nav-item" data-nav="homework">作业布置</div>
         <div class="nav-item" data-nav="grading">作业批阅</div>
@@ -641,7 +645,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
               <h2>今天先做这三件事</h2>
               <p>从当前课件、待批改和补练推送继续，不把管理后台信息堆到首页。</p>
               <div class="focus-list">
-                <div class="focus-item" data-jump="courseware">
+                <div class="focus-item" data-jump="resource">
                   <div class="focus-num">1</div>
                   <div><b>继续编辑当前课件</b><span>第 1 课时 · 小数的意义和读写，8 页已同步。</span></div>
                   <button class="btn btn-primary btn-sm">进入</button>
@@ -669,7 +673,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
               <div class="mini-actions">
                 <div class="mini-action" data-workbench-act="cloud"><b>导入旧课件</b><span>PPT/PDF 自动解析。</span></div>
                 <div class="mini-action" data-jump="resource"><b>课件库</b><span>找已有课件。</span></div>
-                <div class="mini-action" data-jump="courseware"><b>继续编辑</b><span>回到当前课件。</span></div>
+                <div class="mini-action" data-jump="resource"><b>继续编辑</b><span>先到课件库选择课件。</span></div>
               </div>
             </div>
           </div>
@@ -677,7 +681,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       </div>
 
       <!-- Panel 1: Courseware -->
-      <div class="panel active" id="panel-courseware">
+      <div class="panel" id="panel-courseware">
         <div class="cw-body">
 
           <!-- 左侧课堂流程 -->
@@ -707,6 +711,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
               <span class="tool-label">当前：</span>
               <strong id="canvasPageLabel">第 1 页 · 封面</strong>
               <div style="flex:1"></div>
+              <span class="editor-source-pill" id="editorCourseName">课件库 · 小数的意义</span>
               <span class="tool-label">100%</span>
             </div>
             <div class="canvas-pad">
@@ -1217,24 +1222,72 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       </div>
 
       <!-- Panel 5: Courseware Library / Resource -->
-      <div class="panel" id="panel-resource">
+      <div class="panel active" id="panel-resource">
         <div class="pad">
           <div class="section-h">📚 课件库</div>
-          <div class="section-sub">课件库只保留两个入口：云端课件、本地拖拽导入 PPT/PDF。</div>
+          <div class="section-sub">白板端已经可上的课件都沉淀在这里；点击任意课件的“编辑”进入完整课件编辑器。</div>
+          <div class="course-lib-grid" id="teacherCourseLibrary">
+            <div class="course-card" data-course-id="decimal" data-subject="数学">
+              <div class="course-cover"><span>白板已同步 · 数学</span><b>小数的意义</b></div>
+              <div class="course-info">
+                <h3>四年级下 · 数学</h3>
+                <p>8 页课件，已绑定第 5 页随堂练、第 7 页抽人回答。</p>
+                <div class="course-meta"><span>已同步</span><span>8 页</span><span>可编辑</span></div>
+                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="edit" data-course-id="decimal">编辑</button><button class="btn btn-sm" data-course-lib-act="preview" data-course-id="decimal">预览</button></div>
+              </div>
+            </div>
+            <div class="course-card" data-course-id="unit-conversion" data-subject="数学">
+              <div class="course-cover" style="background:linear-gradient(135deg,#fff7ed,#ffedd5)"><span>白板可上 · 数学</span><b>单位换算练习</b></div>
+              <div class="course-info">
+                <h3>四年级下 · 数学</h3>
+                <p>5 页半成品，可继续补互动，也可直接带到白板上课。</p>
+                <div class="course-meta"><span>草稿可用</span><span>5 页</span><span>可编辑</span></div>
+                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="edit" data-course-id="unit-conversion">编辑</button><button class="btn btn-sm" data-course-lib-act="preview" data-course-id="unit-conversion">预览</button></div>
+              </div>
+            </div>
+            <div class="course-card" data-course-id="fraction-compare" data-subject="数学">
+              <div class="course-cover" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff)"><span>白板可上 · 数学</span><b>分数比较</b></div>
+              <div class="course-info">
+                <h3>四年级下 · 数学</h3>
+                <p>6 页课件，已备题库和随堂判断入口。</p>
+                <div class="course-meta"><span>明日课</span><span>6 页</span><span>可编辑</span></div>
+                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="edit" data-course-id="fraction-compare">编辑</button><button class="btn btn-sm" data-course-lib-act="preview" data-course-id="fraction-compare">预览</button></div>
+              </div>
+            </div>
+            <div class="course-card" data-course-id="caoyuan" data-subject="语文">
+              <div class="course-cover" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)"><span>白板已同步 · 语文</span><b>草原</b></div>
+              <div class="course-info">
+                <h3>六年级上 · 语文</h3>
+                <p>6 页课件，包含朗读批注和第 4 页提问。</p>
+                <div class="course-meta"><span>已同步</span><span>6 页</span><span>可编辑</span></div>
+                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="edit" data-course-id="caoyuan">编辑</button><button class="btn btn-sm" data-course-lib-act="preview" data-course-id="caoyuan">预览</button></div>
+              </div>
+            </div>
+            <div class="course-card" data-course-id="langyashan" data-subject="语文">
+              <div class="course-cover" style="background:linear-gradient(135deg,#fff1f2,#ffe4e6)"><span>白板可上 · 语文</span><b>狼牙山五壮士</b></div>
+              <div class="course-info">
+                <h3>六年级上 · 语文</h3>
+                <p>5 页半成品，段落品读和资料页已可用。</p>
+                <div class="course-meta"><span>半成品可用</span><span>5 页</span><span>可编辑</span></div>
+                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="edit" data-course-id="langyashan">编辑</button><button class="btn btn-sm" data-course-lib-act="preview" data-course-id="langyashan">预览</button></div>
+              </div>
+            </div>
+            <div class="course-card" data-course-id="gushi" data-subject="语文">
+              <div class="course-cover" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe)"><span>白板可上 · 语文</span><b>古诗三首</b></div>
+              <div class="course-info">
+                <h3>六年级上 · 语文</h3>
+                <p>4 页课件，诗意梳理和朗读讨论可直接编辑。</p>
+                <div class="course-meta"><span>明日课</span><span>4 页</span><span>可编辑</span></div>
+                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="edit" data-course-id="gushi">编辑</button><button class="btn btn-sm" data-course-lib-act="preview" data-course-id="gushi">预览</button></div>
+              </div>
+            </div>
+          </div>
           <div class="library-clean">
             <div class="library-list">
               <div class="course-row">
                 <div>
-                  <h3>云端课件</h3>
-                  <p>查看已经保存和同步的课件，打开后继续编辑。</p>
-                  <div class="course-meta"><span>我的课件</span><span>云端同步</span><span>可继续编辑</span></div>
-                </div>
-                <div class="course-actions"><button class="btn btn-primary btn-sm" data-course-lib-act="edit">打开云端课件</button></div>
-              </div>
-              <div class="course-row">
-                <div>
                   <h3>拖拽导入本地 PPT / PDF</h3>
-                  <p>把桌面上的 PPT、PDF 或图片拖到这里，系统按页解析成可编辑课件。</p>
+                  <p>把桌面上的 PPT、PDF 或图片拖到这里，系统按页解析成可编辑课件，并自动加入课件库。</p>
                   <div class="import-drop" id="importDrop" style="margin-top:10px">
                     <b>拖入文件</b>
                     <span>PPTX / PPT / PDF / 图片，解析后进入课件编辑。</span>
@@ -1754,7 +1807,8 @@ function showPanel(name){
   document.querySelectorAll('.nav-item[data-nav]').forEach(b=>b.classList.remove('active'));
   const panel=document.getElementById('panel-'+name);
   if(panel)panel.classList.add('active');
-  document.querySelectorAll(`[data-nav="${name}"]`).forEach(el=>el.classList.add('active'));
+  const navName = name === 'courseware' ? 'resource' : name;
+  document.querySelectorAll(`[data-nav="${navName}"]`).forEach(el=>el.classList.add('active'));
 }
 document.querySelectorAll('[data-nav]').forEach(el=>el.addEventListener('click',()=>showPanel(el.dataset.nav)));
 document.querySelectorAll('.method-card').forEach(card=>{
@@ -1932,6 +1986,104 @@ document.querySelectorAll('.icard').forEach(c=>{
 });
 
 // 缓存原始听写配置 modal 内容
+const COURSE_LIBRARY_INDEX = {
+  decimal:{title:'小数的意义', subject:'数学', page:'第 1 页 · 封面', tag:'示例PPT · 人教版 · 四年级下', subtitle:'同一份课件：教师端备课编辑，白板端授课翻页。', steps:['数数引入','分而有数','扩充数系']},
+  'unit-conversion':{title:'单位换算练习', subject:'数学', page:'第 1 页 · 导入', tag:'数学 · 四年级下 · 草稿可用', subtitle:'从米、厘米、千米的换算进入，课中可继续补充随堂练。', steps:['进率回顾','例题拆解','变式练习']},
+  'fraction-compare':{title:'分数比较', subject:'数学', page:'第 1 页 · 导入', tag:'数学 · 四年级下 · 明日课', subtitle:'用同分母、同分子和异分母情境建立比较方法。', steps:['同分母','同分子','异分母']},
+  caoyuan:{title:'草原', subject:'语文', page:'第 1 页 · 情境导入', tag:'语文 · 六年级上 · 已同步', subtitle:'从草原意象、朗读节奏和段落批注进入文本赏析。', steps:['初读感知','品读画面','批注交流']},
+  langyashan:{title:'狼牙山五壮士', subject:'语文', page:'第 1 页 · 资料导入', tag:'语文 · 六年级上 · 半成品可用', subtitle:'用背景资料、人物动作和情感朗读组织课堂推进。', steps:['资料导入','动作描写','情感朗读']},
+  gushi:{title:'古诗三首', subject:'语文', page:'第 1 页 · 朗读导入', tag:'语文 · 六年级上 · 明日课', subtitle:'围绕朗读节奏、诗意理解和意象联想展开。', steps:['读准节奏','理解诗意','意象联想']}
+};
+Object.assign(COURSE_LIBRARY_INDEX, {
+  'english-unit1':{title:'Unit 1 How can I get there?', subject:'英语', page:'第 1 页 · Warm up', tag:'英语 · 六年级上 · 已同步', subtitle:'围绕问路、地点词和路线表达组织听说练。', steps:['地点词','路线表达','对话练习']},
+  'science-tools':{title:'工具与技术', subject:'科学', page:'第 1 页 · 问题导入', tag:'科学 · 六年级上 · 草稿可用', subtitle:'用真实图片和实验记录引出工具如何延展人的能力。', steps:['生活工具','实验观察','数据记录']},
+  'scratch-reading':{title:'阅读批注示范', subject:'语文', page:'第 1 页 · 批注示范', tag:'语文 · 六年级上 · 可删除示例', subtitle:'演示如何把旁批、圈画和朗读任务绑定到同一页。', steps:['圈关键词','写旁批','交流观点']},
+  'math-review':{title:'小数单元复习', subject:'数学', page:'第 1 页 · 复习导入', tag:'数学 · 四年级下 · 复习课', subtitle:'把小数意义、读写、大小比较和换算串成复习任务。', steps:['知识网','典型错因','综合练习']},
+  'writing-scene':{title:'习作：围绕中心意思写', subject:'语文', page:'第 1 页 · 选材导入', tag:'语文 · 六年级上 · 草稿', subtitle:'从中心意思出发，筛选材料并安排详略。', steps:['确定中心','筛选材料','详略安排']},
+  'english-phonics':{title:'自然拼读复习', subject:'英语', page:'第 1 页 · Listen and say', tag:'英语 · 六年级上 · 可用', subtitle:'通过听辨、跟读和小游戏复习常见字母组合。', steps:['听辨','跟读','拼读挑战']}
+});
+let courseLibraryItems = Object.entries(COURSE_LIBRARY_INDEX).map(([id, course]) => ({id, ...course}));
+function getCourseLibraryItem(courseId){
+  return courseLibraryItems.find(course => course.id === courseId) || COURSE_LIBRARY_INDEX[courseId] || COURSE_LIBRARY_INDEX.decimal;
+}
+function renderCourseLibraryCards(){
+  const grid = document.getElementById('teacherCourseLibrary');
+  if(!grid) return;
+  const toneMap = {
+    数学:'linear-gradient(135deg,#ecfdf5,#eff6ff)',
+    语文:'linear-gradient(135deg,#fff7ed,#fef3c7)',
+    英语:'linear-gradient(135deg,#eef2ff,#e0e7ff)',
+    科学:'linear-gradient(135deg,#ecfeff,#d9f99d)'
+  };
+  grid.innerHTML = courseLibraryItems.map(course => {
+    const meta = [course.tag?.split('·').pop()?.trim() || '可编辑', course.pages || `${Math.max(4, course.steps.length + 3)} 页`, course.subject].filter(Boolean);
+    return `<div class="course-card" data-course-id="${escapeHTML(course.id)}" data-subject="${escapeHTML(course.subject)}" role="button" tabindex="0" title="点击编辑《${escapeHTML(course.title)}》">
+      <div class="course-cover" style="background:${course.tone || toneMap[course.subject] || toneMap.数学}">
+        <span>${escapeHTML(course.tag || `${course.subject} · 可编辑`)}</span>
+        <b>${escapeHTML(course.title)}</b>
+      </div>
+      <div class="course-info">
+        <h3>${escapeHTML(course.subject)} · ${escapeHTML(course.page.replace('第 1 页 · ', ''))}</h3>
+        <p>${escapeHTML(course.subtitle || '点击卡片进入完整课件编辑器。')}</p>
+        <div class="course-meta">${meta.map(item=>`<span>${escapeHTML(item)}</span>`).join('')}</div>
+        <div class="course-actions">
+          <button class="btn btn-primary btn-sm" data-course-lib-act="edit" data-course-id="${escapeHTML(course.id)}">编辑</button>
+          <button class="btn btn-sm" data-course-lib-act="preview" data-course-id="${escapeHTML(course.id)}">预览</button>
+          <button class="btn btn-sm" data-course-lib-act="duplicate" data-course-id="${escapeHTML(course.id)}">复制</button>
+          <button class="btn btn-sm btn-danger" data-course-lib-act="delete" data-course-id="${escapeHTML(course.id)}">删除</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function duplicateCourseLibraryItem(courseId){
+  const course = getCourseLibraryItem(courseId);
+  const copy = {...course, id:`${courseId}-copy-${Date.now()}`, title:`${course.title} 副本`, tag:`${course.subject} · 副本 · 可编辑`};
+  courseLibraryItems = [copy, ...courseLibraryItems];
+  renderCourseLibraryCards();
+  showToast(`✓ 已复制《${course.title}》`);
+}
+function deleteCourseLibraryItem(courseId){
+  const course = getCourseLibraryItem(courseId);
+  courseLibraryItems = courseLibraryItems.filter(item => item.id !== courseId);
+  renderCourseLibraryCards();
+  showToast(`✓ 已删除《${course.title}》`);
+}
+function previewCourseLibraryItem(courseId){
+  const course = getCourseLibraryItem(courseId);
+  _setModal({
+    icon:'📄',
+    title:`预览 · ${course.title}`,
+    body:`<div class="demo-callout"><span class="dc-icon">▶</span><div><strong>${escapeHTML(course.title)}</strong><br>${escapeHTML(course.subtitle || '可从课件库继续编辑。')}</div></div>
+      <h4>页面结构</h4>
+      <ul>${(course.steps || []).map(step=>`<li>${escapeHTML(step)}</li>`).join('')}</ul>`,
+    foot:`<button class="btn btn-sm" onclick="closeModal()">关闭</button><button class="btn btn-primary btn-sm" onclick="closeModal();openCourseLibraryEditor('${escapeHTML(course.id)}')">进入编辑</button>`
+  });
+  document.getElementById('modalMask').classList.add('open');
+}
+function openCourseLibraryEditor(courseId='decimal'){
+  const course = getCourseLibraryItem(courseId);
+  showPanel('courseware');
+  goToPage(1);
+  const pill = document.getElementById('editorCourseName');
+  if(pill) pill.textContent = `课件库 · ${course.title}`;
+  const label = document.getElementById('canvasPageLabel');
+  if(label) label.textContent = course.page;
+  const canvas = document.getElementById('canvas');
+  if(canvas){
+    const stepCards = course.steps.map((step, index)=>`<div class="rule-card"><b>${index + 1}</b><span>${escapeHTML(step)}</span></div>`).join('');
+    canvas.innerHTML = `<div class="import-badge">已从课件库打开 · 可继续编辑</div>
+      <div class="cover-deco"></div><div class="cover-num">${course.subject === '语文' ? '文' : '0.1'}</div>
+      <div class="slide-content"><span class="slide-tag">${escapeHTML(course.tag)}</span>
+      <div class="slide-title" style="font-size:38px">${escapeHTML(course.title)}</div>
+      <div class="slide-subtitle">${escapeHTML(course.subtitle)}</div>
+      <div class="rule-board">${stepCards}</div></div>`;
+  }
+  const caption = document.getElementById('canvasCaptionText');
+  if(caption) caption.innerHTML = `<strong>课件库：</strong>已打开《${escapeHTML(course.title)}》，这里就是完整课件编辑器，可继续加页面、题目和互动卡片。`;
+  showToast(`✓ 已从课件库打开《${course.title}》编辑器`);
+}
+
 const _LISTEN_BODY = document.querySelector('.modal-body').innerHTML;
 const _LISTEN_FOOT = document.querySelector('.modal-foot').innerHTML;
 
@@ -2397,8 +2549,14 @@ document.body.addEventListener('click', e => {
   if (courseLib) {
     const act = courseLib.dataset.courseLibAct;
     if (act === 'edit') {
-      showPanel('courseware');
-      goToPage(1);
+      openCourseLibraryEditor(courseLib.dataset.courseId || 'decimal');
+    } else if (act === 'preview') {
+      previewCourseLibraryItem(courseLib.dataset.courseId || 'decimal');
+    } else if (act === 'duplicate') {
+      duplicateCourseLibraryItem(courseLib.dataset.courseId || 'decimal');
+    } else if (act === 'delete') {
+      deleteCourseLibraryItem(courseLib.dataset.courseId || 'decimal');
+      return;
       showToast('✓ 已打开云端课件');
     } else if (act === 'import') {
       openDemo('import-ppt');
@@ -2407,6 +2565,11 @@ document.body.addEventListener('click', e => {
     } else {
       showToast('✓ 已打开课件预览');
     }
+    return;
+  }
+  const courseCard = e.target.closest('#teacherCourseLibrary .course-card[data-course-id]');
+  if (courseCard) {
+    openCourseLibraryEditor(courseCard.dataset.courseId || 'decimal');
     return;
   }
   const resourceAct = e.target.closest('[data-resource-act]');
@@ -2969,6 +3132,7 @@ document.querySelector('#modalMask').addEventListener('click', e => {
   chip.classList.toggle('selected');
 });
 
+renderCourseLibraryCards();
 renderFlow(); renderThumbs(); renderCanvas();
 </script>
 </body>
