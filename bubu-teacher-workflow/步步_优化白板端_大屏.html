@@ -3,1037 +3,2127 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=1280" />
-<title>步步 · 优化白板端（教室大屏）</title>
+<title>步步优化白板端（教室大屏）</title>
 <style>
 :root{
-  --green:#18b887;
-  --green-dark:#0f8e68;
-  --green-soft:#e7f8f1;
-  --blue:#2563eb;
-  --blue-soft:#e9f0ff;
-  --orange:#f59e0b;
-  --orange-soft:#fff7df;
-  --red:#e11d48;
-  --red-soft:#ffe8ee;
+  --seewo-green:#07c783;
+  --seewo-green-dark:#06a86f;
+  --seewo-orange:#ff9f1c;
+  --seewo-orange-soft:#fff1d8;
   --ink:#111827;
-  --muted:#64748b;
-  --line:#dce4ef;
-  --panel:#ffffff;
-  --paper:#fbfdfc;
-  --shadow:0 18px 48px rgba(15,23,42,.18);
+  --muted:#6b7280;
+  --line:#d9dee8;
+  --chrome:#eef1f6;
+  --paper:#ffffff;
+  --toolbar:#f7f9fc;
+  --shadow:0 18px 46px rgba(15,23,42,.18);
 }
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;overflow:hidden}
+html,body{margin:0;height:100%;overflow:hidden}
 body{
-  background:#111827;
-  color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif;
+  color:var(--ink);
+  background:#dfe4ec;
   -webkit-font-smoothing:antialiased;
 }
 button{font:inherit}
-.board-app{
+.sr-only{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+.seewo-app{
   position:relative;
   width:100vw;
   height:100vh;
   min-width:1180px;
   min-height:660px;
   overflow:hidden;
-  background:#f1f5f9;
+  background:#edf0f5;
 }
-.statusbar{
-  position:absolute; left:14px; right:14px; top:12px; height:44px; z-index:75;
-  display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
-  padding:0 16px;
-  border-radius:10px;
-  background:rgba(255,255,255,.92);
-  border:1px solid rgba(148,163,184,.34);
-  box-shadow:0 8px 22px rgba(15,23,42,.08);
-  font-weight:900;
-}
-.statusbar .left,.statusbar .right{display:flex;align-items:center;gap:14px;font-size:13px;color:#334155}
-.statusbar .right{justify-content:flex-end;color:#475569}
-.statusbar .center{font-size:16px;color:#0f172a}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(24,184,135,.16);display:inline-block}
-.canvas-zone{
-  position:absolute; left:14px; right:14px; top:66px; bottom:122px;
-  display:grid; grid-template-columns:78px 1fr; gap:12px;
-}
-.filmstrip{
-  border-radius:10px;
-  border:1px solid rgba(148,163,184,.30);
-  background:#eaf0f7;
-  padding:8px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.thumb{
-  height:52px;
-  border-radius:7px;
-  border:2px solid transparent;
-  background:#fff;
-  display:grid;
-  place-items:center;
-  color:#64748b;
-  font-size:12px;
-  font-weight:900;
-  box-shadow:0 2px 8px rgba(15,23,42,.06);
-  cursor:pointer;
-}
-.thumb.active{border-color:var(--green);color:var(--green-dark)}
-.board-page{
-  position:relative;
-  overflow:hidden;
-  border-radius:10px;
-  border:1px solid rgba(148,163,184,.34);
-  background:
-    radial-gradient(circle at 1px 1px, rgba(148,163,184,.26) 1px, transparent 0) 0 0/24px 24px,
-    var(--paper);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.78),0 16px 38px rgba(15,23,42,.12);
-}
-.page-title{
-  position:absolute;left:30px;top:28px;
-  margin:0;
-  font-size:30px;
-  line-height:1.18;
-  font-weight:900;
-  letter-spacing:0;
-}
-.page-sub{
-  position:absolute;left:30px;top:72px;
-  font-size:14px;
-  color:var(--muted);
-  font-weight:800;
-}
-.lesson-card{
-  position:absolute;left:30px;top:126px;width:48%;min-height:188px;
-  background:rgba(255,255,255,.92);
-  border:2px solid #111827;
-  border-radius:8px;
-  padding:22px 24px;
-}
-.lesson-card h2{margin:0 0 14px;font-size:19px}
-.formula{font-size:38px;font-weight:900;letter-spacing:0;color:#0f172a}
-.options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
-.option{
-  border:1px solid #cbd5e1;
-  border-radius:8px;
-  background:#f8fafc;
-  padding:9px 12px;
-  font-weight:900;
-}
-.fraction-wheel{
-  position:absolute;right:96px;top:116px;width:252px;height:252px;
-  border-radius:50%;
-  border:5px solid #fb923c;
-  background:conic-gradient(#fed7aa 0 45%,#fff 45% 100%);
-  box-shadow:0 12px 30px rgba(251,146,60,.22);
-}
-.fraction-wheel:before{
-  content:"";
-  position:absolute;left:50%;top:-8px;bottom:-8px;width:4px;
-  transform:translateX(-50%) rotate(-18deg);
-  background:#fb923c;
-  border-radius:4px;
-}
-.red-ring{
-  position:absolute;left:54%;top:54%;width:248px;height:108px;
-  border:4px solid var(--red);
-  border-radius:56% 44% 52% 48%;
-  transform:rotate(-8deg);
-  pointer-events:none;
-}
-.red-ring:after{
-  content:"先把 1/2 化成 4/8";
-  position:absolute;right:-100px;bottom:-22px;
-  color:var(--red);
-  font-size:18px;
-  font-weight:900;
-  transform:rotate(8deg);
-  white-space:nowrap;
-}
-.pre-note{
-  position:absolute;left:30px;right:320px;bottom:28px;
-  min-height:48px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:10px 14px;
-  border-radius:10px;
-  background:var(--orange-soft);
-  border:1px solid #fed7aa;
-  color:#9a3412;
-  font-weight:900;
-}
-.summary-stack{
-  position:absolute;right:24px;bottom:24px;width:270px;
-  display:grid;
-  gap:8px;
-}
-.summary-pill{
+.window-strip{
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  height:32px;
+  background:#e9edf3;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
-  padding:9px 12px;
-  border-radius:9px;
-  background:#f8fafc;
-  border:1px solid rgba(148,163,184,.30);
-  color:#475569;
-  font-size:12px;
+  padding:0 14px 0 0;
+  color:#1f2937;
+  z-index:30;
+}
+.brand-tab{
+  height:32px;
+  min-width:118px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:0 14px;
+  background:#dde2eb;
+  font-size:16px;
   font-weight:900;
 }
-.summary-pill strong{font-size:16px;color:var(--green-dark)}
+.logo-mark{
+  width:22px;
+  height:22px;
+  border-radius:5px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  background:var(--seewo-green);
+  font-size:11px;
+  font-weight:900;
+}
+.doc-tabs{
+  position:absolute;
+  left:128px;
+  top:0;
+  height:32px;
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+.doc-tab{
+  height:32px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:0 16px;
+  border-radius:8px 8px 0 0;
+  background:#fff;
+  font-size:14px;
+  font-weight:800;
+  color:#1f2937;
+}
+.doc-tab.muted{
+  background:#dfe3eb;
+  color:#5b6473;
+}
+.window-actions{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  color:#111827;
+  font-weight:800;
+}
+.edit-ribbon{
+  position:absolute;
+  left:0;
+  right:0;
+  top:32px;
+  height:74px;
+  background:#fff;
+  border-bottom:1px solid #cfd6e2;
+  display:grid;
+  grid-template-columns:340px 1fr 110px;
+  align-items:center;
+  z-index:25;
+}
+.ribbon-left,
+.ribbon-tools,
+.ribbon-share{
+  display:flex;
+  align-items:center;
+}
+.ribbon-left{
+  height:100%;
+  gap:18px;
+  padding-left:14px;
+}
+.ribbon-tool{
+  min-width:46px;
+  height:58px;
+  border:0;
+  background:transparent;
+  color:#1f2937;
+  display:grid;
+  place-items:center;
+  gap:2px;
+  cursor:pointer;
+  font-weight:800;
+}
+.ribbon-tool .ico{
+  font-size:22px;
+  line-height:1;
+  color:#4b5563;
+}
+.ribbon-tool.small .ico{font-size:19px}
+.ribbon-tool.disabled{opacity:.36}
+.ribbon-divider{
+  width:1px;
+  height:38px;
+  background:#dce1ea;
+}
+.teach-button{
+  height:38px;
+  min-width:98px;
+  border:0;
+  border-radius:6px;
+  background:var(--seewo-green);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  cursor:pointer;
+  font-size:17px;
+  font-weight:900;
+}
+.teach-button .play{
+  width:0;
+  height:0;
+  border-top:8px solid transparent;
+  border-bottom:8px solid transparent;
+  border-left:13px solid #fff;
+}
+.ribbon-tools{
+  justify-content:center;
+  gap:clamp(10px,1.7vw,26px);
+}
+.feature-tool{
+  min-width:50px;
+  border:0;
+  background:transparent;
+  display:grid;
+  place-items:center;
+  gap:4px;
+  cursor:pointer;
+  color:#111827;
+  font-size:14px;
+  font-weight:800;
+}
+.feature-tool .symbol{
+  font-size:25px;
+  color:#5b6473;
+  line-height:1;
+}
+.feature-tool.green .symbol{color:var(--seewo-green)}
+.feature-tool.blue .symbol{color:#3b82f6}
+.feature-tool.orange .symbol{color:#f59e0b}
+.ribbon-share{
+  justify-content:center;
+}
+.share-button{
+  height:38px;
+  border:1px solid #d7dde8;
+  border-radius:7px;
+  background:#fff;
+  padding:0 16px;
+  cursor:pointer;
+  color:#111827;
+  font-weight:800;
+}
+.editor-shell{
+  position:absolute;
+  left:0;
+  right:0;
+  top:106px;
+  bottom:32px;
+  display:grid;
+  grid-template-columns:122px 1fr 246px 46px;
+  background:#e7ebf2;
+}
+.page-strip{
+  position:relative;
+  border-right:1px solid #d3d9e5;
+  background:#f8fafc;
+  padding:10px 10px 38px;
+  overflow:hidden;
+}
+.new-page{
+  height:36px;
+  width:100%;
+  border:1px solid #d6dce7;
+  border-radius:4px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  cursor:pointer;
+  color:#111827;
+  font-weight:800;
+}
+.thumb-list{
+  position:absolute;
+  left:10px;
+  right:10px;
+  top:58px;
+  bottom:36px;
+  overflow:hidden;
+}
+.thumb-row{
+  display:grid;
+  grid-template-columns:18px 1fr;
+  align-items:center;
+  gap:6px;
+  margin-bottom:12px;
+  color:#6b7280;
+  font-weight:800;
+}
+.thumb-row.active{color:var(--seewo-green-dark)}
+.thumb{
+  height:56px;
+  border:1px solid #d9dee8;
+  border-radius:4px;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  cursor:pointer;
+}
+.thumb.active{
+  border:3px solid var(--seewo-green);
+}
+.thumb-mini{
+  width:82%;
+  height:70%;
+  border-radius:2px;
+  background:
+    linear-gradient(90deg,transparent 0 20%,#0f172a 20% 24%,transparent 24% 100%),
+    linear-gradient(#cbd5e1 0 0) 0 20%/100% 2px no-repeat,
+    linear-gradient(#cbd5e1 0 0) 0 48%/72% 2px no-repeat,
+    linear-gradient(#cbd5e1 0 0) 0 76%/84% 2px no-repeat;
+}
+.thumb-mini.cover{
+  background:
+    linear-gradient(135deg,transparent 58%,#37aee2 58% 72%,#f97316 72%),
+    radial-gradient(circle at 28% 42%,#047b92 0 16%,transparent 17%),
+    #fff;
+}
+.thumb-mini.result{
+  background:
+    linear-gradient(#94a3b8 0 0) 18% 78%/13% 32% no-repeat,
+    linear-gradient(#22c55e 0 0) 42% 78%/13% 58% no-repeat,
+    linear-gradient(#e5e7eb 0 0) 66% 78%/13% 45% no-repeat,
+    linear-gradient(#e5e7eb 0 0) 88% 78%/13% 20% no-repeat,
+    #fff;
+}
+.strip-footer{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:32px;
+  display:flex;
+  align-items:center;
+  padding-left:12px;
+  border-top:1px solid #d9dee8;
+  color:#5f6878;
+  font-size:13px;
+  font-weight:800;
+}
+.workbench{
+  position:relative;
+  overflow:hidden;
+  background:#e6eaf1;
+  display:grid;
+  place-items:center;
+}
+.slide-page{
+  position:relative;
+  width:min(100%, calc((100vh - 218px) * 1.777));
+  max-width:1180px;
+  aspect-ratio:16/9;
+  background:var(--paper);
+  box-shadow:0 1px 0 #d8dde7;
+  overflow:hidden;
+}
+.slide-inner{
+  position:absolute;
+  inset:0;
+  padding:58px 78px;
+  background:#fff;
+}
+.slide-inner.cover{
+  background:
+    linear-gradient(135deg,transparent 64%,rgba(125,166,197,.36) 64% 75%,#33a8da 75% 85%,#f97316 85% 96%,#fed7aa 96%),
+    #fff;
+}
+.course-logo{
+  position:absolute;
+  left:126px;
+  top:150px;
+  width:170px;
+  height:120px;
+  color:#047b92;
+  font-size:56px;
+  font-weight:900;
+}
+.cover-box{
+  position:absolute;
+  left:42%;
+  top:52%;
+  width:430px;
+  height:64px;
+  transform:translate(-50%,-50%);
+  border:3px solid #fb8c00;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  color:#fb8c00;
+  font-size:28px;
+  font-family:"KaiTi","STKaiti",serif;
+}
+.cover-title{
+  position:absolute;
+  left:36%;
+  top:65%;
+  transform:translateX(-50%);
+  font-size:42px;
+  font-family:"KaiTi","STKaiti",serif;
+  letter-spacing:0;
+}
+.lesson-question{
+  font-family:"Times New Roman","SimSun",serif;
+  font-size:38px;
+  line-height:1.65;
+  color:#050505;
+  font-weight:800;
+  letter-spacing:0;
+}
+.lesson-question .blue{
+  color:#0000cc;
+  font-style:italic;
+}
+.answer-blank{
+  display:inline-block;
+  min-width:340px;
+  border-bottom:3px solid #111;
+  transform:translateY(-6px);
+}
+.teacher-note{
+  position:absolute;
+  left:74px;
+  right:74px;
+  bottom:46px;
+  min-height:44px;
+  border:1px solid #fed7aa;
+  border-radius:9px;
+  background:#fff8eb;
+  color:#9a3412;
+  display:flex;
+  align-items:center;
+  padding:8px 14px;
+  font-size:16px;
+  font-weight:900;
+}
+.worksheet{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:42px;
+  height:100%;
+  align-items:center;
+}
+.worksheet h1{
+  margin:0 0 22px;
+  font-size:34px;
+}
+.fraction-card{
+  border:2px solid #111827;
+  border-radius:6px;
+  padding:24px 26px;
+}
+.fraction-line{
+  display:flex;
+  justify-content:space-between;
+  font-size:42px;
+  font-weight:900;
+  margin:18px 0;
+}
+.answer-options{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+.answer-options div{
+  border:1px solid #cbd5e1;
+  border-radius:4px;
+  padding:10px 12px;
+  font-size:18px;
+  font-weight:900;
+}
+.pie-sketch{
+  position:relative;
+  width:260px;
+  height:260px;
+  border:5px solid #fb923c;
+  border-radius:50%;
+  background:conic-gradient(#fed7aa 0 44%,#fff 44% 100%);
+}
+.pie-sketch:before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:-8px;
+  width:5px;
+  height:276px;
+  transform:translateX(-50%) rotate(-17deg);
+  border-radius:4px;
+  background:#fb923c;
+}
+.red-mark{
+  position:absolute;
+  left:52%;
+  top:54%;
+  width:280px;
+  height:112px;
+  border:4px solid #e11d48;
+  border-radius:50%;
+  transform:rotate(-10deg);
+}
+.red-mark span{
+  position:absolute;
+  right:-142px;
+  bottom:-18px;
+  color:#e11d48;
+  font-size:20px;
+  font-weight:900;
+  white-space:nowrap;
+  transform:rotate(10deg);
+}
+.mini-result{
+  height:100%;
+  display:grid;
+  grid-template-columns:.9fr 1.1fr;
+  gap:40px;
+  align-items:center;
+}
+.rate{
+  color:#333;
+  font-size:28px;
+  font-weight:900;
+}
+.rate strong{
+  margin-left:16px;
+  font-size:76px;
+}
+.chart{
+  height:320px;
+  display:flex;
+  align-items:flex-end;
+  gap:46px;
+  padding:20px 30px 36px;
+}
+.bar{
+  width:54px;
+  background:#edf0f4;
+  position:relative;
+}
+.bar:after{
+  content:attr(data-label);
+  position:absolute;
+  left:50%;
+  bottom:-34px;
+  transform:translateX(-50%);
+  color:#555;
+  font-size:24px;
+}
+.bar.correct{background:#68c87a}
+.property-pane{
+  border-left:1px solid #d3d9e5;
+  background:#fff;
+  display:flex;
+  flex-direction:column;
+}
+.property-title{
+  height:48px;
+  display:flex;
+  align-items:center;
+  padding:0 16px;
+  border-bottom:1px solid #e5e7eb;
+  font-size:18px;
+  font-weight:900;
+}
+.property-body{
+  padding:18px 16px;
+  display:grid;
+  gap:22px;
+  color:#111827;
+}
+.layout-preview,
+.bg-preview{
+  width:100%;
+  height:74px;
+  border:1px solid #d8dee9;
+  border-radius:4px;
+  background:#fff;
+}
+.bg-preview{
+  background:
+    linear-gradient(135deg,transparent 62%,#bae6fd 62% 78%,#38bdf8 78% 90%,#f97316 90%),
+    #fff;
+}
+.pane-row{
+  display:grid;
+  grid-template-columns:82px 1fr;
+  gap:12px;
+  align-items:center;
+}
+.pane-button{
+  height:34px;
+  border:0;
+  border-radius:4px;
+  background:#f0f2f6;
+  font-weight:800;
+  cursor:pointer;
+}
+.side-tabs{
+  background:#fff;
+  border-left:1px solid #d3d9e5;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:22px;
+  padding-top:24px;
+  color:#111827;
+  font-weight:900;
+}
+.side-tab{
+  writing-mode:vertical-rl;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:#111827;
+}
+.side-tab.active{color:var(--seewo-green)}
+.runtime-mask{
+  position:absolute;
+  inset:0;
+  background:rgba(255,255,255,0);
+  pointer-events:none;
+  z-index:45;
+}
 .ink-canvas{
   position:absolute;
   inset:0;
-  z-index:30;
   width:100%;
   height:100%;
+  z-index:55;
   pointer-events:none;
   cursor:crosshair;
 }
-.ink-canvas.active{pointer-events:auto;touch-action:none}
-.float-controller{
+.ink-canvas.active{
+  pointer-events:auto;
+  touch-action:none;
+}
+.easy-controller{
   position:absolute;
   right:24px;
-  top:118px;
-  z-index:86;
+  top:126px;
+  z-index:90;
   display:flex;
-  align-items:flex-start;
-  gap:10px;
+  flex-direction:column;
+  align-items:center;
   touch-action:none;
   user-select:none;
 }
 .float-main{
-  width:68px;
-  height:68px;
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,.62);
-  background:linear-gradient(135deg,#172554,#2563eb);
-  color:#fff;
-  box-shadow:0 18px 42px rgba(15,23,42,.30);
-  display:grid;
-  place-items:center;
-  cursor:pointer;
-  font-weight:900;
-}
-.float-main span{font-size:21px;line-height:1}
-.float-main small{display:block;font-size:11px;margin-top:2px}
-.float-controller.open .float-main{background:linear-gradient(135deg,var(--green),#0f8e68)}
-.dock{
-  width:70px;
-  display:none;
-  flex-direction:column;
-  gap:7px;
-  padding:8px;
-  border-radius:14px;
-  background:rgba(15,23,42,.90);
-  border:1px solid rgba(255,255,255,.16);
-  box-shadow:0 18px 42px rgba(15,23,42,.30);
-}
-.float-controller.open .dock{display:flex}
-.dock button{
-  width:54px;
-  min-height:48px;
-  border-radius:11px;
-  border:1px solid rgba(255,255,255,.13);
-  background:rgba(255,255,255,.08);
-  color:#fff;
-  cursor:pointer;
+  width:72px;
+  min-height:78px;
+  border:0;
+  border-radius:38px 38px 22px 22px;
+  background:#fff;
+  color:#1f2937;
   display:grid;
   place-items:center;
   gap:2px;
+  padding:7px 8px;
+  box-shadow:0 10px 28px rgba(15,23,42,.17);
+  cursor:grab;
   font-weight:900;
 }
-.dock button span{font-size:16px}
-.dock button small{font-size:10px;color:#cbd5e1}
-.dock button:hover,.dock button.active{background:rgba(24,184,135,.25);border-color:rgba(24,184,135,.72)}
-.toolbar{
-  position:absolute;
-  left:96px;
-  right:96px;
-  bottom:68px;
-  z-index:78;
-  height:48px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:6px 10px;
-  border-radius:14px;
-  background:rgba(15,23,42,.84);
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 12px 28px rgba(15,23,42,.24);
+.float-main strong{
+  color:#e6a000;
+  font-size:22px;
+  line-height:1;
 }
-.tool{
-  min-width:38px;
-  height:36px;
-  padding:0 10px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.08);
-  color:#fff;
-  cursor:pointer;
-  font-weight:900;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:5px;
-}
-.tool:hover,.tool.active{background:rgba(24,184,135,.28);border-color:rgba(24,184,135,.74)}
-.tool.light{background:#fff;color:#111827}
-.sep{width:1px;height:28px;background:rgba(255,255,255,.18);margin:0 2px}
-.page-label{min-width:92px;text-align:center;color:#dbeafe;font-size:12px;font-weight:900}
-.page-nav{
-  position:absolute;
-  left:50%;
-  bottom:14px;
-  transform:translateX(-50%);
-  z-index:79;
-  display:flex;
-  gap:10px;
-  align-items:center;
-  padding:8px 10px;
-  border-radius:14px;
-  background:rgba(15,23,42,.82);
-  border:1px solid rgba(255,255,255,.14);
-}
-.page-nav button{
-  height:36px;
-  min-width:72px;
-  border:0;
-  border-radius:10px;
-  background:#fff;
+.float-main span{
+  font-size:19px;
   color:#111827;
-  font-weight:900;
-  cursor:pointer;
 }
-.page-nav button.next{background:var(--green);color:#fff}
-.page-nav button:disabled{opacity:.38;cursor:not-allowed}
-.panel{
-  position:absolute;
-  z-index:84;
+.float-main small{
+  color:#6b7280;
+  font-size:11px;
+}
+.dock{
   display:none;
-  right:104px;
-  top:86px;
-  width:410px;
-  max-height:430px;
-  overflow:auto;
-  padding:14px;
-  border-radius:14px;
-  background:rgba(255,255,255,.97);
-  border:1px solid rgba(148,163,184,.34);
-  box-shadow:var(--shadow);
+  width:72px;
+  margin-top:10px;
+  padding:8px 0;
+  border-radius:32px;
+  background:#fff;
+  box-shadow:0 12px 32px rgba(15,23,42,.18);
+  border:1px solid #edf0f5;
+  overflow:hidden;
 }
-.panel.show{display:block}
-.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
-.panel-head h3{margin:0;font-size:16px;font-weight:900}
-.panel-head button{
-  width:30px;
-  height:30px;
-  border:0;
-  border-radius:8px;
-  background:#e2e8f0;
-  color:#111827;
-  cursor:pointer;
-  font-weight:900;
+.easy-controller.open .dock{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
-.tool-section{margin-bottom:12px}
-.tool-section h4{margin:0 0 8px;color:var(--muted);font-size:12px;font-weight:900}
-.tool-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.tile{
+.dock button{
+  width:62px;
   min-height:56px;
-  border:1px solid #e2e8f0;
-  border-radius:10px;
-  background:#f8fafc;
+  border:0;
+  background:#fff;
   display:grid;
   place-items:center;
-  gap:3px;
-  font-weight:900;
-  font-size:11px;
+  gap:2px;
   cursor:pointer;
-  color:#111827;
-}
-.tile span{font-size:18px}
-.tile:hover{border-color:var(--green);background:var(--green-soft);color:var(--green-dark)}
-.pen-controls{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:10px;
-}
-.choice-row{display:flex;flex-wrap:wrap;gap:8px}
-.choice{
-  min-width:42px;
-  height:34px;
-  border-radius:9px;
-  border:1px solid #cbd5e1;
-  background:#fff;
-  font-weight:900;
-  cursor:pointer;
-}
-.choice.active{outline:2px solid var(--green);border-color:var(--green)}
-.color-choice{width:34px;min-width:34px;border-radius:50%;color:transparent}
-.color-choice[data-pen-color="#111827"]{background:#111827}
-.color-choice[data-pen-color="#e11d48"]{background:#e11d48}
-.color-choice[data-pen-color="#2563eb"]{background:#2563eb}
-.answer-panel{width:430px}
-.rate{display:flex;align-items:flex-end;gap:8px;margin-bottom:10px}
-.rate strong{font-size:42px;line-height:1;color:#ea580c}
-.rate span{color:#64748b;font-weight:900;padding-bottom:5px}
-.answer-bars{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;height:168px;align-items:end;margin:12px 0}
-.answer-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px}
-.answer-bar{width:100%;border-radius:8px 8px 0 0;background:#cbd5e1;min-height:12px;display:grid;place-items:start center;color:#111827;font-weight:900;padding-top:5px}
-.answer-col.ok .answer-bar{background:linear-gradient(180deg,#34d399,#0f8e68);color:#fff}
-.answer-col .key{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#f1f5f9;font-weight:900}
-.panel-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.panel-actions button{
-  border:1px solid #dbe3ee;
-  background:#f8fafc;
-  border-radius:9px;
-  padding:9px;
-  cursor:pointer;
-  font-weight:900;
-}
-.cast-wall{
-  position:absolute;
-  inset:66px 96px 122px 96px;
-  z-index:83;
-  display:none;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-  padding:12px;
-  border-radius:14px;
-  background:rgba(15,23,42,.92);
-  box-shadow:var(--shadow);
-}
-.cast-wall.show{display:grid}
-.cast-card{
-  position:relative;
-  overflow:hidden;
-  border-radius:10px;
-  background:
-    linear-gradient(rgba(37,99,235,.12) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(37,99,235,.12) 1px,transparent 1px),
-    #fff;
-  background-size:28px 28px;
-  border:2px solid rgba(255,255,255,.24);
-  padding:38px 22px 22px;
-}
-.cast-card.active{border-color:var(--green);box-shadow:0 0 0 3px rgba(24,184,135,.22)}
-.cast-name{
-  position:absolute;
-  left:12px;
-  top:10px;
-  padding:4px 10px;
-  border-radius:99px;
-  background:#111827;
-  color:#fff;
+  color:#4b5563;
   font-size:12px;
   font-weight:900;
 }
-.cast-ink{color:#1d4ed8;font-size:25px;font-weight:900;line-height:1.7;transform:rotate(-4deg)}
-.student-drawer{
-  position:absolute;
-  right:14px;
-  top:66px;
-  bottom:122px;
-  width:312px;
-  z-index:84;
-  transform:translateX(336px);
-  transition:transform .18s ease;
-  border-radius:14px;
-  background:rgba(255,255,255,.97);
-  border:1px solid rgba(148,163,184,.34);
-  box-shadow:var(--shadow);
-  padding:14px;
+.dock button span{
+  width:32px;
+  height:32px;
+  border-radius:9px;
+  display:grid;
+  place-items:center;
+  font-size:20px;
 }
-.student-drawer.show{transform:translateX(0)}
-.task{border:1px solid #e2e8f0;background:#f8fafc;border-radius:10px;padding:10px;margin-bottom:8px}
-.task strong{display:block;margin-bottom:4px}
-.mini-board{
+.dock button.active span,
+.dock button:hover span{
+  background:#fff4df;
+  color:#f59e0b;
+}
+.dock button[data-action="answer"] span{color:#16a34a}
+.dock button[data-action="clear"] span{color:#2563eb}
+.dock button[data-action="students"] span{color:#ef4444}
+.dock-divider{
+  width:42px;
+  height:1px;
+  background:#e5e7eb;
+  margin:5px 0;
+}
+.bottom-toolbar{
   position:absolute;
-  left:44%;
-  top:28%;
-  width:340px;
-  height:220px;
-  z-index:85;
-  display:none;
-  border-radius:12px;
+  left:0;
+  right:0;
+  bottom:0;
+  height:84px;
+  z-index:82;
+  pointer-events:none;
+}
+.toolbar-group{
+  position:absolute;
+  bottom:12px;
+  height:58px;
+  border-radius:6px;
+  background:rgba(248,250,252,.92);
+  box-shadow:0 8px 22px rgba(15,23,42,.12);
+  display:flex;
+  align-items:stretch;
+  overflow:hidden;
+  pointer-events:auto;
+}
+.toolbar-group.left{left:0}
+.toolbar-group.center{left:50%;transform:translateX(-50%)}
+.toolbar-group.right{right:224px}
+.toolbar-button{
+  min-width:74px;
+  border:0;
+  background:transparent;
+  color:#4b5563;
+  display:grid;
+  place-items:center;
+  gap:2px;
+  cursor:pointer;
+  font-weight:900;
+  font-size:12px;
+}
+.toolbar-button .ico{
+  font-size:24px;
+  line-height:1;
+}
+.toolbar-button.active{
+  min-width:82px;
+  background:var(--seewo-green);
+  color:#fff;
+}
+.toolbar-separator{
+  width:1px;
+  margin:12px 0;
+  background:#d9dee8;
+}
+.page-nav{
+  position:absolute;
+  right:10px;
+  bottom:12px;
+  z-index:83;
+  height:58px;
+  border-radius:6px;
+  background:rgba(248,250,252,.94);
+  box-shadow:0 8px 22px rgba(15,23,42,.12);
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+}
+.page-nav button{
+  height:58px;
+  width:58px;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  color:#4b5563;
+  font-size:32px;
+  font-weight:900;
+}
+.page-nav button:disabled{
+  opacity:.38;
+  cursor:default;
+}
+.page-counter{
+  width:88px;
+  text-align:center;
+  font-weight:900;
+  color:#5f6878;
+}
+.page-counter small{
+  display:block;
+  font-size:12px;
+  margin-top:2px;
+}
+.pen-palette{
+  position:absolute;
+  left:50%;
+  bottom:84px;
+  transform:translateX(-50%);
+  min-width:460px;
+  padding:12px 14px;
+  border-radius:9px;
   background:#fff;
-  border:2px solid #111827;
+  border:1px solid #dbe1eb;
   box-shadow:var(--shadow);
-  padding:14px;
+  display:none;
+  grid-template-columns:auto auto auto auto;
+  gap:14px;
+  align-items:center;
+  z-index:88;
 }
-.mini-board.show{display:block}
-.mini-board h3{margin:0 0 8px;font-size:15px}
-.scratch{
-  height:142px;
-  border-radius:8px;
-  background:
-    linear-gradient(rgba(148,163,184,.22) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(148,163,184,.22) 1px,transparent 1px),
-    #f8fafc;
-  background-size:22px 22px;
-  color:var(--red);
+.pen-palette.show{display:grid}
+.palette-group{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.palette-label{
+  color:#6b7280;
+  font-size:12px;
+  font-weight:900;
+}
+.swatch{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  border:2px solid #e5e7eb;
+  cursor:pointer;
+}
+.swatch.active{outline:3px solid rgba(7,199,131,.22);border-color:var(--seewo-green)}
+.size-dot{
+  border:0;
+  background:#f1f5f9;
+  border-radius:20px;
+  min-width:32px;
+  height:28px;
+  cursor:pointer;
+  font-weight:900;
+}
+.size-dot.active{background:var(--seewo-green);color:#fff}
+.mode-button{
+  height:28px;
+  padding:0 10px;
+  border:0;
+  border-radius:5px;
+  background:#f1f5f9;
+  cursor:pointer;
+  font-weight:900;
+}
+.mode-button.active{background:#111827;color:#fff}
+.floating-panel{
+  position:absolute;
+  left:50%;
+  bottom:88px;
+  transform:translateX(-50%);
+  width:560px;
+  max-height:calc(100vh - 160px);
+  overflow:auto;
+  border-radius:6px;
+  border:1px solid #d9dee8;
+  background:#fff;
+  box-shadow:var(--shadow);
+  padding:28px 32px;
+  z-index:86;
+  display:none;
+}
+.floating-panel.show{display:block}
+.floating-panel h3{
+  margin:0 0 20px;
+  font-size:19px;
+}
+.tool-grid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:24px 22px;
+  margin-bottom:32px;
+}
+.tile{
+  position:relative;
+  min-height:68px;
+  border:0;
+  background:transparent;
+  color:#5b6473;
+  display:grid;
+  place-items:center;
+  gap:8px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:800;
+}
+.tile span{
+  font-size:31px;
+  line-height:1;
+  color:#636b78;
+}
+.tile.plus:after{
+  content:"+";
+  position:absolute;
+  right:10px;
+  top:2px;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:var(--seewo-green);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:13px;
+  font-weight:900;
+}
+.answer-panel,
+.cast-wall,
+.mini-board,
+.student-drawer,
+.side-pages{
+  position:absolute;
+  z-index:87;
+  display:none;
+}
+.answer-panel.show,
+.cast-wall.show,
+.mini-board.show,
+.student-drawer.show,
+.side-pages.show{display:block}
+.answer-panel{
+  left:16%;
+  right:7%;
+  top:112px;
+  bottom:104px;
+  border-radius:2px;
+  overflow:hidden;
+  background:#fff;
+  border:1px solid #d9dee8;
+  box-shadow:var(--shadow);
+}
+.panel-titlebar{
+  height:54px;
+  background:var(--seewo-orange);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
   font-size:20px;
   font-weight:900;
-  padding:24px;
 }
-.toast-stack{position:fixed;right:18px;top:76px;z-index:120;display:grid;gap:8px;pointer-events:none}
-.toast{
-  background:#fff;
-  border:1px solid #dbe3ee;
-  border-left:4px solid var(--green);
-  border-radius:10px;
-  padding:10px 14px;
-  box-shadow:0 10px 26px rgba(15,23,42,.14);
-  font-size:13px;
+.panel-close{
+  width:34px;
+  height:34px;
+  border:0;
+  border-radius:50%;
+  background:rgba(255,255,255,.18);
+  color:#fff;
+  cursor:pointer;
+  font-size:25px;
+}
+.answer-body{
+  position:absolute;
+  inset:54px 0 0;
+  display:grid;
+  grid-template-columns:1fr 180px;
+}
+.answer-main{
+  padding:52px 60px;
+}
+.answer-rate{
+  display:flex;
+  align-items:baseline;
+  gap:18px;
+  color:#3f3f46;
+  font-size:20px;
   font-weight:800;
-  transition:opacity .2s,transform .2s;
+}
+.answer-rate strong{
+  font-size:66px;
+  line-height:1;
+}
+.answer-chart{
+  height:330px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:54px;
+  padding:20px 20px 42px;
+}
+.answer-chart .bar{
+  width:58px;
+  background:#eff1f5;
+}
+.answer-chart .bar.correct{
+  background:#61c576;
+}
+.correct-row{
+  position:absolute;
+  left:60px;
+  bottom:28px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  color:#3f3f46;
+  font-size:20px;
+  font-weight:900;
+}
+.answer-choice{
+  width:46px;
+  height:46px;
+  border:2px solid #f3c5c5;
+  border-radius:4px;
+  color:#e45c5c;
+  display:grid;
+  place-items:center;
+}
+.answer-choice.correct{
+  border-color:var(--seewo-green);
+  color:var(--seewo-green);
+  background:#ecfdf5;
+}
+.answer-side{
+  border-left:1px solid #eef0f4;
+  padding:58px 20px;
+  color:#7a8190;
+  font-weight:900;
+}
+.question-chip{
+  height:78px;
+  border-radius:8px;
+  display:grid;
+  place-items:center;
+  margin-bottom:18px;
+  background:#f7f7f8;
+}
+.question-chip.active{
+  background:#ffad2e;
+  color:#fff;
+}
+.cast-wall{
+  left:14%;
+  right:9%;
+  top:112px;
+  bottom:104px;
+  border-radius:2px;
+  overflow:hidden;
+  background:#fff;
+  border:1px solid #d9dee8;
+  box-shadow:var(--shadow);
+}
+.cast-grid{
+  position:absolute;
+  inset:54px 0 0;
+  padding:32px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  grid-template-rows:repeat(2,1fr);
+  gap:18px;
+}
+.cast-card{
+  border:1px solid #e3e7ef;
+  border-radius:6px;
+  background:#101827;
+  color:#fff;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  font-weight:900;
+}
+.cast-card:nth-child(2){background:#f8fafc;color:#111827}
+.cast-card:nth-child(3){background:#0f172a}
+.cast-card:nth-child(4){background:#fff;color:#111827}
+.chalk{
+  font-family:"Comic Sans MS","KaiTi",cursive;
+  font-size:46px;
+  color:#f87171;
+}
+.mini-board{
+  left:7%;
+  right:7%;
+  top:48px;
+  bottom:52px;
+  border-radius:8px;
+  background:#fff;
+  border:1px solid #cfd6df;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.mini-head{
+  height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+  border-bottom:1px solid #e5e7eb;
+  font-size:20px;
+  font-weight:900;
+}
+.mini-body{
+  position:absolute;
+  inset:52px 0 0;
+  display:grid;
+  grid-template-columns:50px 1fr 252px;
+}
+.shape-rail{
+  border-right:1px solid #d9dee8;
+  background:#f8fafc;
+  padding-top:10px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+}
+.shape-tool{
+  width:42px;
+  height:42px;
+  border:0;
+  background:transparent;
+  display:grid;
+  place-items:center;
+  font-size:28px;
+  cursor:pointer;
+}
+.shape-tool.active{
+  outline:2px solid #6bbd69;
+  background:#fff;
+}
+.math-canvas{
+  position:relative;
+  background:#fff;
+  border-top:28px solid #777;
+  border-bottom:24px solid #777;
+}
+.math-bottom{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:24px;
+  height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+  color:#c9c9c9;
+  font-size:30px;
+}
+.math-inspector{
+  border-left:1px solid #d9dee8;
+  background:#fff;
+  display:flex;
+  flex-direction:column;
+}
+.object-title{
+  height:48px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 12px;
+  border-bottom:1px solid #d9dee8;
+  font-weight:900;
+}
+.inspector-section{
+  border-bottom:1px solid #e5e7eb;
+  padding:14px 12px;
+  display:grid;
+  gap:10px;
+  font-size:15px;
+}
+.green-cta{
+  position:absolute;
+  right:22px;
+  bottom:18px;
+  height:42px;
+  border:0;
+  border-radius:6px;
+  background:#58c88d;
+  color:#fff;
+  padding:0 26px;
+  cursor:pointer;
+  font-size:17px;
+  font-weight:900;
+}
+.student-drawer{
+  right:110px;
+  top:148px;
+  width:360px;
+  border-radius:8px;
+  background:#fff;
+  border:1px solid #d9dee8;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.drawer-head{
+  height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+  background:#f8fafc;
+  border-bottom:1px solid #e5e7eb;
+  font-weight:900;
+}
+.student-list{
+  padding:14px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+.student-seat{
+  height:44px;
+  border:1px solid #d9dee8;
+  border-radius:5px;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  background:#fff;
+}
+.student-seat.online{
+  color:var(--seewo-green-dark);
+  background:#effdf7;
+}
+.side-pages{
+  left:12px;
+  bottom:92px;
+  width:304px;
+  max-height:520px;
+  border-radius:8px;
+  background:#fff;
+  border:1px solid #d9dee8;
+  box-shadow:var(--shadow);
+  padding:14px;
+}
+.side-pages h3{
+  margin:0 0 12px;
+  font-size:16px;
+}
+.page-gallery{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.gallery-card{
+  height:78px;
+  border:1px solid #d9dee8;
+  border-radius:5px;
+  background:#fff;
+  cursor:pointer;
+}
+.gallery-card.active{
+  border:3px solid var(--seewo-green);
+}
+.toast{
+  position:absolute;
+  left:50%;
+  top:128px;
+  transform:translateX(-50%) translateY(-10px);
+  min-width:240px;
+  padding:12px 18px;
+  border-radius:6px;
+  color:#fff;
+  background:rgba(17,24,39,.86);
+  box-shadow:0 12px 30px rgba(15,23,42,.22);
+  text-align:center;
+  font-weight:900;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease,transform .18s ease;
+  z-index:110;
+}
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+.foot-status{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:32px;
+  background:#fff;
+  border-top:1px solid #d4d9e3;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:22px;
+  padding:0 18px;
+  color:#4b5563;
+  font-weight:800;
+  z-index:24;
+}
+.seewo-app.teaching .window-strip,
+.seewo-app.teaching .edit-ribbon,
+.seewo-app.teaching .page-strip,
+.seewo-app.teaching .property-pane,
+.seewo-app.teaching .side-tabs,
+.seewo-app.teaching .foot-status{
+  display:none;
+}
+.seewo-app.teaching .editor-shell{
+  top:0;
+  bottom:0;
+  grid-template-columns:1fr;
+  background:#fff;
+}
+.seewo-app.teaching .workbench{
+  grid-column:1/-1;
+  width:100%;
+  height:100%;
+  background:#fff;
+  place-items:stretch;
+}
+.seewo-app.teaching .slide-page{
+  width:100vw;
+  height:100vh;
+  max-width:none;
+  aspect-ratio:auto;
+  box-shadow:none;
+}
+.seewo-app.teaching .slide-inner{
+  padding:76px 92px 122px;
+}
+.seewo-app.teaching .lesson-question{
+  max-width:1120px;
+  font-size:46px;
+}
+.seewo-app.teaching .teacher-note{
+  left:92px;
+  right:92px;
+  bottom:104px;
+}
+.seewo-app.teaching .easy-controller{
+  top:72px;
+  right:22px;
+}
+.seewo-app.teaching .floating-panel{
+  bottom:94px;
+}
+@media (max-height:720px){
+  .edit-ribbon{height:64px}
+  .editor-shell{top:96px}
+  .slide-inner{padding:42px 66px}
+  .lesson-question{font-size:32px}
+  .bottom-toolbar{height:76px}
+  .seewo-app.teaching .slide-inner{padding:52px 78px 104px}
+  .seewo-app.teaching .lesson-question{font-size:38px}
 }
 </style>
 </head>
 <body>
-<main class="board-app" id="boardApp">
-  <canvas class="ink-canvas" id="inkCanvas" data-canvas="annotationCanvas"></canvas>
+<main class="seewo-app teaching" id="boardApp">
+  <div class="sr-only">步步优化白板端 板中板 答题结果 学生投屏四宫格 底部工具栏 函数 几何 尺规 题库 仿真实验</div>
 
-  <header class="statusbar">
-    <div class="left"><span class="dot"></span><span>四年级 2 班 · 数学</span><span id="onlineState">27/28 平板在线</span></div>
-    <div class="center">步步优化白板端 · 教师大屏</div>
-    <div class="right"><span>传屏同步</span><span>录制待命</span><span>16:58</span></div>
+  <header class="window-strip" aria-label="编辑窗口标题栏">
+    <div class="brand-tab"><span class="logo-mark">BB</span>步步白板</div>
+    <div class="doc-tabs">
+      <div class="doc-tab"><span class="logo-mark" style="width:18px;height:18px;background:#111827;font-size:9px">EN</span> 1 集合的含义与表示 seewo_...</div>
+      <div class="doc-tab muted">未命名教案</div>
+    </div>
+    <div class="window-actions"><span>?</span><span>信</span><span>一</span><span>□</span><span>×</span></div>
   </header>
 
-  <section class="canvas-zone">
-    <nav class="filmstrip" id="filmstrip" aria-label="课件缩略页"></nav>
-    <section class="board-page" id="boardPage">
-      <h1 class="page-title" id="pageTitle">随堂讲解：哪个分数最接近 1/2？</h1>
-      <div class="page-sub" id="pageSub">老师可以直接用白板笔圈画；学生平板同步看到当前页。</div>
-      <div class="lesson-card">
-        <h2 id="cardTitle">单选题</h2>
-        <div class="formula" id="formula">2/5　3/7　4/9　5/8</div>
-        <div class="options" id="options">
-          <div class="option">A · 2/5</div>
-          <div class="option">B · 3/7</div>
-          <div class="option">C · 4/9</div>
-          <div class="option">D · 5/8</div>
+  <section class="edit-ribbon" aria-label="顶部功能区">
+    <div class="ribbon-left">
+      <button class="ribbon-tool small" type="button"><span class="ico">☁</span>文件</button>
+      <button class="ribbon-tool small" type="button"><span class="ico">↻</span>同步</button>
+      <div class="ribbon-divider"></div>
+      <button class="ribbon-tool small disabled" type="button"><span class="ico">↶</span>撤销</button>
+      <button class="ribbon-tool small disabled" type="button"><span class="ico">↷</span>恢复</button>
+      <button class="teach-button" type="button" id="teachMode"><span class="play"></span>授课</button>
+    </div>
+    <div class="ribbon-tools">
+      <button class="feature-tool" type="button"><span class="symbol">T</span>文本</button>
+      <button class="feature-tool blue" type="button"><span class="symbol">●</span>形状</button>
+      <button class="feature-tool orange" type="button"><span class="symbol">▧</span>多媒体</button>
+      <button class="feature-tool green" type="button"><span class="symbol">▦</span>表格</button>
+      <button class="feature-tool orange" type="button"><span class="symbol">◕</span>课堂活动</button>
+      <button class="feature-tool blue" type="button"><span class="symbol">⌘</span>思维导图</button>
+      <button class="feature-tool blue" type="button"><span class="symbol">△</span>几何</button>
+      <button class="feature-tool blue" type="button"><span class="symbol">π</span>公式</button>
+      <button class="feature-tool green" type="button"><span class="symbol">ƒx</span>函数</button>
+      <button class="feature-tool green" type="button"><span class="symbol">▥</span>统计图表</button>
+      <button class="feature-tool orange" type="button"><span class="symbol">▤</span>学科工具</button>
+    </div>
+    <div class="ribbon-share">
+      <button class="share-button" type="button">分享</button>
+    </div>
+  </section>
+
+  <section class="editor-shell" aria-label="授课工作区">
+    <aside class="page-strip" aria-label="课件页缩略图">
+      <button class="new-page" type="button"><span style="font-size:22px">＋</span>新建页面</button>
+      <div class="thumb-list" id="filmstrip"></div>
+      <div class="strip-footer" id="stripFooter">课件 第 1 页，共 98 页</div>
+    </aside>
+
+    <section class="workbench" id="workbench">
+      <article class="slide-page" id="slidePage">
+        <div class="slide-inner" id="slideInner"></div>
+        <canvas class="ink-canvas" id="inkCanvas" data-canvas="annotationCanvas"></canvas>
+      </article>
+    </section>
+
+    <aside class="property-pane" aria-label="右侧属性面板">
+      <div class="property-title">布局与背景</div>
+      <div class="property-body">
+        <div class="pane-row">
+          <div class="layout-preview"></div>
+          <button class="pane-button" type="button">更改布局</button>
+        </div>
+        <div class="pane-row">
+          <div class="bg-preview"></div>
+          <button class="pane-button" type="button">更多背景</button>
+        </div>
+        <button class="pane-button" type="button">应用主题</button>
+        <div class="pane-row">
+          <div class="layout-preview" style="height:48px"></div>
+          <button class="pane-button" type="button">替换</button>
+        </div>
+        <div class="pane-row">
+          <div class="layout-preview" style="height:48px;background:linear-gradient(135deg,#fff 48%,#ef4444 49% 51%,#fff 52%)"></div>
+          <button class="pane-button" type="button">去背景</button>
         </div>
       </div>
-      <div class="fraction-wheel" aria-hidden="true"></div>
-      <div class="red-ring" aria-hidden="true"></div>
-      <div class="pre-note"><strong>课前留白：</strong><span>老师课前发的一段话留在白板角落，授课开始后自动缩成便签。</span></div>
-      <div class="summary-stack">
-        <div class="summary-pill"><span>已答学生</span><strong id="answeredCount">24</strong></div>
-        <div class="summary-pill"><span>未同步平板</span><strong>1</strong></div>
-        <div class="summary-pill"><span>本页批注</span><strong>跟页保存</strong></div>
-      </div>
-    </section>
+    </aside>
+
+    <aside class="side-tabs" aria-label="右侧面板切换">
+      <div class="side-tab active">属性</div>
+      <div class="side-tab">动画</div>
+      <div class="side-tab">关联</div>
+    </aside>
   </section>
 
-  <div class="float-controller open" id="floatController" style="right:24px;top:118px">
+  <section class="easy-controller open" id="floatController" style="right:22px;top:72px" aria-label="易课堂悬浮控制条">
+    <button class="float-main" id="floatMain" type="button" aria-label="拖动或展开易课堂控制条">
+      <span><strong id="onlineCount">3</strong>/24</span>
+      <small>上课学生</small>
+    </button>
     <div class="dock" id="dock">
-      <button type="button" data-action="pen"><span>✎</span><small>笔</small></button>
-      <button type="button" data-action="clear"><span>⌫</span><small>清空</small></button>
-      <button type="button" data-action="more"><span>＋</span><small>更多</small></button>
-      <button type="button" data-action="answer"><span>▥</span><small>答题</small></button>
-      <button type="button" data-action="cast"><span>▦</span><small>投屏</small></button>
-      <button type="button" data-action="students"><span>▤</span><small>学生</small></button>
-      <button type="button" data-action="timer"><span>⏱</span><small>计时</small></button>
-      <button type="button" data-action="pick"><span>◎</span><small>抽选</small></button>
+      <button type="button" data-action="cast"><span>▣</span>互动</button>
+      <button type="button" data-action="answer"><span>?</span>答题</button>
+      <button type="button" data-action="clear"><span>▣</span>清空</button>
+      <button type="button" data-action="students"><span>▤</span>学生</button>
+      <button type="button" data-action="miniBoard"><span>▢</span>板中板</button>
+      <div class="dock-divider"></div>
+      <button type="button" data-action="pen"><span>✎</span>笔</button>
+      <button type="button" data-action="more"><span>☰</span>菜单</button>
     </div>
-    <button class="float-main" id="floatMain" type="button" aria-label="打开课堂控制器"><span>✦</span><small>课堂</small></button>
-  </div>
-
-  <section class="toolbar" aria-label="授课底部工具栏">
-    <button class="tool" type="button" data-action="menu">☰</button>
-    <button class="tool" type="button" data-action="min">－</button>
-    <button class="tool" type="button" data-action="teacher">师</button>
-    <span class="sep"></span>
-    <button class="tool" type="button" data-action="select">选择</button>
-    <button class="tool active" type="button" data-action="pen">笔</button>
-    <button class="tool" type="button" data-action="eraser">橡皮</button>
-    <button class="tool" type="button" data-action="undo">撤销</button>
-    <button class="tool" type="button" data-action="more">更多</button>
-    <span class="sep"></span>
-    <button class="tool" type="button" data-action="screenshot">截图</button>
-    <button class="tool" type="button" data-action="record">录制</button>
-    <button class="tool light" type="button" data-action="prevPage">‹</button>
-    <div class="page-label" id="toolbarPage">1 / 5</div>
-    <button class="tool light" type="button" data-action="nextPage">›</button>
   </section>
 
-  <nav class="page-nav">
-    <button type="button" data-action="prevPage" id="prevBtn">上一页</button>
-    <div class="page-label" id="pageLabel">第 1 / 5 页</div>
-    <button class="next" type="button" data-action="nextPage" id="nextBtn">下一页</button>
+  <section class="bottom-toolbar" aria-label="底部工具栏">
+    <div class="toolbar-group left">
+      <button class="toolbar-button" type="button" data-action="pages"><span class="ico">☰</span>菜单</button>
+      <div class="toolbar-separator"></div>
+      <button class="toolbar-button" type="button"><span class="ico">↙</span>最小化</button>
+      <div class="toolbar-separator"></div>
+      <button class="toolbar-button" type="button"><span class="ico">师</span>教师</button>
+    </div>
+    <div class="toolbar-group center">
+      <button class="toolbar-button active" type="button" data-action="select"><span class="ico">➤</span>选择</button>
+      <button class="toolbar-button" type="button" data-action="pen"><span class="ico">✎</span>笔</button>
+      <button class="toolbar-button" type="button" data-action="eraser"><span class="ico">◆</span>橡皮</button>
+      <button class="toolbar-button" type="button" data-action="undo"><span class="ico">↶</span>撤销</button>
+      <button class="toolbar-button" type="button" data-action="more"><span class="ico">…</span>更多</button>
+    </div>
+    <div class="toolbar-group right">
+      <button class="toolbar-button" type="button" data-action="snapshot"><span class="ico">▣</span>截图</button>
+      <button class="toolbar-button" type="button"><span class="ico">◎</span>录制胶囊</button>
+      <button class="toolbar-button" type="button"><span class="ico">▯</span>手机投屏</button>
+    </div>
+  </section>
+
+  <nav class="page-nav" aria-label="底部翻页">
+    <button type="button" id="prevBtn" aria-label="上一页">‹</button>
+    <div class="page-counter"><span id="pageLabel">22/98</span><small>页码</small></div>
+    <button type="button" id="nextBtn" aria-label="下一页">›</button>
   </nav>
 
-  <section class="panel" id="penPanel">
-    <div class="panel-head"><h3>白板笔</h3><button type="button" data-action="closePanels">×</button></div>
-    <div class="pen-controls">
-      <div>
-        <div class="tool-section"><h4>颜色</h4></div>
-        <div class="choice-row">
-          <button class="choice color-choice active" data-pen-color="#111827" type="button">黑</button>
-          <button class="choice color-choice" data-pen-color="#e11d48" type="button">红</button>
-          <button class="choice color-choice" data-pen-color="#2563eb" type="button">蓝</button>
-        </div>
-      </div>
-      <div>
-        <div class="tool-section"><h4>粗细</h4></div>
-        <div class="choice-row">
-          <button class="choice active" data-pen-size="4" type="button">细</button>
-          <button class="choice" data-pen-size="8" type="button">粗</button>
-          <button class="choice" data-pen-size="13" type="button">特粗</button>
-        </div>
-      </div>
-      <div>
-        <div class="tool-section"><h4>线型</h4></div>
-        <div class="choice-row">
-          <button class="choice active" data-pen-mode="curve" type="button">曲线</button>
-          <button class="choice" data-pen-mode="line" type="button">直线</button>
-        </div>
-      </div>
+  <section class="pen-palette" id="penPalette" aria-label="白板笔设置">
+    <div class="palette-group">
+      <span class="palette-label">颜色</span>
+      <button class="swatch active" type="button" data-pen-color="#111827" style="background:#111827" aria-label="黑笔"></button>
+      <button class="swatch" type="button" data-pen-color="#e11d48" style="background:#e11d48" aria-label="红笔"></button>
+      <button class="swatch" type="button" data-pen-color="#2563eb" style="background:#2563eb" aria-label="蓝笔"></button>
+    </div>
+    <div class="palette-group">
+      <span class="palette-label">粗细</span>
+      <button class="size-dot" type="button" data-pen-size="4">4</button>
+      <button class="size-dot active" type="button" data-pen-size="8">8</button>
+      <button class="size-dot" type="button" data-pen-size="13">13</button>
+    </div>
+    <div class="palette-group">
+      <span class="palette-label">线型</span>
+      <button class="mode-button active" type="button" data-pen-mode="curve">曲线</button>
+      <button class="mode-button" type="button" data-pen-mode="line">直线</button>
+    </div>
+    <div class="palette-group">
+      <button class="mode-button" type="button" data-action="clear">清空批注</button>
     </div>
   </section>
 
-  <section class="panel" id="morePanel" aria-label="更多工具">
-    <div class="panel-head"><h3>更多工具</h3><button type="button" data-action="closePanels">×</button></div>
-    <div class="tool-section">
-      <h4>通用</h4>
-      <div class="tool-grid">
-        <button class="tile" type="button" data-action="shape"><span>□</span>形状</button>
-        <button class="tile" type="button" data-action="magnifier"><span>⌕</span>放大镜</button>
-        <button class="tile" type="button" data-action="miniBoard"><span>▣</span>板中板</button>
-        <button class="tile" type="button" data-action="screenshot"><span>▤</span>截图</button>
-        <button class="tile" type="button" data-action="timer"><span>⏱</span>计时</button>
-        <button class="tile" type="button" data-action="undo"><span>↶</span>恢复</button>
-      </div>
+  <section class="floating-panel" id="morePanel" aria-label="更多工具">
+    <h3>通用</h3>
+    <div class="tool-grid">
+      <button class="tile" type="button"><span>●</span>形状</button>
+      <button class="tile" type="button"><span>⌕</span>放大镜</button>
+      <button class="tile" type="button" data-action="miniBoard"><span>▣</span>板中板</button>
+      <button class="tile" type="button" data-action="snapshot"><span>✂</span>截图</button>
+      <button class="tile" type="button"><span>♟</span>计时</button>
+      <button class="tile" type="button"><span>↷</span>恢复</button>
     </div>
-    <div class="tool-section">
-      <h4>学科工具</h4>
-      <div class="tool-grid">
-        <button class="tile" type="button" data-action="function"><span>ƒ</span>函数</button>
-        <button class="tile" type="button" data-action="geometry"><span>△</span>几何</button>
-        <button class="tile" type="button" data-action="ruler"><span>尺</span>尺规</button>
-        <button class="tile" type="button" data-action="dictation"><span>听</span>听写</button>
-        <button class="tile" type="button" data-action="grid"><span>田</span>四线三格</button>
-        <button class="tile" type="button" data-action="painter"><span>画</span>画板</button>
-        <button class="tile" type="button" data-action="chem"><span>化</span>化学方程</button>
-        <button class="tile" type="button" data-action="planet"><span>星</span>星球</button>
-      </div>
+    <h3>学科工具</h3>
+    <div class="tool-grid">
+      <button class="tile plus" type="button"><span>字</span>汉字</button>
+      <button class="tile plus" type="button"><span>ā</span>拼音</button>
+      <button class="tile plus" type="button"><span>诗</span>古诗词</button>
+      <button class="tile" type="button" data-action="function"><span>ƒx</span>函数</button>
+      <button class="tile" type="button"><span>△</span>几何</button>
+      <button class="tile" type="button"><span>▭</span>尺规</button>
+      <button class="tile" type="button"><span>◠</span>听写</button>
+      <button class="tile plus" type="button"><span>A</span>英汉字典</button>
+      <button class="tile" type="button"><span>☰</span>四线三格</button>
+      <button class="tile" type="button"><span>✕</span>画板</button>
+      <button class="tile" type="button"><span>▵</span>化学方程</button>
+      <button class="tile plus" type="button"><span>◌</span>星球</button>
+      <button class="tile" type="button"><span>▤</span>乐器</button>
     </div>
-    <div class="tool-section">
-      <h4>在线资源</h4>
-      <div class="tool-grid">
-        <button class="tile" type="button" data-action="microLesson"><span>▶</span>微课</button>
-        <button class="tile" type="button" data-action="courseVideo"><span>▻</span>课程视频</button>
-        <button class="tile" type="button" data-action="questionBank"><span>题</span>题库</button>
-        <button class="tile" type="button" data-action="mathBoard"><span>∑</span>数学画板</button>
-        <button class="tile" type="button" data-action="experiment"><span>⚙</span>仿真实验</button>
-        <button class="tile" type="button" data-action="lab"><span>NB</span>NB实验</button>
-      </div>
+    <h3>在线资源</h3>
+    <div class="tool-grid">
+      <button class="tile" type="button"><span>☯</span>洋葱微课</button>
+      <button class="tile" type="button"><span>▶</span>课程视频</button>
+      <button class="tile" type="button"><span>▣</span>题库</button>
+      <button class="tile" type="button" data-action="miniBoard"><span>∿</span>数学画板</button>
+      <button class="tile" type="button"><span>⚛</span>仿真实验</button>
+      <button class="tile" type="button"><span>◉</span>NB实验</button>
     </div>
   </section>
 
-  <section class="panel answer-panel" id="answerPanel" aria-label="答题结果">
-    <div class="panel-head"><h3>多选题 · 作答结果</h3><button type="button" data-action="closePanels">×</button></div>
-    <div class="rate"><strong>66.7%</strong><span>正确率 · 18/27 已提交</span></div>
-    <div class="answer-bars">
-      <div class="answer-col"><div class="answer-bar" style="height:42%">5</div><div class="key">A</div></div>
-      <div class="answer-col"><div class="answer-bar" style="height:26%">3</div><div class="key">B</div></div>
-      <div class="answer-col ok"><div class="answer-bar" style="height:74%">11</div><div class="key">C</div></div>
-      <div class="answer-col ok"><div class="answer-bar" style="height:64%">9</div><div class="key">D</div></div>
-    </div>
-    <div class="panel-actions">
-      <button type="button" data-action="pick">抽选讲评学生</button>
-      <button type="button" data-action="students">查看未答学生</button>
+  <section class="answer-panel" id="answerPanel" aria-label="答题结果">
+    <div class="panel-titlebar"><span>多选题</span><button class="panel-close" type="button" data-close="answerPanel">×</button></div>
+    <div class="answer-body">
+      <div class="answer-main">
+        <div class="answer-rate">正确率 <strong>66.7</strong>%</div>
+        <div class="answer-chart">
+          <div class="bar" data-label="A" style="height:35%"></div>
+          <div class="bar correct" data-label="B" style="height:72%"></div>
+          <div class="bar" data-label="C" style="height:8%"></div>
+          <div class="bar" data-label="D" style="height:16%"></div>
+        </div>
+        <div class="correct-row">
+          <span>正确答案：</span>
+          <span class="answer-choice">A</span>
+          <span class="answer-choice correct">B</span>
+          <span class="answer-choice">C</span>
+          <span class="answer-choice">D</span>
+          <button class="pane-button" type="button">播放解析</button>
+        </div>
+      </div>
+      <aside class="answer-side">
+        <div class="question-chip active">第1题<br>66.7%</div>
+        <div class="question-chip">第2题<br>33.3%</div>
+        <div style="margin-top:28px;color:#374151">0人未答题 »</div>
+      </aside>
     </div>
   </section>
 
   <section class="cast-wall" id="castPanel" aria-label="学生投屏四宫格">
-    <div class="cast-card active"><div class="cast-name">小黑</div><div class="cast-ink">5/8 最接近<br>因为 5×2=10</div></div>
-    <div class="cast-card"><div class="cast-name">小红</div><div class="cast-ink">4/9 也接近？<br>差一点点</div></div>
-    <div class="cast-card"><div class="cast-name">小蓝</div><div class="cast-ink">把 1/2 化成 4/8<br>所以 5/8 差 1/8</div></div>
-    <div class="cast-card"><div class="cast-name">小白</div><div class="cast-ink">我先画圆<br>再比面积</div></div>
+    <div class="panel-titlebar"><span>学生投屏四宫格</span><button class="panel-close" type="button" data-close="castPanel">×</button></div>
+    <div class="cast-grid">
+      <div class="cast-card"><span>小蓝</span><div class="chalk">456</div><small>实时同步学生草稿</small></div>
+      <div class="cast-card"><span>小黄</span><div class="chalk" style="color:#e879f9">789</div><small>已提交答案 B</small></div>
+      <div class="cast-card"><span>小林</span><div class="chalk" style="color:#5eead4">a b c</div><small>需要老师点拨</small></div>
+      <div class="cast-card"><span>小陈</span><div class="chalk" style="color:#facc15">1 2 3</div><small>推到大屏讲解</small></div>
+    </div>
   </section>
 
-  <aside class="student-drawer" id="studentDrawer" aria-label="学生端预览">
-    <div class="panel-head"><h3>学生端任务</h3><button type="button" data-action="closePanels">×</button></div>
-    <div class="task"><strong>学习任务</strong><span>收到当前白板页与随堂题。</span></div>
-    <div class="task"><strong>未提交</strong><span>芷雨、明轩、星辰，共 3 人。</span></div>
-    <div class="task"><strong>错题记录</strong><span>选 A/B 的学生自动加入错题本。</span></div>
-    <div class="task"><strong>教师传屏</strong><span>学生平板保持跟随当前大屏页。</span></div>
-  </aside>
-
-  <section class="mini-board" id="miniBoard">
-    <div class="panel-head"><h3>板中板 · 临时推演</h3><button type="button" data-action="miniBoard">×</button></div>
-    <div class="scratch">1/2 = 4/8<br>5/8 比 4/8 多 1/8</div>
+  <section class="mini-board" id="miniBoard" aria-label="板中板">
+    <div class="mini-head">
+      <div><span class="logo-mark" style="display:inline-grid;margin-right:8px">∿</span>数学画板</div>
+      <button class="pane-button" type="button" data-close="miniBoard">保存</button>
+    </div>
+    <div class="mini-body">
+      <aside class="shape-rail">
+        <button class="shape-tool active" type="button">➤</button>
+        <button class="shape-tool" type="button">•</button>
+        <button class="shape-tool" type="button">╱</button>
+        <button class="shape-tool" type="button">○</button>
+        <button class="shape-tool" type="button">✎</button>
+        <button class="shape-tool" type="button">A</button>
+      </aside>
+      <section class="math-canvas">
+        <div class="math-bottom">•  ╱  △  ×  ⊙  ⟲  a−2  🗑  …</div>
+      </section>
+      <aside class="math-inspector">
+        <div class="object-title">对象 <span style="margin-left:auto">▶</span></div>
+        <div class="inspector-section">
+          <strong>全局</strong>
+          <span>基础　网格　x轴　y轴</span>
+          <label>新点自动命名 <input type="checkbox" checked /></label>
+          <label>画布尺寸 <select><option>16:9 默认</option></select></label>
+          <label>显示精度 <select><option>0.00</option></select></label>
+        </div>
+      </aside>
+    </div>
+    <button class="green-cta" type="button" data-close="miniBoard">插入画板</button>
   </section>
 
-  <div class="toast-stack" id="toastStack"></div>
+  <section class="student-drawer" id="studentDrawer" aria-label="学生平板状态">
+    <div class="drawer-head"><span>24 个学生平板</span><button class="pane-button" type="button" data-close="studentDrawer">收起</button></div>
+    <div class="student-list">
+      <div class="student-seat online">小蓝</div><div class="student-seat online">小黄</div><div class="student-seat online">小林</div><div class="student-seat">小陈</div>
+      <div class="student-seat online">5</div><div class="student-seat">6</div><div class="student-seat online">7</div><div class="student-seat">8</div>
+      <div class="student-seat">9</div><div class="student-seat online">10</div><div class="student-seat">11</div><div class="student-seat">12</div>
+      <div class="student-seat">13</div><div class="student-seat">14</div><div class="student-seat">15</div><div class="student-seat">16</div>
+    </div>
+  </section>
+
+  <section class="side-pages" id="sidePages" aria-label="页面导航">
+    <h3>课件页面</h3>
+    <div class="page-gallery" id="pageGallery"></div>
+  </section>
+
+  <div class="toast" id="toast"></div>
+  <footer class="foot-status"><span>备课助手 <strong style="color:#fff;background:#15bd74;border-radius:10px;padding:1px 6px">new</strong></span><span>截图</span><span>备注</span><span style="color:#fb8c00;font-size:20px">S</span><span>中</span><span>AI</span></footer>
 </main>
 
 <script>
-const $ = (selector, root=document) => root.querySelector(selector);
-const $$ = (selector, root=document) => Array.from(root.querySelectorAll(selector));
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
 
 const pages = [
-  {title:'随堂讲解：哪个分数最接近 1/2？', sub:'老师可以直接用白板笔圈画；学生平板同步看到当前页。', tab:'讲解', card:'单选题', formula:'2/5　3/7　4/9　5/8', answered:24},
-  {title:'学生投屏：四种解法同时看', sub:'把学生平板投到大屏，老师直接在屏幕上批注。', tab:'投屏', card:'分屏讲评', formula:'学生 A：通分　学生 B：画图', answered:27},
-  {title:'随堂答题：实时看分布，不打断讲解', sub:'答题结果可以覆盖在白板上讲，讲完再收起。', tab:'答题', card:'多选题', formula:'C 与 D 是本题关键选项', answered:18},
-  {title:'板中板：临时推演不污染课件', sub:'打开一块小白板，推演结束后关闭，原课件页还在。', tab:'板中板', card:'推演区', formula:'1/2 = 4/8', answered:24},
-  {title:'课后留痕：当前页批注跟页保存', sub:'翻页后批注只跟随本页，不会串到下一页。', tab:'留痕', card:'本页记录', formula:'保存板书、答题图、投屏证据', answered:27}
+  {
+    kind: "cover",
+    thumb: "cover",
+    footer: "课件 第 1 页，共 98 页",
+    label: "1/98",
+    html: `
+      <div class="course-logo">bb</div>
+      <div class="cover-box">专题六　解析几何</div>
+      <div class="cover-title">第1讲　直线、圆、圆锥曲线</div>
+      <div class="teacher-note">课前留言：老师课前发的一段话留在白板角落，开始授课后自动缩成便签。</div>
+    `
+  },
+  {
+    kind: "question",
+    thumb: "normal",
+    footer: "课件 第 22 页，共 98 页",
+    label: "22/98",
+    html: `
+      <div class="lesson-question">
+        3．已知圆心在直线 <i>x-y-1=0</i> 上的圆与 <i>y</i> 轴的两个交点的坐标分别为<br>
+        (0,4)，(0，−2)，则该圆的方程为 <span class="answer-blank"></span>。
+        <br><span class="blue">(x−2)<sup>2</sup>+(y−1)<sup>2</sup>=13</span>
+      </div>
+      <div class="teacher-note">授课提示：先让学生找圆心，再用半径相等推出方程。</div>
+    `
+  },
+  {
+    kind: "worksheet",
+    thumb: "normal",
+    footer: "课件 第 23 页，共 98 页",
+    label: "23/98",
+    html: `
+      <div class="worksheet">
+        <div class="fraction-card">
+          <h1>随堂讲解：哪个分数最接近 1/2?</h1>
+          <strong>单选题</strong>
+          <div class="fraction-line"><span>2/5</span><span>3/7</span><span>4/9</span><span>5/8</span></div>
+          <div class="answer-options"><div>A · 2/5</div><div>B · 3/7</div><div>C · 4/9</div><div>D · 5/8</div></div>
+        </div>
+        <div style="position:relative;min-height:340px">
+          <div class="pie-sketch"></div>
+          <div class="red-mark"><span>先把 1/2 化成 4/8</span></div>
+        </div>
+      </div>
+    `
+  },
+  {
+    kind: "result",
+    thumb: "result",
+    footer: "课件 第 24 页，共 98 页",
+    label: "24/98",
+    html: `
+      <div class="mini-result">
+        <div>
+          <div class="rate">正确率 <strong>66.7</strong>%</div>
+          <p style="font-size:20px;color:#4b5563;font-weight:900">选择 B 的学生最多，可以把小蓝和小黄答案拖上来对比。</p>
+        </div>
+        <div class="chart">
+          <div class="bar" data-label="A" style="height:35%"></div>
+          <div class="bar correct" data-label="B" style="height:72%"></div>
+          <div class="bar" data-label="C" style="height:8%"></div>
+          <div class="bar" data-label="D" style="height:16%"></div>
+        </div>
+      </div>
+    `
+  },
+  {
+    kind: "summary",
+    thumb: "normal",
+    footer: "课件 第 25 页，共 98 页",
+    label: "25/98",
+    html: `
+      <div class="lesson-question" style="font-size:34px">
+        下课总结：今天保留三条板书。<br>
+        1．圆心在线上。<br>
+        2．半径由交点距离确定。<br>
+        3．答题结果自动进入课后报告。
+      </div>
+      <div class="teacher-note">课后动作：发布订正任务，推送错题本和本页批注截图。</div>
+    `
+  }
 ];
 
-let pageIndex = 0;
+const canvas = $("#inkCanvas");
+const ctx = canvas.getContext("2d");
+window.annotationCanvas = canvas;
+
+let pageIndex = 1;
 let penActive = false;
-let penColor = '#111827';
-let penSize = 4;
-let penMode = 'curve';
+let penColor = "#111827";
+let penSize = 8;
+let penMode = "curve";
+let erasing = false;
 let drawing = false;
 let startPoint = null;
-let lineSnapshot = null;
+let lastPoint = null;
+let snapshot = null;
+let toastTimer = 0;
 const annotationsByPage = new Map();
-const undoByPage = new Map();
+const undoStackByPage = new Map();
 
-function toast(message, ms=1700){
-  const stack = $('#toastStack');
-  const item = document.createElement('div');
-  item.className = 'toast';
-  item.textContent = message;
-  stack.appendChild(item);
-  setTimeout(()=>{ item.style.opacity = '0'; item.style.transform = 'translateX(18px)'; }, ms - 250);
-  setTimeout(()=> item.remove(), ms);
+function toast(message, ms = 1600) {
+  const node = $("#toast");
+  node.textContent = message;
+  node.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => node.classList.remove("show"), ms);
 }
 
-function resizeCanvas(preserve=true){
-  const canvas = $('#inkCanvas');
-  const app = $('#boardApp');
-  const old = preserve ? canvas.toDataURL() : '';
-  const rect = app.getBoundingClientRect();
-  const ratio = window.devicePixelRatio || 1;
-  canvas.width = Math.round(rect.width * ratio);
-  canvas.height = Math.round(rect.height * ratio);
-  canvas.style.width = rect.width + 'px';
-  canvas.style.height = rect.height + 'px';
-  const ctx = canvas.getContext('2d');
-  ctx.setTransform(ratio,0,0,ratio,0,0);
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  if(old && old.length > 100){
-    const img = new Image();
-    img.onload = () => ctx.drawImage(img,0,0,rect.width,rect.height);
-    img.src = old;
-  }
-}
-
-function saveInk(){
-  const canvas = $('#inkCanvas');
-  annotationsByPage.set(pageIndex, canvas.toDataURL());
-}
-
-function restoreInk(){
-  const canvas = $('#inkCanvas');
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  const data = annotationsByPage.get(pageIndex);
-  if(!data) return;
+function resizeCanvas(preserve = true) {
+  const old = preserve ? canvas.toDataURL("image/png") : null;
   const rect = canvas.getBoundingClientRect();
-  const img = new Image();
-  img.onload = () => ctx.drawImage(img,0,0,rect.width,rect.height);
-  img.src = data;
-}
-
-function pushUndo(){
-  const canvas = $('#inkCanvas');
-  const list = undoByPage.get(pageIndex) || [];
-  list.push(canvas.toDataURL());
-  if(list.length > 8) list.shift();
-  undoByPage.set(pageIndex, list);
-}
-
-function undoInk(){
-  const canvas = $('#inkCanvas');
-  const list = undoByPage.get(pageIndex) || [];
-  const data = list.pop();
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  if(data){
-    const rect = canvas.getBoundingClientRect();
-    const img = new Image();
-    img.onload = () => ctx.drawImage(img,0,0,rect.width,rect.height);
-    img.src = data;
-    annotationsByPage.set(pageIndex, data);
-  }else{
-    annotationsByPage.delete(pageIndex);
+  const ratio = window.devicePixelRatio || 1;
+  canvas.width = Math.max(1, Math.round(rect.width * ratio));
+  canvas.height = Math.max(1, Math.round(rect.height * ratio));
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  if (old) {
+    const image = new Image();
+    image.onload = () => {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    };
+    image.src = old;
   }
-  toast('已撤销上一笔');
 }
 
-function clearInk(){
-  const canvas = $('#inkCanvas');
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  annotationsByPage.delete(pageIndex);
-  toast('已清空当前页批注');
+function saveInk() {
+  annotationsByPage.set(pageIndex, canvas.toDataURL("image/png"));
 }
 
-function setPenActive(active=true){
-  penActive = active;
-  $('#inkCanvas').classList.toggle('active', active);
-  $$('[data-action="pen"]').forEach(btn => btn.classList.toggle('active', active));
-  if(active) showPanel('penPanel');
-  toast(active ? '白板笔已开启' : '白板笔已关闭');
+function restoreInk() {
+  const data = annotationsByPage.get(pageIndex);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (!data) return;
+  const image = new Image();
+  image.onload = () => {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const ratio = window.devicePixelRatio || 1;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  };
+  image.src = data;
 }
 
-function getPoint(event){
-  const rect = $('#inkCanvas').getBoundingClientRect();
-  return {x:event.clientX - rect.left, y:event.clientY - rect.top};
+function pushUndo() {
+  const stack = undoStackByPage.get(pageIndex) || [];
+  stack.push(canvas.toDataURL("image/png"));
+  if (stack.length > 12) stack.shift();
+  undoStackByPage.set(pageIndex, stack);
 }
 
-function startInk(event){
-  if(!penActive || event.button !== 0) return;
-  event.preventDefault();
-  const canvas = $('#inkCanvas');
-  const ctx = canvas.getContext('2d');
+function undoInk() {
+  const stack = undoStackByPage.get(pageIndex) || [];
+  const data = stack.pop();
+  if (!data) {
+    toast("当前页没有可撤销批注");
+    return;
+  }
+  const image = new Image();
+  image.onload = () => {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const ratio = window.devicePixelRatio || 1;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    saveInk();
+  };
+  image.src = data;
+}
+
+function clearInk() {
   pushUndo();
-  drawing = true;
-  startPoint = getPoint(event);
-  lineSnapshot = penMode === 'line' ? ctx.getImageData(0,0,canvas.width,canvas.height) : null;
-  ctx.strokeStyle = penColor;
-  ctx.lineWidth = penSize;
-  ctx.beginPath();
-  ctx.moveTo(startPoint.x,startPoint.y);
-  canvas.setPointerCapture?.(event.pointerId);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  annotationsByPage.delete(pageIndex);
+  toast("已清空本页批注");
 }
 
-function moveInk(event){
-  if(!drawing || !penActive) return;
+function setPenActive(active = true) {
+  penActive = active;
+  erasing = false;
+  canvas.classList.toggle("active", penActive);
+  $("#penPalette").classList.toggle("show", penActive);
+  $$('[data-action="pen"]').forEach((button) => button.classList.toggle("active", penActive));
+  $$('[data-action="select"]').forEach((button) => button.classList.toggle("active", !penActive));
+  if (penActive) closePanels("penPalette");
+}
+
+function getPoint(event) {
+  const rect = canvas.getBoundingClientRect();
+  return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+}
+
+function startInk(event) {
+  if (!penActive) return;
+  drawing = true;
+  pushUndo();
+  startPoint = getPoint(event);
+  lastPoint = startPoint;
+  snapshot = canvas.toDataURL("image/png");
+  ctx.save();
+  ctx.globalCompositeOperation = erasing ? "destination-out" : "source-over";
+  ctx.strokeStyle = erasing ? "rgba(0,0,0,1)" : penColor;
+  ctx.lineWidth = erasing ? penSize * 2.2 : penSize;
+  ctx.beginPath();
+  ctx.moveTo(startPoint.x, startPoint.y);
   event.preventDefault();
-  const canvas = $('#inkCanvas');
-  const ctx = canvas.getContext('2d');
-  const point = getPoint(event);
-  ctx.strokeStyle = penColor;
-  ctx.lineWidth = penSize;
-  if(penMode === 'line' && lineSnapshot){
-    ctx.putImageData(lineSnapshot,0,0);
+}
+
+function drawSnapshotLine(point) {
+  const image = new Image();
+  image.onload = () => {
+    const ratio = window.devicePixelRatio || 1;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.save();
+    ctx.globalCompositeOperation = erasing ? "destination-out" : "source-over";
+    ctx.strokeStyle = erasing ? "rgba(0,0,0,1)" : penColor;
+    ctx.lineWidth = erasing ? penSize * 2.2 : penSize;
     ctx.beginPath();
-    ctx.moveTo(startPoint.x,startPoint.y);
-    ctx.lineTo(point.x,point.y);
+    ctx.moveTo(startPoint.x, startPoint.y);
+    ctx.lineTo(point.x, point.y);
     ctx.stroke();
-  }else{
-    ctx.lineTo(point.x,point.y);
+    ctx.restore();
+  };
+  image.src = snapshot;
+}
+
+function moveInk(event) {
+  if (!drawing || !penActive) return;
+  const point = getPoint(event);
+  if (penMode === "line") {
+    drawSnapshotLine(point);
+  } else {
+    ctx.lineTo(point.x, point.y);
     ctx.stroke();
   }
+  lastPoint = point;
+  event.preventDefault();
 }
 
-function endInk(event){
-  if(!drawing) return;
-  moveInk(event);
+function endInk() {
+  if (!drawing) return;
   drawing = false;
-  lineSnapshot = null;
+  ctx.restore();
   saveInk();
-  $('#inkCanvas').releasePointerCapture?.(event.pointerId);
 }
 
-function renderThumbs(){
-  $('#filmstrip').innerHTML = pages.map((page,index)=>`
-    <button class="thumb ${index === pageIndex ? 'active' : ''}" type="button" data-page="${index}">${page.tab}</button>
-  `).join('');
+function renderThumbs() {
+  $("#filmstrip").innerHTML = pages.map((page, index) => `
+    <div class="thumb-row ${index === pageIndex ? "active" : ""}" data-page="${index}">
+      <span>${index + 1}</span>
+      <button class="thumb ${index === pageIndex ? "active" : ""}" type="button" data-page="${index}">
+        <span class="thumb-mini ${page.thumb || "normal"}"></span>
+      </button>
+    </div>
+  `).join("");
+  $("#pageGallery").innerHTML = pages.map((page, index) => `
+    <button class="gallery-card ${index === pageIndex ? "active" : ""}" type="button" data-page="${index}">
+      <span class="thumb-mini ${page.thumb || "normal"}" style="margin:auto;display:block;margin-top:16px"></span>
+    </button>
+  `).join("");
 }
 
-function renderPage(nextIndex){
+function renderPage(nextIndex) {
   saveInk();
   pageIndex = Math.max(0, Math.min(pages.length - 1, nextIndex));
   const page = pages[pageIndex];
-  $('#pageTitle').textContent = page.title;
-  $('#pageSub').textContent = page.sub;
-  $('#cardTitle').textContent = page.card;
-  $('#formula').textContent = page.formula;
-  $('#answeredCount').textContent = page.answered;
-  $('#pageLabel').textContent = `第 ${pageIndex + 1} / ${pages.length} 页`;
-  $('#toolbarPage').textContent = `${pageIndex + 1} / ${pages.length}`;
-  $('#prevBtn').disabled = pageIndex === 0;
-  $('#nextBtn').disabled = pageIndex === pages.length - 1;
+  const inner = $("#slideInner");
+  inner.className = `slide-inner ${page.kind === "cover" ? "cover" : ""}`;
+  inner.innerHTML = page.html;
+  $("#pageLabel").textContent = page.label;
+  $("#stripFooter").textContent = page.footer;
+  $("#prevBtn").disabled = pageIndex === 0;
+  $("#nextBtn").disabled = pageIndex === pages.length - 1;
   renderThumbs();
   resizeCanvas(false);
-  restoreInk();
-  closePanels();
+  requestAnimationFrame(restoreInk);
 }
 
-function handleOptimizedSwipe(dx,dy){
-  if(Math.abs(dx) < 90) return false;
-  if(Math.abs(dx) < Math.abs(dy) * 1.4) return false;
-  renderPage(pageIndex + (dx < 0 ? 1 : -1));
+function handleOptimizedSwipe(dx, dy) {
+  if (Math.abs(dx) < 56 || Math.abs(dx) < Math.abs(dy) * 1.25) return false;
+  if (dx < 0) renderPage(pageIndex + 1);
+  else renderPage(pageIndex - 1);
   return true;
 }
+window.handleOptimizedSwipe = handleOptimizedSwipe;
 
-function showPanel(id){
-  closePanels(id);
-  $('#' + id)?.classList.add('show');
-}
-
-function togglePanel(id){
-  const target = $('#' + id);
-  const willOpen = !target?.classList.contains('show');
-  closePanels();
-  if(willOpen) target?.classList.add('show');
-}
-
-function closePanels(exceptId=''){
-  $$('.panel,.cast-wall,.student-drawer,.mini-board').forEach(el=>{
-    if(el.id !== exceptId) el.classList.remove('show');
+function closePanels(exceptId = "") {
+  ["morePanel","answerPanel","castPanel","miniBoard","studentDrawer","sidePages"].forEach((id) => {
+    if (id !== exceptId) $(`#${id}`)?.classList.remove("show");
   });
 }
 
-function toggleDock(){
-  $('#floatController').classList.toggle('open');
+function showPanel(id) {
+  closePanels(id);
+  $(`#${id}`)?.classList.add("show");
+  if (id !== "morePanel") $("#morePanel").classList.remove("show");
+  if (id !== "penPalette") $("#penPalette").classList.remove("show");
 }
 
-function moveOptimizedFloat(x,y){
-  const ctrl = $('#floatController');
-  const app = $('#boardApp');
-  const box = app.getBoundingClientRect();
-  const nextX = Math.max(12, Math.min(x, box.width - ctrl.offsetWidth - 12));
-  const nextY = Math.max(66, Math.min(y, box.height - ctrl.offsetHeight - 72));
-  ctrl.style.left = nextX + 'px';
-  ctrl.style.top = nextY + 'px';
-  ctrl.style.right = 'auto';
+function togglePanel(id) {
+  const node = $(`#${id}`);
+  const shouldShow = !node.classList.contains("show");
+  closePanels(shouldShow ? id : "");
+  node.classList.toggle("show", shouldShow);
 }
 
-function initFloatDrag(){
-  const ctrl = $('#floatController');
-  const main = $('#floatMain');
-  const app = $('#boardApp');
-  let tracking = false;
+function moveOptimizedFloat(x, y) {
+  const node = $("#floatController");
+  const appRect = $("#boardApp").getBoundingClientRect();
+  const width = node.offsetWidth || 76;
+  const height = node.offsetHeight || 260;
+  const left = Math.max(8, Math.min(appRect.width - width - 8, x));
+  const top = Math.max(42, Math.min(appRect.height - height - 92, y));
+  node.style.left = `${left}px`;
+  node.style.right = "auto";
+  node.style.top = `${top}px`;
+}
+window.moveOptimizedFloat = moveOptimizedFloat;
+
+function initFloatDrag() {
+  const controller = $("#floatController");
+  const handle = $("#floatMain");
+  let dragging = false;
   let moved = false;
-  let startX = 0;
-  let startY = 0;
   let offsetX = 0;
   let offsetY = 0;
 
-  main.addEventListener('pointerdown', event=>{
-    tracking = true;
+  handle.addEventListener("pointerdown", (event) => {
+    dragging = true;
     moved = false;
-    startX = event.clientX;
-    startY = event.clientY;
-    const rect = ctrl.getBoundingClientRect();
+    const rect = controller.getBoundingClientRect();
     offsetX = event.clientX - rect.left;
     offsetY = event.clientY - rect.top;
-    main.setPointerCapture?.(event.pointerId);
-    event.preventDefault();
-    event.stopPropagation();
+    handle.setPointerCapture(event.pointerId);
   });
-  main.addEventListener('pointermove', event=>{
-    if(!tracking) return;
-    const distance = Math.hypot(event.clientX - startX, event.clientY - startY);
-    if(!moved && distance < 7) return;
+  handle.addEventListener("pointermove", (event) => {
+    if (!dragging) return;
     moved = true;
-    const rect = app.getBoundingClientRect();
-    moveOptimizedFloat(event.clientX - rect.left - offsetX, event.clientY - rect.top - offsetY);
+    moveOptimizedFloat(event.clientX - offsetX, event.clientY - offsetY);
   });
-  function finish(event){
-    if(!tracking) return;
-    const wasMoved = moved;
-    tracking = false;
-    main.releasePointerCapture?.(event.pointerId);
-    if(!wasMoved) toggleDock();
-  }
-  main.addEventListener('pointerup', finish);
-  main.addEventListener('pointercancel', finish);
+  handle.addEventListener("pointerup", (event) => {
+    dragging = false;
+    handle.releasePointerCapture(event.pointerId);
+    if (!moved) controller.classList.toggle("open");
+  });
 }
 
-function initSwipe(){
-  const app = $('#boardApp');
+function initSwipe() {
   let start = null;
-  const interactive = 'button,.panel,.dock,.float-controller,.toolbar,.page-nav,.student-drawer,.cast-wall,.mini-board';
-  app.addEventListener('pointerdown', event=>{
-    if(penActive) return;
-    if(event.button !== 0) return;
-    if(event.target.closest(interactive)) return;
-    start = {x:event.clientX,y:event.clientY};
+  const interactive = "button,.floating-panel,.dock,.easy-controller,.bottom-toolbar,.page-nav,.answer-panel,.cast-wall,.mini-board,.student-drawer,.side-pages";
+  $("#workbench").addEventListener("pointerdown", (event) => {
+    if (event.target.closest(interactive)) return;
+    start = { x:event.clientX, y:event.clientY };
   });
-  app.addEventListener('pointerup', event=>{
-    if(!start) return;
+  $("#workbench").addEventListener("pointerup", (event) => {
+    if (!start) return;
     handleOptimizedSwipe(event.clientX - start.x, event.clientY - start.y);
     start = null;
   });
 }
 
-document.addEventListener('click', event=>{
-  const pageButton = event.target.closest('[data-page]');
-  if(pageButton){
+function setActivePenColor(button) {
+  penColor = button.dataset.penColor;
+  $$(".swatch").forEach((item) => item.classList.toggle("active", item === button));
+  erasing = false;
+}
+
+function setPenSize(button) {
+  penSize = Number(button.dataset.penSize);
+  $$(".size-dot").forEach((item) => item.classList.toggle("active", item === button));
+}
+
+function setPenMode(button) {
+  penMode = button.dataset.penMode;
+  $$(".mode-button[data-pen-mode]").forEach((item) => item.classList.toggle("active", item === button));
+}
+
+document.addEventListener("click", (event) => {
+  const closeButton = event.target.closest("[data-close]");
+  if (closeButton) {
+    $(`#${closeButton.dataset.close}`)?.classList.remove("show");
+    return;
+  }
+
+  const pageButton = event.target.closest("[data-page]");
+  if (pageButton) {
     renderPage(Number(pageButton.dataset.page));
+    closePanels();
     return;
   }
-  const color = event.target.closest('[data-pen-color]');
-  if(color){
-    penColor = color.dataset.penColor;
-    $$('[data-pen-color]').forEach(btn=>btn.classList.toggle('active', btn === color));
-    setPenActive(true);
+
+  const colorButton = event.target.closest("[data-pen-color]");
+  if (colorButton) {
+    setActivePenColor(colorButton);
     return;
   }
-  const size = event.target.closest('[data-pen-size]');
-  if(size){
-    penSize = Number(size.dataset.penSize) || 4;
-    $$('[data-pen-size]').forEach(btn=>btn.classList.toggle('active', btn === size));
-    setPenActive(true);
+  const sizeButton = event.target.closest("[data-pen-size]");
+  if (sizeButton) {
+    setPenSize(sizeButton);
     return;
   }
-  const mode = event.target.closest('[data-pen-mode]');
-  if(mode){
-    penMode = mode.dataset.penMode || 'curve';
-    $$('[data-pen-mode]').forEach(btn=>btn.classList.toggle('active', btn === mode));
-    setPenActive(true);
+  const modeButton = event.target.closest("[data-pen-mode]");
+  if (modeButton) {
+    setPenMode(modeButton);
     return;
   }
-  const actionButton = event.target.closest('[data-action]');
-  if(!actionButton) return;
+
+  const actionButton = event.target.closest("[data-action]");
+  if (!actionButton) return;
   const action = actionButton.dataset.action;
-  switch(action){
-    case 'pen': setPenActive(!penActive); break;
-    case 'clear': clearInk(); break;
-    case 'more': togglePanel('morePanel'); break;
-    case 'answer': togglePanel('answerPanel'); break;
-    case 'cast': closePanels('castPanel'); $('#castPanel').classList.toggle('show'); break;
-    case 'students': closePanels('studentDrawer'); $('#studentDrawer').classList.toggle('show'); break;
-    case 'miniBoard': closePanels('miniBoard'); $('#miniBoard').classList.toggle('show'); break;
-    case 'prevPage': renderPage(pageIndex - 1); break;
-    case 'nextPage': renderPage(pageIndex + 1); break;
-    case 'undo': undoInk(); break;
-    case 'eraser': penColor = '#fbfdfc'; penSize = 18; setPenActive(true); toast('橡皮模式已开启'); break;
-    case 'closePanels': closePanels(); break;
-    case 'timer': toast('计时器已贴到白板右上角'); break;
-    case 'pick': toast('已抽选：嘉怡，适合讲 C/D 的差别'); break;
-    case 'record': toast('录制状态已切换'); break;
-    case 'screenshot': toast('已截取当前白板画面'); break;
-    default: toast('已打开：' + actionButton.textContent.trim());
+  switch (action) {
+    case "select":
+      setPenActive(false);
+      break;
+    case "pen":
+      setPenActive(true);
+      break;
+    case "eraser":
+      erasing = true;
+      setPenActive(true);
+      toast("橡皮已开启");
+      break;
+    case "clear":
+      clearInk();
+      break;
+    case "undo":
+      undoInk();
+      break;
+    case "more":
+      setPenActive(false);
+      togglePanel("morePanel");
+      break;
+    case "answer":
+      setPenActive(false);
+      showPanel("answerPanel");
+      break;
+    case "cast":
+      setPenActive(false);
+      showPanel("castPanel");
+      break;
+    case "students":
+      togglePanel("studentDrawer");
+      break;
+    case "miniBoard":
+      setPenActive(false);
+      showPanel("miniBoard");
+      break;
+    case "pages":
+      togglePanel("sidePages");
+      break;
+    case "snapshot":
+      toast("已截取当前白板画面");
+      break;
+    case "function":
+      toast("函数工具已呼出");
+      break;
+    default:
+      break;
   }
 });
 
-document.addEventListener('keydown', event=>{
-  if(event.key === 'Escape') closePanels();
-  if(event.key === 'ArrowRight') renderPage(pageIndex + 1);
-  if(event.key === 'ArrowLeft') renderPage(pageIndex - 1);
+$("#prevBtn").addEventListener("click", () => renderPage(pageIndex - 1));
+$("#nextBtn").addEventListener("click", () => renderPage(pageIndex + 1));
+$("#teachMode").addEventListener("click", () => {
+  document.documentElement.requestFullscreen?.();
+  toast("进入授课模式：底部工具栏与易课堂控制条已就绪");
 });
 
-window.annotationCanvas = $('#inkCanvas');
-window.clearOptimizedInk = clearInk;
-window.handleOptimizedSwipe = handleOptimizedSwipe;
-window.moveOptimizedFloat = moveOptimizedFloat;
+window.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowLeft") renderPage(pageIndex - 1);
+  if (event.key === "ArrowRight") renderPage(pageIndex + 1);
+  if (event.key.toLowerCase() === "p") setPenActive(!penActive);
+});
+window.addEventListener("resize", () => {
+  saveInk();
+  resizeCanvas(false);
+  requestAnimationFrame(restoreInk);
+});
 
-$('#inkCanvas').addEventListener('pointerdown', startInk);
-$('#inkCanvas').addEventListener('pointermove', moveInk);
-$('#inkCanvas').addEventListener('pointerup', endInk);
-$('#inkCanvas').addEventListener('pointercancel', endInk);
-window.addEventListener('resize', ()=>resizeCanvas(true));
+canvas.addEventListener("pointerdown", startInk);
+canvas.addEventListener("pointermove", moveInk);
+canvas.addEventListener("pointerup", endInk);
+canvas.addEventListener("pointerleave", endInk);
+canvas.addEventListener("pointercancel", endInk);
 
-resizeCanvas(false);
-renderPage(0);
 initFloatDrag();
 initSwipe();
-setTimeout(()=>toast('拖动课堂悬浮球，或点开右侧工具'), 500);
+renderPage(pageIndex);
 </script>
 </body>
 </html>
