@@ -1394,11 +1394,79 @@ function mountRotationLayer(clone, rect, origin, opacity=1, zIndex=9999){
     opacity:String(opacity),
     pointerEvents:'none',
     zIndex:String(zIndex),
-    willChange:'transform, opacity'
+    willChange:'transform, clip-path',
+    backfaceVisibility:'hidden',
+    transformStyle:'preserve-3d'
   });
   layer.appendChild(clone);
   document.body.appendChild(layer);
   return layer;
+}
+function easeRotationProgress(t){
+  return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+function rectCenter(rect){
+  return {x:rect.left + rect.width / 2, y:rect.top + rect.height / 2};
+}
+function rotatedBoxSize(width, height, angleDeg, scale=1){
+  const theta = angleDeg * Math.PI / 180;
+  const cos = Math.abs(Math.cos(theta));
+  const sin = Math.abs(Math.sin(theta));
+  return {
+    width:(width * cos + height * sin) * scale,
+    height:(width * sin + height * cos) * scale
+  };
+}
+function clampValue(value, min, max){
+  if(min > max) return (min + max) / 2;
+  return Math.min(max, Math.max(min, value));
+}
+function rotationViewportMargin(){
+  return Math.min(72, Math.max(28, Math.min(window.innerWidth, window.innerHeight) * .055));
+}
+function safeRotationFrame(rect, startCenter, targetCenter, angleDeg, t){
+  const eased = easeRotationProgress(t);
+  const margin = rotationViewportMargin();
+  const rawBox = rotatedBoxSize(rect.width, rect.height, angleDeg, 1);
+  const availableW = Math.max(320, window.innerWidth - margin * 2);
+  const availableH = Math.max(360, window.innerHeight - margin * 2);
+  const needsFit = t > 0 && t < 1 && (rawBox.width > availableW || rawBox.height > availableH);
+  const scale = needsFit ? Math.min(1, availableW / rawBox.width, availableH / rawBox.height) : 1;
+  const box = rotatedBoxSize(rect.width, rect.height, angleDeg, scale);
+  const desired = {
+    x:startCenter.x + (targetCenter.x - startCenter.x) * eased,
+    y:startCenter.y + (targetCenter.y - startCenter.y) * eased
+  };
+  const minX = margin + box.width / 2;
+  const maxX = window.innerWidth - margin - box.width / 2;
+  const minY = margin + box.height / 2;
+  const maxY = window.innerHeight - margin - box.height / 2;
+  const center = {
+    x:clampValue(desired.x, minX, maxX),
+    y:clampValue(desired.y, minY, maxY)
+  };
+  const own = rectCenter(rect);
+  return {
+    offset:t,
+    transform:`translate(${(center.x - own.x).toFixed(2)}px, ${(center.y - own.y).toFixed(2)}px) rotate(${angleDeg.toFixed(2)}deg) scale(${scale.toFixed(4)})`
+  };
+}
+function buildRotationKeyframes(rect, startCenter, targetCenter, fromAngle, toAngle, offsets){
+  return offsets.map(t=>{
+    const eased = easeRotationProgress(t);
+    const angle = fromAngle + (toAngle - fromAngle) * eased;
+    return safeRotationFrame(rect, startCenter, targetCenter, angle, t);
+  });
+}
+function oldRotationClip(t){
+  if(t <= .42) return 'inset(0 0 0 0)';
+  if(t >= .58) return 'inset(0 0 0 100%)';
+  return `inset(0 0 0 ${(((t - .42) / .16) * 100).toFixed(1)}%)`;
+}
+function newRotationClip(t){
+  if(t <= .42) return 'inset(0 100% 0 0)';
+  if(t >= .58) return 'inset(0 0 0 0)';
+  return `inset(0 ${((1 - (t - .42) / .16) * 100).toFixed(1)}% 0 0)`;
 }
 async function rotateStudentTablet(){
   const tablet = $('#col-home .tablet');
@@ -1408,8 +1476,7 @@ async function rotateStudentTablet(){
   const toLandscape = !isTabletLandscape();
   const direction = toLandscape ? -1 : 1;
   const spinAngle = direction * 90;
-  const spinEase = 'cubic-bezier(0.4, 0.0, 0.2, 1)';
-  const duration = 760;
+  const duration = 820;
   let frameLayer = null;
   let oldLayer = null;
   let targetLayer = null;
@@ -1423,27 +1490,23 @@ async function rotateStudentTablet(){
     setStudentTabletOrientation(toLandscape ? 'landscape' : 'portrait');
     const targetRect = tablet.getBoundingClientRect();
     const targetClone = prepareScreenContentClone(tablet);
-    const oldOrigin = chooseRotationOrigin(startRect, targetRect, spinAngle);
-    const targetOrigin = chooseRotationOrigin(targetRect, startRect, -spinAngle);
-    frameLayer = mountRotationLayer(frameClone, startRect, oldOrigin, 1, 9999);
-    oldLayer = mountRotationLayer(oldClone, startRect, oldOrigin, 1, 10000);
-    targetLayer = mountRotationLayer(targetClone, targetRect, targetOrigin, 1, 10001);
-    const frameAnim = frameLayer.animate([
-      { transform:'rotate(0deg)' },
-      { transform:`rotate(${spinAngle}deg)` }
-    ], { duration, easing:spinEase, fill:'forwards' });
-    const oldAnim = oldLayer.animate([
-      { transform:'rotate(0deg)', clipPath:'inset(0 0 0 0)', offset:0 },
-      { transform:`rotate(${spinAngle}deg)`, clipPath:'inset(0 0 0 0)', offset:.42 },
-      { transform:`rotate(${spinAngle}deg)`, clipPath:'inset(0 0 0 100%)', offset:.58 },
-      { transform:`rotate(${spinAngle}deg)`, clipPath:'inset(0 0 0 100%)', offset:1 }
-    ], { duration, easing:spinEase, fill:'forwards' });
-    const targetAnim = targetLayer.animate([
-      { transform:`rotate(${-spinAngle}deg)`, clipPath:'inset(0 100% 0 0)', offset:0 },
-      { transform:`rotate(${-spinAngle}deg)`, clipPath:'inset(0 100% 0 0)', offset:.42 },
-      { transform:`rotate(${-spinAngle}deg)`, clipPath:'inset(0 0 0 0)', offset:.58 },
-      { transform:'rotate(0deg)', clipPath:'inset(0 0 0 0)', offset:1 }
-    ], { duration, easing:spinEase, fill:'forwards' });
+    const centerOrigin = rect => ({x:rect.width / 2, y:rect.height / 2});
+    const startCenter = rectCenter(startRect);
+    const targetCenter = rectCenter(targetRect);
+    const offsets = [...new Set([
+      ...Array.from({length:25}, (_, i)=>Number((i / 24).toFixed(4))),
+      .42, .58
+    ])].sort((a, b)=>a - b);
+    const frameFrames = buildRotationKeyframes(startRect, startCenter, targetCenter, 0, spinAngle, offsets);
+    const oldFrames = frameFrames.map(kf=>({...kf, clipPath:oldRotationClip(kf.offset)}));
+    const targetFrames = buildRotationKeyframes(targetRect, startCenter, targetCenter, -spinAngle, 0, offsets)
+      .map(kf=>({...kf, clipPath:newRotationClip(kf.offset)}));
+    frameLayer = mountRotationLayer(frameClone, startRect, centerOrigin(startRect), 1, 9999);
+    oldLayer = mountRotationLayer(oldClone, startRect, centerOrigin(startRect), 1, 10000);
+    targetLayer = mountRotationLayer(targetClone, targetRect, centerOrigin(targetRect), 1, 10001);
+    const frameAnim = frameLayer.animate(frameFrames, { duration, easing:'linear', fill:'forwards' });
+    const oldAnim = oldLayer.animate(oldFrames, { duration, easing:'linear', fill:'forwards' });
+    const targetAnim = targetLayer.animate(targetFrames, { duration, easing:'linear', fill:'forwards' });
     await Promise.all([frameAnim.finished, oldAnim.finished, targetAnim.finished]);
     frameAnim.cancel();
     oldAnim.cancel();
