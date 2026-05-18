@@ -161,13 +161,36 @@ async function main() {
     await evalIn(student, "localStorage.clear(); true");
     await waitFor(board, "document.querySelector('#sceneRoot')?.children.length > 0", "whiteboard initial render");
     await waitFor(student, "document.querySelector('#classStage')?.children.length > 0", "student initial render");
-    await waitFor(board, "!!document.querySelector('#whiteboardBoot:not(.hidden)')", "whiteboard desktop boot");
+    await waitFor(board, "!!document.querySelector('#whiteboardBoot.ready:not(.hidden)')", "whiteboard desktop boot");
+    await waitFor(
+      board,
+      "document.querySelectorAll('#whiteboardBoot .wb-icon').length >= 6 && !!document.querySelector('[data-boot-act=\"open-computer\"]') && !!document.querySelector('[data-boot-act=\"open-pen\"]')",
+      "whiteboard desktop app icons",
+    );
+    await evalIn(
+      board,
+      "document.querySelector('[data-boot-act=\"open-pen\"]').dispatchEvent(new MouseEvent('dblclick', {bubbles:true})); true",
+    );
+    await waitFor(
+      board,
+      "document.querySelector('#whiteboardBoot')?.classList.contains('hidden') && document.querySelector('#boardCanvas')?.classList.contains('active')",
+      "whiteboard pen app opens writable board",
+    );
+    await evalIn(board, "location.reload(); true");
+    await waitFor(board, "document.readyState === 'complete'", "whiteboard reload after pen app");
+    await waitFor(board, "!!document.querySelector('#whiteboardBoot.ready:not(.hidden)')", "whiteboard desktop boot after reload");
     await evalIn(
       board,
       "document.querySelector('[data-boot-act=\"open-bubu\"]').dispatchEvent(new MouseEvent('dblclick', {bubbles:true})); true",
     );
     await waitFor(board, "document.querySelector('#whiteboardBoot')?.classList.contains('login')", "whiteboard login screen");
     await evalIn(board, "document.querySelector('[data-boot-act=\"login\"]').click(); true");
+    await waitFor(
+      board,
+      "document.querySelector('#whiteboardBoot')?.classList.contains('course-picker') && !!document.querySelector('[data-boot-act=\"start-course\"]')",
+      "whiteboard prepared lesson picker",
+    );
+    await evalIn(board, "document.querySelector('[data-boot-act=\"start-course\"]').click(); true");
     await waitFor(
       board,
       "document.querySelector('#whiteboardBoot')?.classList.contains('hidden') && document.querySelector('#pageLabel')?.textContent.includes('1 / 8') && document.querySelector('#sceneRoot')?.innerText.includes('小数的意义')",

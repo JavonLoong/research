@@ -70,27 +70,42 @@ body{
 .whiteboard-boot{
   position:fixed; inset:0; z-index:3000; color:#fff;
   background:
-    linear-gradient(135deg, rgba(14,116,144,.72), rgba(15,23,42,.88)),
-    radial-gradient(circle at 15% 18%, rgba(255,255,255,.18), transparent 28%),
-    linear-gradient(135deg, #0f766e, #1e3a8a 56%, #111827);
+    linear-gradient(135deg, rgba(12,74,110,.72), rgba(15,23,42,.82)),
+    linear-gradient(160deg, #145a86 0%, #16706f 44%, #23407a 100%);
   overflow:hidden; user-select:none;
 }
 .whiteboard-boot.hidden{display:none}
-.wb-desktop{position:absolute;inset:0;padding:34px 38px 64px}
-.wb-desktop-icons{display:grid;grid-template-columns:86px;gap:20px}
-.wb-icon{width:82px;min-height:84px;border:1px solid transparent;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;padding:8px 6px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.42);cursor:default}
-.wb-icon:hover,.wb-icon.selected{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.28)}
-.wb-icon-tile{width:46px;height:46px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#22c993,#0ea874);box-shadow:0 10px 26px rgba(0,0,0,.25);font-size:24px;font-weight:900}
-.wb-icon span{font-size:12px;font-weight:700;line-height:1.25;text-align:center}
-.wb-taskbar{position:absolute;left:0;right:0;bottom:0;height:46px;background:rgba(15,23,42,.74);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-top:1px solid rgba(255,255,255,.12)}
+.wb-desktop{position:absolute;inset:0;padding:26px 34px 58px;background:linear-gradient(130deg,rgba(255,255,255,.08),transparent 34%,rgba(0,0,0,.12) 74%)}
+.wb-desktop-icons{display:grid;grid-template-rows:repeat(5,94px);grid-auto-flow:column;grid-auto-columns:92px;gap:10px 14px;align-content:start;justify-content:start}
+.wb-icon{width:88px;min-height:90px;border:1px solid transparent;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;padding:7px 6px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.46);cursor:default}
+.wb-icon:hover,.wb-icon.selected{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.30)}
+.wb-icon-tile{width:50px;height:50px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,#e2e8f0,#94a3b8);box-shadow:0 12px 24px rgba(0,0,0,.22);font-size:24px;font-weight:900;position:relative;overflow:hidden}
+.wb-icon-tile::after{content:"";position:absolute;inset:0;border:1px solid rgba(255,255,255,.26);border-radius:inherit;pointer-events:none}
+.wb-icon-tile.bubu{background:linear-gradient(135deg,#24d69a,#0f9f78);color:#fff}
+.wb-icon-tile.bubu .bubu-mark{width:31px;height:31px;border-radius:9px;background:#fff;position:relative;box-shadow:inset 0 0 0 3px rgba(255,255,255,.7)}
+.wb-icon-tile.bubu .bubu-mark::before{content:"";position:absolute;left:7px;top:7px;width:17px;height:17px;border-radius:5px;background:linear-gradient(135deg,#22c993,#7d6cf2);box-shadow:10px 10px 0 rgba(125,108,242,.88)}
+.wb-icon-tile.computer{background:linear-gradient(135deg,#dbeafe,#60a5fa);color:#1e3a8a}
+.wb-icon-tile.computer::before{content:"";width:30px;height:22px;border-radius:3px;background:#eff6ff;border:3px solid #2563eb;box-shadow:0 19px 0 -10px #2563eb}
+.wb-icon-tile.folder{background:linear-gradient(135deg,#fde68a,#f59e0b);color:#78350f}
+.wb-icon-tile.folder::before{content:"";width:34px;height:25px;border-radius:4px;background:#fff7c2;box-shadow:0 -7px 0 -2px #fbbf24}
+.wb-icon-tile.pen{background:linear-gradient(135deg,#f8fafc,#bae6fd);color:#075985}
+.wb-icon-tile.pen::before{content:"";width:8px;height:34px;border-radius:8px;background:#0f172a;transform:rotate(38deg);box-shadow:0 0 0 4px #38bdf8}
+.wb-icon-tile.recycle{background:linear-gradient(135deg,#e0f2fe,#94a3b8);color:#334155}
+.wb-icon-tile.browser{background:linear-gradient(135deg,#fef3c7,#fb7185);color:#7f1d1d}
+.wb-icon span{font-size:12px;font-weight:800;line-height:1.22;text-align:center;max-width:78px}
+.wb-taskbar{position:absolute;left:0;right:0;bottom:0;height:48px;background:rgba(15,23,42,.78);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-top:1px solid rgba(255,255,255,.14)}
 .wb-start{display:flex;align-items:center;gap:10px;font-weight:800;font-size:13px}
-.wb-start::before{content:"";width:18px;height:18px;background:linear-gradient(90deg,#60a5fa 50%,#93c5fd 50%);border-radius:3px;box-shadow:inset 8px 0 0 rgba(255,255,255,.18), inset 0 8px 0 rgba(255,255,255,.18)}
+.wb-start::before{content:"";width:20px;height:20px;background:linear-gradient(90deg,#60a5fa 50%,#93c5fd 50%);border-radius:4px;box-shadow:inset 9px 0 0 rgba(255,255,255,.18), inset 0 9px 0 rgba(255,255,255,.18)}
+.wb-taskbar-apps{display:flex;gap:8px;margin-left:10px}.wb-task-pill{width:34px;height:30px;border-radius:7px;background:rgba(255,255,255,.12);display:grid;place-items:center;font-size:14px}
 .wb-tray{display:flex;align-items:center;gap:16px;font-size:12px;color:#dbeafe}
-.wb-login{position:absolute;inset:0;display:none;place-items:center;background:rgba(15,23,42,.34);backdrop-filter:blur(6px)}
+.wb-login,.wb-course-picker{position:absolute;inset:0;display:none;place-items:center;background:rgba(15,23,42,.36);backdrop-filter:blur(7px)}
 .whiteboard-boot.login .wb-login{display:grid}
-.wb-login-card{width:520px;background:#fff;color:var(--text);border-radius:14px;box-shadow:0 24px 80px rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.42);padding:22px}
-.wb-login-card h2{font-size:22px;margin:0 0 6px}
-.wb-login-card p{font-size:13px;color:var(--muted);margin:0 0 16px}
+.whiteboard-boot.course-picker .wb-login{display:none}
+.whiteboard-boot.course-picker .wb-course-picker{display:grid}
+.wb-login-card,.wb-course-card{width:540px;background:#fff;color:var(--text);border-radius:14px;box-shadow:0 24px 80px rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.42);padding:22px}
+.wb-course-card{width:760px}
+.wb-login-card h2,.wb-course-card h2{font-size:22px;margin:0 0 6px}
+.wb-login-card p,.wb-course-card p{font-size:13px;color:var(--muted);margin:0 0 16px}
 .wb-login-grid{display:grid;grid-template-columns:1fr 150px;gap:16px;align-items:stretch}
 .wb-teacher-list{display:flex;flex-direction:column;gap:10px}
 .wb-teacher{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;cursor:pointer}
@@ -102,6 +117,14 @@ body{
   linear-gradient(90deg,#111827 8px,transparent 8px) 0 0/18px 18px,
   linear-gradient(#111827 8px,transparent 8px) 0 0/18px 18px,#fff;border:8px solid #fff;box-shadow:inset 0 0 0 1px var(--line)}
 .wb-qr span{font-size:11.5px;color:var(--muted);font-weight:700}
+.wb-course-list{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px}
+.wb-course-item{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;display:flex;flex-direction:column;min-height:210px}
+.wb-course-item.primary{border-color:rgba(34,201,147,.55);box-shadow:0 10px 24px rgba(34,201,147,.12)}
+.wb-course-cover{height:88px;padding:14px 16px;background:linear-gradient(135deg,#e8f7f0,#e0f2fe);display:flex;flex-direction:column;justify-content:flex-end}
+.wb-course-cover b{font-size:20px}.wb-course-cover span{font-size:12px;color:var(--muted);font-weight:800;margin-top:4px}
+.wb-course-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px;flex:1}
+.wb-course-meta{display:flex;gap:6px;flex-wrap:wrap}.wb-course-meta span{border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:11px;color:var(--muted);font-weight:800;background:var(--surface-2)}
+.wb-course-actions{margin-top:auto;display:flex;gap:8px}.wb-course-actions button{height:34px;border-radius:8px;border:1px solid var(--line);background:#fff;font-weight:900;padding:0 12px;cursor:pointer}.wb-course-actions .primary{background:var(--primary);border-color:var(--primary);color:#fff}
 .scene-root{ position:absolute; inset:0; overflow:hidden; }
 .course-slide{position:absolute;inset:0;padding:42px 52px 78px;background:linear-gradient(135deg,#f8fafc,#eef8f3);display:flex;flex-direction:column;color:var(--text)}
 .slide-tag{display:inline-flex;align-self:flex-start;border:1px solid var(--primary-soft);background:#e8f7f0;color:var(--primary-dark);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;margin-bottom:16px}
@@ -709,28 +732,85 @@ body{
 <div class="whiteboard-boot" id="whiteboardBoot">
   <div class="wb-desktop">
     <div class="wb-desktop-icons">
+      <div class="wb-icon" data-boot-act="open-computer" title="双击打开此电脑">
+        <div class="wb-icon-tile computer"></div>
+        <span>此电脑</span>
+      </div>
       <div class="wb-icon" data-boot-act="open-bubu" title="双击打开步步课堂">
-        <div class="wb-icon-tile">步</div>
+        <div class="wb-icon-tile bubu"><i class="bubu-mark"></i></div>
         <span>步步课堂</span>
       </div>
-      <div class="wb-icon"><div class="wb-icon-tile" style="background:linear-gradient(135deg,#60a5fa,#2563eb)">板</div><span>白板笔</span></div>
-      <div class="wb-icon"><div class="wb-icon-tile" style="background:linear-gradient(135deg,#f59e0b,#f97316)">云</div><span>云盘</span></div>
+      <div class="wb-icon" data-boot-act="open-pen" title="双击打开白板笔">
+        <div class="wb-icon-tile pen"></div>
+        <span>白板笔</span>
+      </div>
+      <div class="wb-icon" data-boot-act="open-folder" title="双击打开课件文件夹">
+        <div class="wb-icon-tile folder"></div>
+        <span>课件文件夹</span>
+      </div>
+      <div class="wb-icon" data-boot-act="open-recycle" title="回收站">
+        <div class="wb-icon-tile recycle">♲</div>
+        <span>回收站</span>
+      </div>
+      <div class="wb-icon" data-boot-act="open-browser" title="浏览器">
+        <div class="wb-icon-tile browser">e</div>
+        <span>浏览器</span>
+      </div>
+      <div class="wb-icon" data-boot-act="open-cloud" title="云盘">
+        <div class="wb-icon-tile" style="background:linear-gradient(135deg,#f59e0b,#f97316)">云</div>
+        <span>云盘</span>
+      </div>
     </div>
     <div class="wb-taskbar">
-      <div class="wb-start">Windows 白板桌面</div>
+      <div class="wb-start">Windows 白板桌面 <span class="wb-taskbar-apps"><i class="wb-task-pill">步</i><i class="wb-task-pill">笔</i><i class="wb-task-pill">📁</i></span></div>
       <div class="wb-tray"><span>网络已连接</span><span id="wbClock">08:00</span></div>
     </div>
   </div>
   <div class="wb-login" id="whiteboardLogin">
     <div class="wb-login-card">
       <h2>登录步步课堂</h2>
-      <p>教室白板端不从教师备课端“开始上课”，老师到教室后从桌面打开软件并登录。</p>
+      <p>老师到教室后先登录账号，再选择已经备好的课开始授课。</p>
       <div class="wb-login-grid">
         <div class="wb-teacher-list">
           <div class="wb-teacher" data-boot-act="login"><div class="wb-avatar">王</div><div><b>王老师</b><span>数学 · 最近课件《小数的意义》</span></div><em>进入</em></div>
           <div class="wb-teacher" data-boot-act="login"><div class="wb-avatar" style="background:#7d6cf2">李</div><div><b>李老师</b><span>语文 · 最近课件《草原》</span></div><em>进入</em></div>
         </div>
         <div class="wb-qr"><div class="wb-qr-box"></div><span>扫码登录<br>手机确认身份</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="wb-course-picker" id="whiteboardCoursePicker">
+    <div class="wb-course-card">
+      <h2>选择备好的课</h2>
+      <p>这里展示老师已经在教师端备好的课件，进入后再开始上课。</p>
+      <div class="wb-course-list">
+        <div class="wb-course-item primary">
+          <div class="wb-course-cover"><b>小数的意义</b><span>四年级下 · 数学 · 已同步</span></div>
+          <div class="wb-course-body">
+            <div class="wb-course-meta"><span>8 页课件</span><span>第 5 页随堂练</span><span>第 7 页抽人</span></div>
+            <div class="wb-course-actions">
+              <button class="primary" type="button" data-boot-act="start-course">开始上课</button>
+              <button type="button" data-boot-act="preview-course">预览</button>
+            </div>
+          </div>
+        </div>
+        <div class="wb-course-item">
+          <div class="wb-course-cover" style="background:linear-gradient(135deg,#fff7ed,#ffedd5)"><b>单位换算练习</b><span>四年级下 · 数学 · 草稿</span></div>
+          <div class="wb-course-body">
+            <div class="wb-course-meta"><span>5 页</span><span>待补互动</span></div>
+            <div class="wb-course-actions"><button type="button" data-boot-act="course-disabled">未完成</button></div>
+          </div>
+        </div>
+        <div class="wb-course-item">
+          <div class="wb-course-cover" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff)"><b>分数比较</b><span>四年级下 · 数学 · 明日课</span></div>
+          <div class="wb-course-body">
+            <div class="wb-course-meta"><span>6 页</span><span>已备题库</span></div>
+            <div class="wb-course-actions"><button type="button" data-boot-act="course-disabled">稍后上课</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="wb-course-actions" style="margin-top:14px">
+        <button type="button" data-boot-act="back-login">返回登录</button>
       </div>
     </div>
   </div>
@@ -1765,20 +1845,71 @@ function initWhiteboardBoot(){
     const d = new Date();
     clock.textContent = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
   }
+  const selectDesktopIcon = icon=>{
+    boot?.querySelectorAll('.wb-icon').forEach(item=> item.classList.toggle('selected', item === icon));
+  };
+  boot?.querySelectorAll('.wb-icon').forEach(icon=>{
+    icon.addEventListener('click', ()=> selectDesktopIcon(icon));
+  });
   boot?.querySelectorAll('[data-boot-act="open-bubu"]').forEach(icon=>{
-    icon.addEventListener('click', ()=> icon.classList.add('selected'));
     icon.addEventListener('dblclick', ()=>{
+      selectDesktopIcon(icon);
+      boot.classList.remove('course-picker');
       boot.classList.add('login');
-      toast('已打开步步课堂，请登录', 'info', 1600);
+      toast('已打开步步课堂，请登录教师账号', 'info', 1600);
+    });
+  });
+  boot?.querySelectorAll('[data-boot-act="open-pen"]').forEach(icon=>{
+    icon.addEventListener('dblclick', ()=>{
+      selectDesktopIcon(icon);
+      boot.classList.add('hidden');
+      boot.classList.remove('login','course-picker');
+      selectScene('cw1', true);
+      setPenActive(true);
+      toggleFloatingPanel(true);
+      toast('白板笔已打开，可以直接在屏幕上书写', 'ok', 1800);
+    });
+  });
+  boot?.querySelectorAll('[data-boot-act="open-computer"],[data-boot-act="open-folder"],[data-boot-act="open-recycle"],[data-boot-act="open-browser"],[data-boot-act="open-cloud"]').forEach(icon=>{
+    icon.addEventListener('dblclick', ()=>{
+      selectDesktopIcon(icon);
+      toast('这个桌面入口用于模拟白板机环境，核心授课请打开步步课堂或白板笔', 'info', 1800);
     });
   });
   boot?.querySelectorAll('[data-boot-act="login"]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      boot.classList.add('hidden');
-      selectScene('cw1', true);
-      toast('王老师已登录，已打开《小数的意义》课件', 'ok', 2200);
+      boot.classList.remove('login');
+      boot.classList.add('course-picker');
+      toast('登录成功，请选择要上的课', 'ok', 1600);
     });
   });
+  boot?.querySelectorAll('[data-boot-act="start-course"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      boot.classList.add('hidden');
+      boot.classList.remove('login','course-picker');
+      selectScene('cw1', true);
+      setPenActive(false);
+      toggleFloatingPanel(false);
+      toast('已进入《小数的意义》，可以开始上课', 'ok', 2200);
+    });
+  });
+  boot?.querySelectorAll('[data-boot-act="preview-course"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      toast('预览：8 页课件，随堂练绑定在第 5 页，抽人提问绑定在第 7 页', 'info', 2200);
+    });
+  });
+  boot?.querySelectorAll('[data-boot-act="course-disabled"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      toast('这节课还没有完成备课，先选择《小数的意义》演示', 'warn', 1800);
+    });
+  });
+  boot?.querySelectorAll('[data-boot-act="back-login"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      boot.classList.remove('course-picker');
+      boot.classList.add('login');
+    });
+  });
+  boot?.classList.add('ready');
 }
 
 // 抽人重抽（draw 场景共用）
