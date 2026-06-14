@@ -714,6 +714,7 @@
     
     let isPlaying = true;
     let theta = 0; // 当前滚动的弧度
+    let xc = 100;  // 滚轮中心的当前水平坐标 (通过速度积分累加，避免改变半径时发生水平突变跳跃)
 
     // 轨迹记录 (存放绝对坐标)
     let pathPoints = [];
@@ -798,6 +799,7 @@
 
     btnReset.addEventListener('click', () => {
       theta = 0;
+      xc = xStart;
       clearPath();
     });
 
@@ -816,22 +818,20 @@
       
       let first = true;
       for (let t = startT; t <= theta; t += step) {
-        const xc = xStart + R * t;
-        const yc = yGround - R;
-        const xp = xc - d * Math.sin(t);
-        const yp = yc + d * Math.cos(t);
+        const xc_t = xc - R * (theta - t);
+        const yc_t = yGround - R;
+        const xp_t = xc_t - d * Math.sin(t);
+        const yp_t = yc_t + d * Math.cos(t);
         
         if (first) {
-          ctx.moveTo(xp - offsetX, yp);
+          ctx.moveTo(xp_t - offsetX, yp_t);
           first = false;
         } else {
-          ctx.lineTo(xp - offsetX, yp);
+          ctx.lineTo(xp_t - offsetX, yp_t);
         }
       }
-      const xc_end = xStart + R * theta;
-      const yc_end = yGround - R;
-      const xp_end = xc_end - d * Math.sin(theta);
-      const yp_end = yc_end + d * Math.cos(theta);
+      const xp_end = xc - d * Math.sin(theta);
+      const yp_end = yGround - R + d * Math.cos(theta);
       ctx.lineTo(xp_end - offsetX, yp_end);
       
       ctx.strokeStyle = 'rgba(0, 113, 227, 0.40)'; // 半透明蓝色
@@ -873,11 +873,12 @@
       lastTime = currentTime;
 
       if (isPlaying) {
-        theta += omega * dt;
+        const dTheta = omega * dt;
+        theta += dTheta;
+        xc += R * dTheta;
       }
 
       // 计算圆心的绝对位置
-      const xc = xStart + R * theta;
       const yc = yGround - R;
 
       // 计算测量点 P 的绝对位置
@@ -900,9 +901,9 @@
         offsetX = xc - canvas.width / 2;
       } else {
         // 如果不跟随，当圆心滚出屏幕后自动循环包裹
-        const cycleWidth = canvas.width - 200;
         if (xc - offsetX > canvas.width + 100) {
           theta = 0;
+          xc = xStart;
           clearPath();
         }
       }
