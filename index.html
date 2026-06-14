@@ -39,7 +39,7 @@
       color: var(--text-main);
       font-family: var(--font-sans);
       overflow: hidden;
-      min-height: 100vh;
+      height: 100vh;
       display: flex;
       flex-direction: column;
     }
@@ -73,8 +73,9 @@
     .app-container {
       display: flex;
       flex: 1;
-      height: calc(100vh - 56px);
+      min-height: 0;
       position: relative;
+      overflow: hidden;
     }
 
     /* 左侧/中间画布区域 */
@@ -83,6 +84,7 @@
       position: relative;
       background-color: #ffffff;
       overflow: hidden;
+      min-height: 0;
     }
 
     canvas {
@@ -98,6 +100,8 @@
     /* 右侧控制面板 */
     .control-panel {
       width: 380px;
+      height: 100%;
+      box-sizing: border-box;
       background-color: var(--panel-bg);
       border-left: 1px solid var(--panel-border);
       padding: 20px;
@@ -106,6 +110,7 @@
       gap: 20px;
       overflow-y: auto;
       z-index: 5;
+      min-height: 0;
     }
 
     .section-title {
@@ -414,6 +419,69 @@
       pointer-events: none;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
+
+    .header-meta {
+      font-size: 13px;
+      text-align: right;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-end;
+    }
+
+    /* 移动端与小屏幕适配 */
+    @media (max-width: 768px) {
+      header {
+        height: auto;
+        padding: 12px 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      header h1 {
+        font-size: 16px;
+      }
+
+      header p {
+        font-size: 12px;
+      }
+
+      .header-meta {
+        text-align: left;
+        align-items: flex-start;
+        margin-top: 4px;
+      }
+
+      .app-container {
+        flex-direction: column;
+      }
+
+      .canvas-container {
+        height: 40vh;
+        flex: none;
+        width: 100%;
+        border-bottom: 1px solid var(--panel-border);
+      }
+
+      .control-panel {
+        width: 100%;
+        height: auto;
+        border-left: none;
+        border-top: 1px solid var(--panel-border);
+        padding: 16px;
+        gap: 16px;
+      }
+
+      .bottom-status {
+        font-size: 12px;
+        padding: 6px 12px;
+        bottom: 10px;
+        left: 10px;
+        border-radius: 12px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -424,7 +492,7 @@
       <h1>滚轮摆线与配速法交互式课件</h1>
       <p>平面复杂运动的分解与合成（平移 + 圆周旋转）</p>
     </div>
-    <div style="font-size: 13px; text-align: right; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">
+    <div class="header-meta">
       <div>瞬时旋转中心（瞬心）教学演示</div>
       <div style="display: flex; gap: 12px; font-size: 12px;">
         <a href="https://javonloong.github.io/research/" target="_blank" style="color: var(--accent-cyan); text-decoration: none; font-weight: 500;">🌐 在线演示 (GitHub Pages)</a>
@@ -652,13 +720,22 @@
 
     // 起始位置
     const xStart = 100;
-    let yGround = canvas.height * 0.60;
+    let yGround = 0;
 
     // 动态适配画布大小
     function resizeCanvas() {
+      const oldYGround = yGround;
       canvas.width = canvas.parentElement.clientWidth;
       canvas.height = canvas.parentElement.clientHeight;
       yGround = canvas.height * 0.60; // Place ground at 60% of the screen height
+      
+      // 平滑移动已记录点以防止屏幕旋转/拉伸时轨迹上下跳跃
+      if (oldYGround > 0 && oldYGround !== yGround && pathPoints.length > 0) {
+        const dy = yGround - oldYGround;
+        for (let i = 0; i < pathPoints.length; i++) {
+          pathPoints[i].y += dy;
+        }
+      }
     }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
@@ -678,7 +755,6 @@
         btn.classList.remove('active');
       });
       activeBtn.classList.add('active');
-      regeneratePath();
     }
 
     presetStandard.addEventListener('click', () => applyPreset(1.0, presetStandard));
@@ -691,7 +767,6 @@
       R = parseFloat(slideRadius.value);
       valRadius.innerText = R + ' px';
       d = R * ratio;
-      regeneratePath();
     });
 
     slideRatio.addEventListener('input', () => {
@@ -705,8 +780,6 @@
       else if (ratio === 0.5) presetCurtate.classList.add('active');
       else if (ratio === 1.5) presetProlate.classList.add('active');
       else if (ratio === 0.0) presetCenter.classList.add('active');
-      
-      regeneratePath();
     });
 
     slideSpeed.addEventListener('input', () => {
@@ -732,23 +805,40 @@
       pathPoints = [];
     }
 
-    function regeneratePath() {
-      pathPoints = [];
+    // 绘制基于当前物理参数的理论曲线预览（虚线）
+    function drawTheoreticalPreview(offsetX) {
+      if (theta <= 0) return;
+      
+      ctx.beginPath();
       const step = 0.03;
-      // 限制点数在最后 100 弧度内，以保证拖动滑块时极为流畅
+      // 限制点数在最后 100 弧度内，以保证渲染极为流畅
       const startT = Math.max(0, theta - 100);
+      
+      let first = true;
       for (let t = startT; t <= theta; t += step) {
         const xc = xStart + R * t;
         const yc = yGround - R;
         const xp = xc - d * Math.sin(t);
         const yp = yc + d * Math.cos(t);
-        pathPoints.push({ x: xp, y: yp });
+        
+        if (first) {
+          ctx.moveTo(xp - offsetX, yp);
+          first = false;
+        } else {
+          ctx.lineTo(xp - offsetX, yp);
+        }
       }
       const xc_end = xStart + R * theta;
       const yc_end = yGround - R;
       const xp_end = xc_end - d * Math.sin(theta);
       const yp_end = yc_end + d * Math.cos(theta);
-      pathPoints.push({ x: xp_end, y: yp_end });
+      ctx.lineTo(xp_end - offsetX, yp_end);
+      
+      ctx.strokeStyle = 'rgba(0, 113, 227, 0.40)'; // 半透明蓝色
+      ctx.lineWidth = 1.8;
+      ctx.setLineDash([6, 6]); // 虚线效果
+      ctx.stroke();
+      ctx.setLineDash([]); // 还原实线设置
     }
 
     // 绘制箭头函数
@@ -824,6 +914,7 @@
       drawGridAndGround(offsetX);
 
       // 2. 绘制测量轨迹 (带滚动偏移)
+      drawTheoreticalPreview(offsetX);
       drawTrajectory(offsetX);
 
       // 3. 绘制轮子及轮辐
