@@ -707,9 +707,13 @@
     const presetCenter = document.getElementById('presetCenter');
 
     // 仿真参数状态
-    let R = parseFloat(slideRadius.value);
-    let ratio = parseFloat(slideRatio.value);
-    let d = R * ratio;
+    let targetR = parseFloat(slideRadius.value);
+    let targetRatio = parseFloat(slideRatio.value);
+    let targetD = targetR * targetRatio;
+
+    let R = targetR;
+    let ratio = targetRatio;
+    let d = targetD;
     let omega = parseFloat(slideSpeed.value);
     
     let isPlaying = true;
@@ -748,8 +752,8 @@
     function applyPreset(selectedRatio, activeBtn) {
       slideRatio.value = selectedRatio;
       valRatio.innerText = selectedRatio.toFixed(2);
-      ratio = selectedRatio;
-      d = R * ratio;
+      targetRatio = selectedRatio;
+      targetD = targetR * targetRatio;
       
       // 清空激活状态
       [presetStandard, presetCurtate, presetProlate, presetCenter].forEach(btn => {
@@ -765,22 +769,22 @@
 
     // 滑杆事件监听
     slideRadius.addEventListener('input', () => {
-      R = parseFloat(slideRadius.value);
-      valRadius.innerText = R + ' px';
-      d = R * ratio;
+      targetR = parseFloat(slideRadius.value);
+      valRadius.innerText = targetR + ' px';
+      targetD = targetR * targetRatio;
     });
 
     slideRatio.addEventListener('input', () => {
-      ratio = parseFloat(slideRatio.value);
-      valRatio.innerText = ratio.toFixed(2);
-      d = R * ratio;
+      targetRatio = parseFloat(slideRatio.value);
+      valRatio.innerText = targetRatio.toFixed(2);
+      targetD = targetR * targetRatio;
       
       // 取消预设的高亮，除非精确匹配
       [presetStandard, presetCurtate, presetProlate, presetCenter].forEach(btn => btn.classList.remove('active'));
-      if (ratio === 1.0) presetStandard.classList.add('active');
-      else if (ratio === 0.5) presetCurtate.classList.add('active');
-      else if (ratio === 1.5) presetProlate.classList.add('active');
-      else if (ratio === 0.0) presetCenter.classList.add('active');
+      if (targetRatio === 1.0) presetStandard.classList.add('active');
+      else if (targetRatio === 0.5) presetCurtate.classList.add('active');
+      else if (targetRatio === 1.5) presetProlate.classList.add('active');
+      else if (targetRatio === 0.0) presetCenter.classList.add('active');
     });
 
     slideSpeed.addEventListener('input', () => {
@@ -872,6 +876,14 @@
       const dt = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
 
+      // 物理参数弹性缓动 (LERP)，避免用户滑动滑条时参数突变导致轨迹锯齿/跳跃
+      if (dt > 0) {
+        const easeFactor = 1 - Math.exp(-12 * dt); // 12 rad/s 的缓动速率，非常平滑且响应迅速
+        R += (targetR - R) * easeFactor;
+        ratio += (targetRatio - ratio) * easeFactor;
+        d = R * ratio;
+      }
+
       if (isPlaying) {
         const dTheta = omega * dt;
         theta += dTheta;
@@ -887,11 +899,15 @@
       const yp = yc + d * Math.cos(theta);
 
       // 自动记录轨迹
-      if (isPlaying) {
-        pathPoints.push({ x: xp, y: yp });
-        // 为了防止数组过大卡顿，限制记录的最大点数
-        if (pathPoints.length > 3000) {
-          pathPoints.shift();
+      const isEasing = Math.abs(targetR - R) > 0.05 || Math.abs(targetRatio - ratio) > 0.005;
+      if (isPlaying || isEasing) {
+        if (pathPoints.length === 0 || 
+            Math.abs(pathPoints[pathPoints.length - 1].x - xp) > 0.1 || 
+            Math.abs(pathPoints[pathPoints.length - 1].y - yp) > 0.1) {
+          pathPoints.push({ x: xp, y: yp });
+          if (pathPoints.length > 3000) {
+            pathPoints.shift();
+          }
         }
       }
 
